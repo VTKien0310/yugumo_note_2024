@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Extendables\Core\Http\Route\RouteInvoker;
 
-Route::get('/', function () {
-    return view('app');
-});
+RouteInvoker::invokeWebRoute('authentication');
+
+Route::get('/', fn() => view('modules.note.pages.list-note-page'))->name('note.list');
