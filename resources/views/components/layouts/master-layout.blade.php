@@ -1,4 +1,4 @@
-<x-html title="Yugumo">
+<x-html :title="$pageTitle ?? 'Yugumo'">
     <x-slot name="head">
         {{-- Load brand name font --}}
         <link rel="preconnect" href="https://fonts.googleapis.com">
