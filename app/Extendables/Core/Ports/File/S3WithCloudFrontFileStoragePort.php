@@ -6,11 +6,6 @@ use Aws\CloudFront\UrlSigner;
 
 class S3WithCloudFrontFileStoragePort extends S3FileStoragePort
 {
-    /**
-     * @param  UrlSigner  $urlSigner
-     * @param  string  $workDir
-     * @param  int  $defaultTempUrlDuration
-     */
     public function __construct(
         private readonly UrlSigner $urlSigner,
         string $workDir = '',
@@ -20,7 +15,7 @@ class S3WithCloudFrontFileStoragePort extends S3FileStoragePort
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function makeTempUrlForPath(
         string $path,
@@ -42,8 +37,8 @@ class S3WithCloudFrontFileStoragePort extends S3FileStoragePort
     public function makeDownloadUrlForPath(
         string $path,
         string $filename,
-        string $contentType = null,
-        int $duration = null,
+        ?string $contentType = null,
+        ?int $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string {

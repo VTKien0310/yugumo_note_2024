@@ -7,5 +7,5 @@ interface SortQueryStringState
     /**
      * @return SortCondition[]
      */
-    function getSortConditions(): array;
+    public function getSortConditions(): array;
 }

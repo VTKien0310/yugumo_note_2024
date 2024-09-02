@@ -7,13 +7,10 @@ use Illuminate\Support\Facades\Hash;
 
 trait PasswordHash
 {
-    /**
-     * @return Attribute
-     */
     protected function password(): Attribute
     {
         return Attribute::make(
-            set: fn(string $value) => Hash::make($value)
+            set: fn (string $value) => Hash::make($value)
         );
     }
 }

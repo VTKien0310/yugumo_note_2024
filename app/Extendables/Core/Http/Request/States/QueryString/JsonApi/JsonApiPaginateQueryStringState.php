@@ -2,21 +2,13 @@
 
 namespace App\Extendables\Core\Http\Request\States\QueryString\JsonApi;
 
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Extendables\Core\Http\Request\States\QueryString\PaginateQueryStringState;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
 class JsonApiPaginateQueryStringState implements PaginateQueryStringState
 {
-    /**
-     * @var int
-     */
     private readonly int $pageNumber;
 
-    /**
-     * @var int
-     */
     private readonly int $pageSize;
 
     public function __construct(
@@ -33,12 +25,6 @@ class JsonApiPaginateQueryStringState implements PaginateQueryStringState
         }
     }
 
-    /**
-     * @param  array  $requestData
-     * @param  string  $requestDataField
-     * @param  int  $defaultValue
-     * @return int
-     */
     private function processRequestData(array $requestData, string $requestDataField, int $defaultValue): int
     {
         if (empty($requestData[$requestDataField])) {
@@ -46,25 +32,25 @@ class JsonApiPaginateQueryStringState implements PaginateQueryStringState
         }
         $requestDataValue = $requestData[$requestDataField];
 
-        if (filter_var($requestDataValue, FILTER_VALIDATE_INT) !== false && (int)$requestDataValue >= 1) {
-            return (int)$requestDataValue;
+        if (filter_var($requestDataValue, FILTER_VALIDATE_INT) !== false && (int) $requestDataValue >= 1) {
+            return (int) $requestDataValue;
         }
 
         return $defaultValue;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function getPageSize(): int
+    public function getPageSize(): int
     {
         return $this->pageSize;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function getPageNumber(): int
+    public function getPageNumber(): int
     {
         return $this->pageNumber;
     }

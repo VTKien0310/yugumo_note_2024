@@ -56,7 +56,7 @@ abstract class InjectableJsonResource extends JsonResource
     protected function potentiallyMissing(string $onlyQueryStringKey, callable $valueResolver): mixed
     {
         if (! empty($this->only) && ! in_array($onlyQueryStringKey, $this->only)) {
-            return new MissingValue();
+            return new MissingValue;
         }
 
         try {
@@ -66,7 +66,7 @@ abstract class InjectableJsonResource extends JsonResource
                 throw $exception;
             }
 
-            return new MissingValue();
+            return new MissingValue;
         }
     }
 
@@ -89,7 +89,7 @@ abstract class InjectableJsonResource extends JsonResource
                 throw $exception;
             }
 
-            return new MissingValue();
+            return new MissingValue;
         }
     }
 
@@ -107,7 +107,7 @@ abstract class InjectableJsonResource extends JsonResource
                 throw $exception;
             }
 
-            return new MissingValue();
+            return new MissingValue;
         }
     }
 }

@@ -9,9 +9,9 @@ use Illuminate\Database\Query\Builder;
 class ExactFilter extends Filter
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function handle(
+    public function handle(
         EloquentBuilder|Builder $builder,
         FilterCondition $filterCondition
     ): Builder|EloquentBuilder {

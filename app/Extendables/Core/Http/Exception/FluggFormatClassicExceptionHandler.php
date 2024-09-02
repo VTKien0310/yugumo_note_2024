@@ -22,17 +22,17 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
     private readonly FluggFormatResponseBuilder $responseBuilder;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function __construct(Container $container)
     {
         parent::__construct($container);
 
-        $this->responseBuilder = new FluggFormatResponseBuilder();
+        $this->responseBuilder = new FluggFormatResponseBuilder;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function render($request, $exception)
     {
@@ -50,21 +50,11 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
         return parent::render($request, $exception);
     }
 
-    /**
-     * @param  int  $statusCode
-     * @param  string  $errorCode
-     * @param  string  $errorMessage
-     * @return array
-     */
     private function makeErrorResponseData(int $statusCode, string $errorCode = '', string $errorMessage = ''): array
     {
         return $this->responseBuilder->makeErrorResponseData($errorCode, $errorMessage, $statusCode);
     }
 
-    /**
-     * @param  \Illuminate\Validation\ValidationException  $exception
-     * @return \Illuminate\Http\JsonResponse
-     */
     private function renderResponseForValidationException(ValidationException $exception): JsonResponse
     {
         $statusCode = Response::HTTP_UNPROCESSABLE_ENTITY;
@@ -78,17 +68,13 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
         foreach ($exception->validator->errors()->messages() as $param => $errors) {
             $response['error']['details'][] = [
                 'param' => $param,
-                'errors' => $errors
+                'errors' => $errors,
             ];
         }
 
         return response()->json($response, $statusCode);
     }
 
-    /**
-     * @param  int  $statusCode
-     * @return \Illuminate\Http\JsonResponse
-     */
     private function renderResponseForHttpException(int $statusCode): JsonResponse
     {
         return response()->json(
@@ -101,10 +87,6 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
         );
     }
 
-    /**
-     * @param  int  $statusCode
-     * @return string
-     */
     private function getHttpExceptionMessage(int $statusCode): string
     {
         return match ($statusCode) {
@@ -118,10 +100,6 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
         };
     }
 
-    /**
-     * @param  int  $statusCode
-     * @return string
-     */
     private function getHttpExceptionCode(int $statusCode): string
     {
         return match ($statusCode) {
@@ -136,7 +114,7 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function convertExceptionToArray(\Throwable $e): array
     {
@@ -145,19 +123,11 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
             : $this->convertForNonDebugEnv($e);
     }
 
-    /**
-     * @param  \Throwable  $e
-     * @return int
-     */
     private function getUnknownErrorStatusCode(\Throwable $e): int
     {
         return $this->isHttpException($e) ? $e->getStatusCode() : 500;
     }
 
-    /**
-     * @param  \Throwable  $e
-     * @return array
-     */
     private function convertForDebugEnv(\Throwable $e): array
     {
         $response = $this->makeErrorResponseData(
@@ -170,14 +140,13 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
             'exception' => get_class($e),
             'file' => $e->getFile(),
             'line' => $e->getLine(),
-            'trace' => collect($e->getTrace())->map(fn($trace) => Arr::except($trace, ['args']))->all(),
+            'trace' => collect($e->getTrace())->map(fn ($trace) => Arr::except($trace, ['args']))->all(),
         ]);
 
         return $response;
     }
 
     /**
-     * @param  \Throwable  $e
      * @return string[]
      */
     private function convertForNonDebugEnv(\Throwable $e): array
@@ -189,10 +158,6 @@ class FluggFormatClassicExceptionHandler extends ExceptionHandler
         );
     }
 
-    /**
-     * @param  ModelNotFoundException  $exception
-     * @return JsonResponse
-     */
     private function renderResponseForModelNotFound(ModelNotFoundException $exception): JsonResponse
     {
         $statusCode = Response::HTTP_NOT_FOUND;

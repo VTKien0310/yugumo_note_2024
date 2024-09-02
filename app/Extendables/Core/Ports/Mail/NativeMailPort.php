@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Mail;
 class NativeMailPort implements MailPort
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function send(string|User|Collection $receivers, string $mailable, ...$mailableArgs): void
     {
@@ -17,7 +17,7 @@ class NativeMailPort implements MailPort
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function queueSend(string|User|Collection $receivers, string $mailable, ...$mailableArgs): void
     {
