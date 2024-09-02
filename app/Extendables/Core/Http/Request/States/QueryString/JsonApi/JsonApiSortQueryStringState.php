@@ -2,11 +2,9 @@
 
 namespace App\Extendables\Core\Http\Request\States\QueryString\JsonApi;
 
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
 use App\Extendables\Core\Http\Request\States\QueryString\SortQueryStringState;
 use App\Extendables\Core\Utils\SortDirectionEnum;
-use Illuminate\Http\Request;
 
 class JsonApiSortQueryStringState implements SortQueryStringState
 {
@@ -15,10 +13,6 @@ class JsonApiSortQueryStringState implements SortQueryStringState
      */
     private readonly array $sorts;
 
-    /**
-     * @param  mixed  $sortRequestData
-     * @param  string  $dataSeparator
-     */
     public function __construct(
         mixed $sortRequestData,
         private readonly string $dataSeparator = ','
@@ -31,22 +25,18 @@ class JsonApiSortQueryStringState implements SortQueryStringState
     }
 
     /**
-     * @param  string  $requestData
      * @return SortCondition[]
      */
     private function processRequestData(string $requestData): array
     {
         $requestData = explode($this->dataSeparator, $requestData);
+
         return array_map(
-            fn(string $condition): SortCondition => $this->processCondition($condition),
+            fn (string $condition): SortCondition => $this->processCondition($condition),
             $requestData
         );
     }
 
-    /**
-     * @param  string  $condition
-     * @return SortCondition
-     */
     private function processCondition(string $condition): SortCondition
     {
         if (str_starts_with($condition, '-')) {
@@ -57,9 +47,9 @@ class JsonApiSortQueryStringState implements SortQueryStringState
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function getSortConditions(): array
+    public function getSortConditions(): array
     {
         return $this->sorts;
     }

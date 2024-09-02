@@ -11,6 +11,5 @@ class TextFileToArrayResultValueObject extends ValueObject
         public readonly ?array $result,
         public readonly int $readLinesCount,
         public readonly ?TextFileToArrayErrorEnum $error = null
-    ) {
-    }
+    ) {}
 }

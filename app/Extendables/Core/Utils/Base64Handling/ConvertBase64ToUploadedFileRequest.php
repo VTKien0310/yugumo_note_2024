@@ -6,56 +6,37 @@ use Illuminate\Http\UploadedFile;
 
 trait ConvertBase64ToUploadedFileRequest
 {
-    /**
-     * @return string
-     */
     protected function jsonBase64NameKey(): string
     {
         return 'name';
     }
 
-    /**
-     * @return string
-     */
     protected function jsonBase64ContentKey(): string
     {
         return 'content';
     }
 
-    /**
-     * @return string
-     */
     protected function jsonBase64PositionKey(): string
     {
         return 'position';
     }
 
-    /**
-     * @return array
-     */
     protected function base64Param(): array
     {
         return [];
     }
 
-    /**
-     * @return array
-     */
     protected function base64ArrayParam(): array
     {
         return [];
     }
 
-    /**
-     * @param  array  $base64Arr
-     * @return array
-     */
     protected function convertMultiBase64ToUploadedFile(array $base64Arr): array
     {
-        $base64Converter = new Base64ToUploadedFileConverter();
+        $base64Converter = new Base64ToUploadedFileConverter;
         $uploadedFiles = [];
         foreach ($base64Arr as $index => $base64) {
-            if (!$this->isValidParamValue($base64)) {
+            if (! $this->isValidParamValue($base64)) {
                 continue;
             }
 
@@ -75,10 +56,6 @@ trait ConvertBase64ToUploadedFileRequest
         return $uploadedFiles;
     }
 
-    /**
-     * @param  string  $paramName
-     * @return void
-     */
     protected function convertBase64RequestParamToUploadedFile(string $paramName): void
     {
         $paramValue = $this->input($paramName);
@@ -89,7 +66,7 @@ trait ConvertBase64ToUploadedFileRequest
 
         if ($this->isValidParamValue($paramValue)) {
             $this->unsetRequestParam($paramName);
-            $base64Converter = new Base64ToUploadedFileConverter();
+            $base64Converter = new Base64ToUploadedFileConverter;
             $convertedParamValue = $base64Converter->handle(
                 $this->getBase64ContentFromArray($paramValue),
                 $this->getBase64NameFromArray($paramValue)
@@ -100,21 +77,13 @@ trait ConvertBase64ToUploadedFileRequest
         }
     }
 
-    /**
-     * @param  mixed  $paramValue
-     * @return bool
-     */
     protected function isValidParamValue(mixed $paramValue): bool
     {
         return is_array($paramValue)
-            && !empty($paramValue[$this->jsonBase64ContentKey()])
-            && !empty($paramValue[$this->jsonBase64NameKey()]);
+            && ! empty($paramValue[$this->jsonBase64ContentKey()])
+            && ! empty($paramValue[$this->jsonBase64NameKey()]);
     }
 
-    /**
-     * @param  string  $paramName
-     * @return void
-     */
     protected function convertBase64ArrayRequestParamToUploadedFile(string $paramName): void
     {
         $paramValue = $this->input($paramName);
@@ -132,30 +101,17 @@ trait ConvertBase64ToUploadedFileRequest
         }
     }
 
-    /**
-     * @param  string  $paramName
-     * @param  array|UploadedFile  $convertedFile
-     * @return void
-     */
     protected function saveConvertedFileToRequest(string $paramName, array|UploadedFile $convertedFile): void
     {
         $this->convertedFiles[$paramName] = $convertedFile;
     }
 
-    /**
-     * @param  string  $paramName
-     * @return void
-     */
     protected function unsetRequestParam(string $paramName): void
     {
         $this->request->remove($paramName);
         $this->json->remove($paramName);
     }
 
-    /**
-     * @param  string  $paramName
-     * @return void
-     */
     protected function setNullRequestParam(string $paramName): void
     {
         $this->merge([
@@ -163,35 +119,23 @@ trait ConvertBase64ToUploadedFileRequest
         ]);
     }
 
-    /**
-     * @param  array  $arr
-     * @return string
-     */
     protected function getBase64ContentFromArray(array $arr): string
     {
         return $arr[$this->jsonBase64ContentKey()];
     }
 
-    /**
-     * @param  array  $arr
-     * @return string
-     */
     protected function getBase64NameFromArray(array $arr): string
     {
         return $arr[$this->jsonBase64NameKey()];
     }
 
-    /**
-     * @param  array  $arr
-     * @return string
-     */
     protected function getBase64PositionFromArray(array $arr): string
     {
         return $arr[$this->jsonBase64PositionKey()];
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function prepareForValidation()
     {

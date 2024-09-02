@@ -6,12 +6,7 @@ use Illuminate\Http\UploadedFile;
 
 class Base64ToUploadedFileConverter
 {
-    /**
-     * @param  string  $base64
-     * @param  string  $fileName
-     * @return UploadedFile
-     */
-    function handle(string $base64, string $fileName): UploadedFile
+    public function handle(string $base64, string $fileName): UploadedFile
     {
         // trim the data header from the encoded string
         if (str_contains($base64, ';base64')) {

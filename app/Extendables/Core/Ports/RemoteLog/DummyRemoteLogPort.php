@@ -10,63 +10,54 @@ class DummyRemoteLogPort implements RemoteLogPort
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 
     public function debug(
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 
     public function info(
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 
     public function critical(
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 
     public function alert(
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 
     public function emergency(
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 
     public function notice(
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 
     public function warning(
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 
     public function log(
         LogLevelEnum $logLevel,
         Stringable|string $message,
         array $context = [],
         string $environmentInfoKey = 'environment'
-    ): void {
-    }
+    ): void {}
 }

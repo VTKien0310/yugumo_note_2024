@@ -9,9 +9,9 @@ use Illuminate\Database\Query\Builder;
 class PartialFilter extends Filter
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function handle(
+    public function handle(
         EloquentBuilder|Builder $builder,
         FilterCondition $filterCondition
     ): Builder|EloquentBuilder {
@@ -29,6 +29,7 @@ class PartialFilter extends Filter
             foreach ($filterCondition->condition as $cond) {
                 $builder = $builder->where($filterColumn, 'LIKE', "%$cond%");
             }
+
             return $builder;
         }
 

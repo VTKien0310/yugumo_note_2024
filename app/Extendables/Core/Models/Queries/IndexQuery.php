@@ -22,8 +22,7 @@ class IndexQuery
         private readonly SortQueryStringState $sortQueryStringState,
         private readonly OnlyQueryStringState $onlyQueryStringState,
         private readonly RelationQueryStringState $relationQueryStringState
-    ) {
-    }
+    ) {}
 
     /**
      * @param  Filter[]  $allowedFilters
@@ -33,7 +32,7 @@ class IndexQuery
         Builder|EloquentBuilder $builder,
         array $allowedFilters = [],
         array $allowedSorts = [],
-        SelectByOnlyQueryStringValueObject $selectByOnlyQueryStringValueObject = null,
+        ?SelectByOnlyQueryStringValueObject $selectByOnlyQueryStringValueObject = null,
         array $eagerLoadableCounts = [],
         array $eagerLoadableRelations = []
     ): Builder|EloquentBuilder {

@@ -9,53 +9,31 @@ use Illuminate\Http\JsonResponse;
 
 class Responder
 {
-    /**
-     * @param  ResponseBuilder  $responseBuilder
-     */
-    function __construct(
+    public function __construct(
         protected readonly ResponseBuilder $responseBuilder
-    ) {
-    }
+    ) {}
 
-    /**
-     * @return JsonResponse
-     */
-    function responseNoContent(): JsonResponse
+    public function responseNoContent(): JsonResponse
     {
         return $this->responseBuilder->responseNoContent();
     }
 
-    /**
-     * @param  mixed  $data
-     * @return JsonResponse
-     */
-    function responseRawContent(mixed $data): JsonResponse
+    public function responseRawContent(mixed $data): JsonResponse
     {
         return $this->responseBuilder->responseSuccess($data);
     }
 
-    /**
-     * @param  LengthAwarePaginator  $data
-     * @return JsonResponse
-     */
     public function responseRawPaginatedContent(LengthAwarePaginator $data): JsonResponse
     {
         return $this->responseRawContent(new RawContentCollectionResource($data));
     }
 
-    /**
-     * @param  int  $count
-     * @return JsonResponse
-     */
-    function responseCount(int $count): JsonResponse
+    public function responseCount(int $count): JsonResponse
     {
         return $this->responseBuilder->responseSuccess(['count' => $count]);
     }
 
-    /**
-     * @return JsonResponse
-     */
-    function responseUnauthorized(): JsonResponse
+    public function responseUnauthorized(): JsonResponse
     {
         return $this->responseBuilder->responseForbidden(
             CommonHttpErrorCodeEnum::UNAUTHORIZED->value,
@@ -63,10 +41,7 @@ class Responder
         );
     }
 
-    /**
-     * @return JsonResponse
-     */
-    function responseUnauthenticated(): JsonResponse
+    public function responseUnauthenticated(): JsonResponse
     {
         return $this->responseBuilder->responseUnauthorized(
             CommonHttpErrorCodeEnum::UNAUTHENTICATED->value,

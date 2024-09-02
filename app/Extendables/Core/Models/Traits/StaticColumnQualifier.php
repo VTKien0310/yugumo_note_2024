@@ -15,6 +15,6 @@ trait StaticColumnQualifier
 
     public static function table(): string
     {
-        return (new static())->getTable();
+        return (new static)->getTable();
     }
 }

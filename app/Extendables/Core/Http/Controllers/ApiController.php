@@ -2,6 +2,4 @@
 
 namespace App\Extendables\Core\Http\Controllers;
 
-abstract class ApiController extends Controller
-{
-}
+abstract class ApiController extends Controller {}

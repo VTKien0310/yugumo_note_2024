@@ -39,7 +39,7 @@ class DummyFileStoragePort implements FileStoragePort
     public function putFileAs(
         File|UploadedFile $file,
         string $name,
-        string $extension = null,
+        ?string $extension = null,
         bool $isRelativeToWorkDir = true
     ): bool|string {
         $fileStoragePath = $isRelativeToWorkDir ? $this->workDir : '';
@@ -65,7 +65,7 @@ class DummyFileStoragePort implements FileStoragePort
 
     public function makeTempUrlForPath(
         string $path,
-        int $duration = null,
+        ?int $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string {
@@ -88,7 +88,7 @@ class DummyFileStoragePort implements FileStoragePort
     public function putBinaryContentAs(
         string $file,
         string $name,
-        string $extension = null,
+        ?string $extension = null,
         bool $isWorkDirPath = true
     ): string|bool {
         $path = $isWorkDirPath ? "{$this->getWorkDir()}/$name" : $name;
@@ -102,11 +102,11 @@ class DummyFileStoragePort implements FileStoragePort
 
     public function download(
         string $path,
-        string $name = null,
+        ?string $name = null,
         array $headers = [],
         bool $isWorkDirPath = false
     ): StreamedResponse {
-        return new StreamedResponse();
+        return new StreamedResponse;
     }
 
     /**
@@ -124,7 +124,7 @@ class DummyFileStoragePort implements FileStoragePort
     /**
      * {@inheritDoc}
      */
-    public function exists(string $filePath, bool $isWorkDirPath = true, string $fileExtension = null): bool
+    public function exists(string $filePath, bool $isWorkDirPath = true, ?string $fileExtension = null): bool
     {
         return true;
     }
@@ -135,8 +135,8 @@ class DummyFileStoragePort implements FileStoragePort
     public function makeDownloadUrlForPath(
         string $path,
         string $filename,
-        string $contentType = null,
-        int $duration = null,
+        ?string $contentType = null,
+        ?int $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string {

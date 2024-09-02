@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 trait UlidEloquent
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getKeyType(): string
     {
@@ -16,7 +16,7 @@ trait UlidEloquent
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getIncrementing(): bool
     {
@@ -30,7 +30,7 @@ trait UlidEloquent
     {
         static::creating(function (Model $model) {
             if (! $model->getKey()) {
-                $model->{$model->getKeyName()} = (string)Str::ulid();
+                $model->{$model->getKeyName()} = (string) Str::ulid();
             }
         });
     }
