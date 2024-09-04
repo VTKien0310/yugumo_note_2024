@@ -1,7 +1,7 @@
 <x-layouts.master-layout>
-    <x-slot:pageTitle>Yugumo | Notes</x-slot:pageTitle>
+    <x-slot:pageTitle>Yugumo | Recently</x-slot:pageTitle>
 
     <x-layouts.authenticated-layout>
-        <h1>List note page</h1>
+        <h1>Recent note page</h1>
     </x-layouts.authenticated-layout>
 </x-layouts.master-layout>

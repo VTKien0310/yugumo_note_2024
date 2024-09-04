@@ -3,9 +3,9 @@
 namespace App\Http\Authentication;
 
 use App\Extendables\Core\Http\Controllers\WebController;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 
 class AuthenticationController extends WebController
 {
