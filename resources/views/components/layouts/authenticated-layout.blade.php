@@ -23,7 +23,7 @@
 @endphp
 
 <div>
-    <div class="navbar bg-base-100 shadow-xl">
+    <div class="navbar bg-base-100 shadow-xl mb-5">
 
         <h1 class="brand-name-font flex-1 text-xl text-primary">YUGUMO</h1>
 
@@ -48,7 +48,7 @@
 
     </div>
 
-    <div>
+    <div class="flex flex-row justify-center">
         {{ $slot }}
     </div>
 </div>
