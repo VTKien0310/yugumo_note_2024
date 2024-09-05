@@ -16,6 +16,8 @@ class NoteType extends Model
 
     const DESCRIPTION = 'description';
 
+    const ILLUSTRATION_PATH = 'illustration_path';
+
     protected $table = 'note_types';
 
     protected $guarded = [
