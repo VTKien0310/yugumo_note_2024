@@ -4,6 +4,7 @@ namespace App\Features\Note\Actions;
 
 use App\Features\Note\Models\NoteType;
 use App\Features\Note\ValueObjects\NoteTypeViewDataValueObject;
+use Illuminate\Support\Facades\Vite;
 
 readonly class MakeAllNoteTypeViewDataAction
 {
@@ -16,7 +17,13 @@ readonly class MakeAllNoteTypeViewDataAction
     {
         return $this->getAllNoteTypeAction
             ->handle()
-            ->map(fn (NoteType $noteType) => new NoteTypeViewDataValueObject($noteType))
+            ->map(fn (NoteType $noteType) => new NoteTypeViewDataValueObject(
+                id: $noteType->id,
+                name: $noteType->name,
+                description: $noteType->description,
+                illustrationPath: Vite::asset($noteType->illustration_path),
+                illustrationAlt: $noteType->name.' illustration',
+            ))
             ->all();
     }
 }

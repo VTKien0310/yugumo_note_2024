@@ -3,7 +3,6 @@
 namespace App\Http\Note;
 
 use App\Extendables\Core\Http\Controllers\WebController;
-use App\Features\Note\Actions\MakeAllNoteTypeViewDataAction;
 use Illuminate\Contracts\View\View;
 
 class NoteController extends WebController
@@ -27,10 +26,8 @@ class NoteController extends WebController
     /**
      * GET /notes/create
      */
-    public function create(MakeAllNoteTypeViewDataAction $makeAllNoteTypeViewDataAction): View
+    public function create(): View
     {
-        return view('modules.note.pages.create-note-page', [
-            'noteTypes' => $makeAllNoteTypeViewDataAction->handle(),
-        ]);
+        return view('modules.note.pages.create-note-page');
     }
 }
