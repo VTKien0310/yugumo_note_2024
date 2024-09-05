@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // flush all users before seed new data
-        User::forceDelete();
+        User::query()->forceDelete();
 
         $users = [
             [
