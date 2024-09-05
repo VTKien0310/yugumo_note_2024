@@ -10,9 +10,9 @@ class NoteController extends WebController
     /**
      * GET /
      */
-    public function recent(): View
+    public function home(): View
     {
-        return view('modules.note.pages.recent-note-page');
+        return view('modules.note.pages.home-note-page');
     }
 
     /**
