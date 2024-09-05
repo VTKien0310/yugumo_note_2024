@@ -1,3 +1,42 @@
+<?php
+
+use Livewire\Volt\Component;
+
+new class extends Component {
+    public string $email = '';
+
+    public string $password = '';
+
+    public function loginAttempt(): void
+    {
+        $credentials = $this->validatedData();
+
+        $authenticateSuccess = Auth::attempt($credentials);
+
+        $authenticateSuccess ? $this->onAuthAttemptSuccess() : $this->onAuthAttemptFail();
+    }
+
+    private function validatedData(): array
+    {
+        return $this->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+    }
+
+    private function onAuthAttemptSuccess(): void
+    {
+        session()->regenerate();
+        $this->redirectIntended();
+    }
+
+    private function onAuthAttemptFail(): void
+    {
+        session()->flash('login-failed', 'Invalid email or password.');
+    }
+}
+?>
+
 <div class="card w-1/4 h-1/2 min-h-fit flex flex-col justify-center items-center bg-base-100 rounded-lg shadow-xl">
     <h1 class="mb-16 text-4xl brand-name-font">YUGUMO</h1>
 
