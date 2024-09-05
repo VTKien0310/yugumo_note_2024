@@ -1,7 +1,44 @@
+@php
+    $noteCategories = [
+        [
+            'name'=>'Simple note',
+            'description'=>"A text-only note to write down what's on your mind",
+            'img'=>Vite::asset('resources/images/simple-note.svg'),
+            'img_alt'=>'Simple note illustration'
+        ],
+        [
+            'name'=>'To-do list',
+            'description'=>'A list with checkboxes to keep track of things you need',
+            'img'=>Vite::asset('resources/images/to-do-list.svg'),
+            'img_alt'=>'To-do list illustration'
+        ],
+    ]
+@endphp
+
 <x-layouts.master-layout>
-    <x-slot:pageTitle>Yugumo | New note</x-slot:pageTitle>
+    <x-slot:pageTitle>Add</x-slot:pageTitle>
 
     <x-layouts.authenticated-layout>
-        <h1>Create note page</h1>
+        <div class="w-full flex flex-row justify-start content-center items-center gap-5">
+
+            @foreach($noteCategories as $noteCategory)
+                <div class="card bg-base-100 w-96 shadow-xl">
+                    <figure>
+                        <img
+                            src="{{ $noteCategory['img'] }}"
+                            alt="{{ $noteCategory['img_alt'] }}"
+                        />
+                    </figure>
+                    <div class="card-body">
+                        <h2 class="card-title">{{ $noteCategory['name'] }}</h2>
+                        <p>{{ $noteCategory['description'] }}</p>
+                        <div class="card-actions justify-center">
+                            <button class="btn btn-primary btn-block">Add</button>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+        </div>
     </x-layouts.authenticated-layout>
 </x-layouts.master-layout>

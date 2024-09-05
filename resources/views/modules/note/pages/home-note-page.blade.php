@@ -1,5 +1,5 @@
 <x-layouts.master-layout>
-    <x-slot:pageTitle>Yugumo | Home</x-slot:pageTitle>
+    <x-slot:pageTitle>Home</x-slot:pageTitle>
 
     <x-layouts.authenticated-layout>
         <h1>Home note page</h1>
