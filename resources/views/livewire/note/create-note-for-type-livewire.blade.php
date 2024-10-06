@@ -35,9 +35,11 @@ new class extends Component {
 
     private function noteTypeFound(NoteType $noteType): void
     {
-        app()->make(CreateNoteAction::class)->handle(Auth::user(), $noteType);
+        $newlyCreatedNote = app()->make(CreateNoteAction::class)->handle(Auth::user(), $noteType);
 
-        $this->redirectRoute('notes.home');
+        $this->redirectRoute('notes.show', [
+            'note' => $newlyCreatedNote->id
+        ]);
     }
 
     private function noteTypeNotFound(): void
