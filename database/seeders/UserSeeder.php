@@ -12,8 +12,8 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // flush all users before seed new data
-        User::forceDelete();
+        // flush all users before new data seeding
+        User::query()->forceDelete();
 
         $users = [
             [

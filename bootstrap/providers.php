@@ -1,8 +1,7 @@
 <?php
 
-use App\Extendables\Providers\ExtendableServiceProvider;
-
 return [
+    App\Extendables\Providers\ExtendableServiceProvider::class,
     App\Providers\AppServiceProvider::class,
-    ExtendableServiceProvider::class,
+    App\Providers\VoltServiceProvider::class,
 ];
