@@ -11,7 +11,7 @@ new class extends Component {
     {
         $credentials = $this->validatedData();
 
-        $authenticateSuccess = Auth::attempt($credentials);
+        $authenticateSuccess = Auth::attempt($credentials, true);
 
         $authenticateSuccess ? $this->onAuthAttemptSuccess() : $this->onAuthAttemptFail();
     }
