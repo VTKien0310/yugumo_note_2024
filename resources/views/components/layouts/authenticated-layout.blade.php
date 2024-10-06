@@ -23,7 +23,7 @@
 @endphp
 
 <div>
-    <div class="navbar bg-base-100 shadow-xl mb-5">
+    <div class="navbar bg-base-100 shadow-lg mb-8">
 
         <h1 class="brand-name-font flex-1 text-xl text-primary">YUGUMO</h1>
 
