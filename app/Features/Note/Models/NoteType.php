@@ -10,13 +10,13 @@ class NoteType extends Model
 {
     use SoftDeletes;
 
-    const ID = 'id';
+    const string ID = 'id';
 
-    const NAME = 'name';
+    const string NAME = 'name';
 
-    const DESCRIPTION = 'description';
+    const string DESCRIPTION = 'description';
 
-    const ILLUSTRATION_PATH = 'illustration_path';
+    const string ILLUSTRATION_PATH = 'illustration_path';
 
     protected $table = 'note_types';
 
@@ -26,7 +26,7 @@ class NoteType extends Model
         'updated_at',
     ];
 
-    const RELATION_NOTES = 'notes';
+    const string RELATION_NOTES = 'notes';
 
     public function notes(): HasMany
     {
