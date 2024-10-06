@@ -13,15 +13,15 @@ class Note extends Model
     use SoftDeletes,
         UlidEloquent;
 
-    const ID = 'id';
+    const string ID = 'id';
 
-    const USER_ID = 'user_id';
+    const string USER_ID = 'user_id';
 
-    const TYPE_ID = 'type_id';
+    const string TYPE_ID = 'type_id';
 
-    const TITLE = 'title';
+    const string TITLE = 'title';
 
-    const DESCRIPTION = 'description';
+    const string DESCRIPTION = 'description';
 
     protected $table = 'notes';
 
@@ -31,14 +31,14 @@ class Note extends Model
         'updated_at',
     ];
 
-    const RELATION_USER = 'user';
+    const string RELATION_USER = 'user';
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    const RELATION_TYPE = 'type';
+    const string RELATION_TYPE = 'type';
 
     public function type(): BelongsTo
     {
