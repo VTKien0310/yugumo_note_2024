@@ -22,9 +22,9 @@ class NoteTypeSeeder extends Seeder
                 NoteType::ILLUSTRATION_PATH => 'resources/images/simple-note.svg',
             ],
             [
-                NoteType::NAME => 'To-do list',
+                NoteType::NAME => 'Checklist',
                 NoteType::DESCRIPTION => 'A list with checkboxes to keep track of things you need',
-                NoteType::ILLUSTRATION_PATH => 'resources/images/to-do-list.svg',
+                NoteType::ILLUSTRATION_PATH => 'resources/images/checklist.svg',
             ],
         ];
 
