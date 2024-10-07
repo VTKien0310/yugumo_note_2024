@@ -41,6 +41,8 @@ class NoteController extends WebController
     {
         $viewNoteAuthorizer->handle($request->user(), $note);
 
-        return view('modules.note.pages.edit-note-page', compact('note'));
+        $noteType = $note->type;
+
+        return view('modules.note.pages.edit-note-page', compact('note', 'noteType'));
     }
 }
