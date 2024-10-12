@@ -27,7 +27,7 @@ new class extends Component {
     }
 }; ?>
 
-<div class="w-1/2">
+<div class="w-3/4 xl:w-1/2">
     <x-form class="w-full flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-label for="title" class="font-bold text-xs"/>
