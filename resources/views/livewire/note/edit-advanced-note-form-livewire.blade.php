@@ -16,14 +16,23 @@ new class extends Component {
         $this->id = $note->id;
         $this->title = $note->title;
         $this->content = $note->content;
+        $this->dispatch('advanced-note-content-updated', noteContent: $note->content);
     }
 
     public function updated(): void
     {
         app()->make(UpdateNoteByIdAction::class)->handle($this->id, [
             'title' => $this->title,
-            'content' => $this->content,
         ]);
+    }
+
+    public function updateContent(string $content): void
+    {
+        app()->make(UpdateNoteByIdAction::class)->handle($this->id, [
+            'content' => $content,
+        ]);
+        $this->content = $content;
+        $this->dispatch('advanced-note-content-updated', noteContent: $content);
     }
 }; ?>
 
@@ -35,7 +44,12 @@ new class extends Component {
         </div>
         <div class="w-full flex flex-col justify-start items-start">
             <x-label for="content" class="font-bold text-xs"/>
-            <div id="editor" class="w-full block mt-1"></div>
+            <x-input wire:model="content" name="content" type="hidden"/>
+            <div
+                id="editor"
+                @content-change.debounce.1000ms="$wire.updateContent($event.detail)"
+                class="w-full block mt-1"
+            />
         </div>
     </x-form>
 </div>
