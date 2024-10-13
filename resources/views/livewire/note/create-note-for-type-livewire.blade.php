@@ -58,7 +58,7 @@ new class extends Component {
             </figure>
             <div class="card-body">
                 <h2 class="card-title">{{ $noteType->name }}</h2>
-                <p>{{ $noteType->description }}</p>
+                <p class="mt-1">{{ $noteType->description }}</p>
                 <div class="card-actions justify-center">
                     <button wire:click="addNoteForType({{ $noteType->id }})" class="btn btn-primary btn-block">
                         Add

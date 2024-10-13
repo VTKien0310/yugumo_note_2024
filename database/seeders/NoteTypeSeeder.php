@@ -26,6 +26,11 @@ class NoteTypeSeeder extends Seeder
                 NoteType::DESCRIPTION => 'A list with checkboxes to keep track of things you need',
                 NoteType::ILLUSTRATION_PATH => 'resources/images/checklist.svg',
             ],
+            [
+                NoteType::NAME => 'Advanced note',
+                NoteType::DESCRIPTION => 'A more advanced note with formatting and images',
+                NoteType::ILLUSTRATION_PATH => 'resources/images/advanced-note.svg',
+            ],
         ];
 
         foreach ($types as $type) {
