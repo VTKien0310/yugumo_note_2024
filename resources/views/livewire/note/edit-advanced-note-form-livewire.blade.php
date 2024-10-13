@@ -31,7 +31,7 @@ new class extends Component {
     <x-form class="w-full flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-label for="title" class="font-bold text-xs"/>
-            <x-input wire:model.live.debounce.250ms="title" name="title" class="input input-bordered w-full mt-1"/>
+            <x-input wire:model.live.debounce.500ms="title" name="title" class="input input-bordered w-full mt-1"/>
         </div>
         <div class="w-full flex flex-col justify-start items-start">
             <x-label for="content" class="font-bold text-xs"/>
