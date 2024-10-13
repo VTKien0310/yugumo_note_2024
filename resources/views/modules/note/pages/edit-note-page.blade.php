@@ -8,6 +8,9 @@
                 @case(1)
                     <livewire:edit-simple-note-form-livewire :note="$note"/>
                     @break
+                @case(3)
+                    <livewire:edit-advanced-note-form-livewire :note="$note"/>
+                    @break
                 @default
                     <p>Work in progress ...</p>
             @endswitch
