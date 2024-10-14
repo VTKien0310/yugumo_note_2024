@@ -18,11 +18,6 @@ new class extends Component {
         $this->content = $note->content;
     }
 
-    public function rendered(): void
-    {
-        $this->dispatch('advanced-note-content-updated', noteContent: $this->content);
-    }
-
     public function updateNoteData(array $data): void
     {
         $updatedNote = app()->make(UpdateNoteByIdAction::class)->handle($this->id, $data);
@@ -53,7 +48,6 @@ new class extends Component {
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-label for="title" class="font-bold text-xs"/>
             <x-input
-                @input.debounce.500ms="$wire.updateNoteTitle($wire.title)"
                 wire:model="title"
                 name="title"
                 class="input input-bordered w-full mt-1"
@@ -62,7 +56,6 @@ new class extends Component {
         <div class="w-full flex flex-col justify-start items-start">
             <x-label for="content" class="font-bold text-xs"/>
             <div
-                @content-change.debounce.1000ms="$wire.updateNoteContent($event.detail)"
                 id="editor"
                 class="w-full block mt-1"
             />
