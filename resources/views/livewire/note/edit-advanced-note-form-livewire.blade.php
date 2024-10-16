@@ -15,30 +15,16 @@ new class extends Component {
     {
         $this->id = $note->id;
         $this->title = $note->title;
-        $this->content = $note->content;
+        $this->content = $note->content['content'];
     }
 
-    public function updateNoteData(array $data): void
+    public function updated(): void
     {
-        $updatedNote = app()->make(UpdateNoteByIdAction::class)->handle($this->id, $data);
-
-        $this->title = $updatedNote->title;
-        $this->content = $updatedNote->content;
-    }
-
-    public function updateNoteTitle(string $newTitle): void
-    {
-        $this->updateNoteData([
-            'title' => $newTitle,
-            'content' => $this->content
-        ]);
-    }
-
-    public function updateNoteContent(string $newContent): void
-    {
-        $this->updateNoteData([
+        app()->make(UpdateNoteByIdAction::class)->handle($this->id, [
             'title' => $this->title,
-            'content' => $newContent
+            'content' => [
+                'content' => $this->content,
+            ],
         ]);
     }
 }; ?>
@@ -48,16 +34,17 @@ new class extends Component {
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-label for="title" class="font-bold text-xs"/>
             <x-input
-                wire:model="title"
+                wire:model.live.debounce.500ms="title"
                 name="title"
                 class="input input-bordered w-full mt-1"
             />
         </div>
         <div class="w-full flex flex-col justify-start items-start">
             <x-label for="content" class="font-bold text-xs"/>
-            <div
-                id="editor"
-                class="w-full block mt-1"
+            <x-trix
+                wire:model.live.debounce.500ms="content"
+                name="content"
+                class="block w-full mt-1"
             />
         </div>
     </x-form>

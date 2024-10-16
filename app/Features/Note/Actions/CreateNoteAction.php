@@ -16,7 +16,7 @@ readonly class CreateNoteAction
         $noteDefaultTitle = 'Untitled';
 
         $noteDefaultContent = match ($noteType->id) {
-            1 => [
+            1, 3 => [
                 'content' => '',
             ],
             default => []
