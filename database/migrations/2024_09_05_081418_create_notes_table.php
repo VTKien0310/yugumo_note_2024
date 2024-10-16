@@ -24,7 +24,7 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
             $table->string('title')->default('Untitled');
-            $table->longText('content')->default('');
+            $table->json('content')->default('{}');
             $table->timestamps();
             $table->softDeletes();
         });

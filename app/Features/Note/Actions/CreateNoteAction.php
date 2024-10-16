@@ -15,11 +15,18 @@ readonly class CreateNoteAction
     {
         $noteDefaultTitle = 'Untitled';
 
+        $noteDefaultContent = match ($noteType->id) {
+            1 => [
+                'content' => '',
+            ],
+            default => []
+        };
+
         return $this->createNoteCommand->handle([
             Note::USER_ID => $user->id,
             Note::TYPE_ID => $noteType->id,
             Note::TITLE => $noteDefaultTitle,
-            Note::DESCRIPTION => '',
+            Note::CONTENT => $noteDefaultContent,
         ]);
     }
 }

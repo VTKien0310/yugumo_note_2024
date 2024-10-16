@@ -21,7 +21,7 @@ class Note extends Model
 
     const string TITLE = 'title';
 
-    const string DESCRIPTION = 'description';
+    const string CONTENT = 'content';
 
     protected $table = 'notes';
 
@@ -30,6 +30,13 @@ class Note extends Model
         'created_at',
         'updated_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'content' => 'array',
+        ];
+    }
 
     const string RELATION_USER = 'user';
 

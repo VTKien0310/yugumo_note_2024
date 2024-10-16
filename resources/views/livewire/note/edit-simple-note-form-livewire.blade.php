@@ -15,14 +15,16 @@ new class extends Component {
     {
         $this->id = $note->id;
         $this->title = $note->title;
-        $this->content = $note->content;
+        $this->content = $note->content['content'];
     }
 
     public function updated(): void
     {
         app()->make(UpdateNoteByIdAction::class)->handle($this->id, [
             'title' => $this->title,
-            'content' => $this->content,
+            'content' => [
+                'content' => $this->content,
+            ],
         ]);
     }
 }; ?>
