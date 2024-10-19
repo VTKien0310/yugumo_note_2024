@@ -4,7 +4,7 @@ namespace App\Features\Note\Actions;
 
 use App\Features\Note\Commands\CreateNoteCommand;
 use App\Features\Note\Models\Note;
-use App\Features\Note\Models\NoteType;
+use App\Features\NoteType\Models\NoteType;
 use App\Features\User\Models\User;
 
 readonly class CreateNoteAction

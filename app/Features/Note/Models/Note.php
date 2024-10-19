@@ -3,6 +3,7 @@
 namespace App\Features\Note\Models;
 
 use App\Extendables\Core\Models\Traits\UlidEloquent;
+use App\Features\NoteType\Models\NoteType;
 use App\Features\User\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

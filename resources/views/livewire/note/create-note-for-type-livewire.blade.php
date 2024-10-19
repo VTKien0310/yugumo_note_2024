@@ -1,12 +1,12 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Features\Note\Actions\MakeAllNoteTypeViewDataAction;
-use App\Features\Note\ValueObjects\NoteTypeViewDataValueObject;
 use App\Features\Note\Actions\CreateNoteAction;
+use App\Features\NoteType\Actions\FindNoteTypeByIdAction;
+use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
+use App\Features\NoteType\Models\NoteType;
+use App\Features\NoteType\ValueObjects\NoteTypeViewDataValueObject;
 use Illuminate\Support\Facades\Auth;
-use App\Features\Note\Actions\FindNoteTypeByIdAction;
-use App\Features\Note\Models\NoteType;
+use Livewire\Volt\Component;
 
 new class extends Component {
     /**

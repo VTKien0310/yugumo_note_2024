@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Features\Note\Actions;
+namespace App\Features\NoteType\Actions;
 
-use App\Features\Note\Models\NoteType;
-use App\Features\Note\ValueObjects\NoteTypeViewDataValueObject;
+use App\Features\NoteType\Models\NoteType;
+use App\Features\NoteType\ValueObjects\NoteTypeViewDataValueObject;
 use Illuminate\Support\Facades\Vite;
 
 readonly class MakeAllNoteTypeViewDataAction

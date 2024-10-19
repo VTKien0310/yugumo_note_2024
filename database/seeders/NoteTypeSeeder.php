@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Features\Note\Models\NoteType;
+use App\Features\NoteType\Models\NoteType;
 use Illuminate\Database\Seeder;
 
 class NoteTypeSeeder extends Seeder

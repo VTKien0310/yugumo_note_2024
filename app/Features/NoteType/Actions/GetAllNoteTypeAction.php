@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Features\Note\Actions;
+namespace App\Features\NoteType\Actions;
 
-use App\Features\Note\Models\NoteType;
+use App\Features\NoteType\Models\NoteType;
 use Illuminate\Database\Eloquent\Collection;
 
 class GetAllNoteTypeAction
