@@ -3,27 +3,28 @@
 namespace App\Features\Note\Actions;
 
 use App\Features\Note\Commands\CreateNoteCommand;
-use App\Features\Note\Commands\CreateTextNoteContentCommand;
 use App\Features\Note\Models\Note;
-use App\Features\Note\Models\TextNoteContent;
 use App\Features\NoteType\Enums\NoteTypeEnum;
 use App\Features\NoteType\Models\NoteType;
 use App\Features\User\Models\User;
+use Illuminate\Support\Facades\DB;
 
 readonly class CreateNoteAction
 {
     public function __construct(
         private CreateNoteCommand $createNoteCommand,
-        private CreateTextNoteContentCommand $createTextNoteContentCommand
+        private CreateEmptyTextNoteContentAction $createEmptyTextNoteContentAction
     ) {}
 
     public function handle(User $user, NoteType $noteType): Note
     {
-        $note = $this->createNewNoteWithDefaultTitle($user, $noteType);
+        return DB::transaction(function () use ($user, $noteType): Note {
+            $note = $this->createNewNoteWithDefaultTitle($user, $noteType);
 
-        $this->createDefaultContentForNewlyCreatedNote($noteType, $note);
+            $this->createDefaultContentForNewlyCreatedNote($noteType, $note);
 
-        return $note;
+            return $note;
+        });
     }
 
     private function createNewNoteWithDefaultTitle(User $user, NoteType $noteType): Note
@@ -40,16 +41,8 @@ readonly class CreateNoteAction
     private function createDefaultContentForNewlyCreatedNote(NoteType $noteType, Note $note): void
     {
         match ($noteType->id) {
-            NoteTypeEnum::SIMPLE->value, NoteTypeEnum::ADVANCED->value => $this->emptyTextNoteContent($note),
+            NoteTypeEnum::SIMPLE->value, NoteTypeEnum::ADVANCED->value => $this->createEmptyTextNoteContentAction->handle($note),
             default => null
         };
-    }
-
-    private function emptyTextNoteContent(Note $note): void
-    {
-        $this->createTextNoteContentCommand->handle([
-            TextNoteContent::NOTE_ID => $note->id,
-            TextNoteContent::CONTENT => '',
-        ]);
     }
 }
