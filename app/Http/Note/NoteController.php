@@ -43,6 +43,8 @@ class NoteController extends WebController
 
         $noteType = $note->type;
 
+        $note->load(Note::RELATION_TEXT_CONTENT);
+
         return view('modules.note.pages.edit-note-page', compact('note', 'noteType'));
     }
 }

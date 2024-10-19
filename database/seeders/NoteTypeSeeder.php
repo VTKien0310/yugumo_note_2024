@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Features\NoteType\Enums\NoteTypeIdEnum;
+use App\Features\NoteType\Enums\NoteTypeEnum;
 use App\Features\NoteType\Models\NoteType;
 use Illuminate\Database\Seeder;
 
@@ -18,19 +18,19 @@ class NoteTypeSeeder extends Seeder
 
         $types = [
             [
-                NoteType::ID => NoteTypeIdEnum::SIMPLE->value,
+                NoteType::ID => NoteTypeEnum::SIMPLE->value,
                 NoteType::NAME => 'Simple note',
                 NoteType::DESCRIPTION => "A text-only note to write down what's on your mind",
                 NoteType::ILLUSTRATION_PATH => 'resources/images/simple-note.svg',
             ],
             [
-                NoteType::ID => NoteTypeIdEnum::ADVANCED->value,
+                NoteType::ID => NoteTypeEnum::ADVANCED->value,
                 NoteType::NAME => 'Advanced note',
                 NoteType::DESCRIPTION => 'A more advanced note with formatting and images',
                 NoteType::ILLUSTRATION_PATH => 'resources/images/advanced-note.svg',
             ],
             [
-                NoteType::ID => NoteTypeIdEnum::CHECKLIST->value,
+                NoteType::ID => NoteTypeEnum::CHECKLIST->value,
                 NoteType::NAME => 'Checklist',
                 NoteType::DESCRIPTION => 'A list with checkboxes to keep track of things you need',
                 NoteType::ILLUSTRATION_PATH => 'resources/images/checklist.svg',
