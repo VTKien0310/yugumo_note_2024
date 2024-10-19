@@ -9,7 +9,7 @@ use App\Features\NoteType\Models\NoteType;
 use App\Features\User\Models\User;
 use Illuminate\Support\Facades\DB;
 
-readonly class CreateNoteAction
+readonly class CreateNewNoteWithDefaultContentAction
 {
     public function __construct(
         private CreateNoteCommand $createNoteCommand,

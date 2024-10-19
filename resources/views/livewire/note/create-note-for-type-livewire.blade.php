@@ -1,6 +1,6 @@
 <?php
 
-use App\Features\Note\Actions\CreateNoteAction;
+use App\Features\Note\Actions\CreateNewNoteWithDefaultContentAction;
 use App\Features\NoteType\Actions\FindNoteTypeByIdAction;
 use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
 use App\Features\NoteType\Models\NoteType;
@@ -35,7 +35,7 @@ new class extends Component {
 
     private function noteTypeFound(NoteType $noteType): void
     {
-        $newlyCreatedNote = app()->make(CreateNoteAction::class)->handle(Auth::user(), $noteType);
+        $newlyCreatedNote = app()->make(CreateNewNoteWithDefaultContentAction::class)->handle(Auth::user(), $noteType);
 
         $this->redirectRoute('notes.show', [
             'note' => $newlyCreatedNote->id
