@@ -5,6 +5,7 @@ namespace App\Features\Note\Actions;
 use App\Features\Note\Commands\UpdateNoteCommand;
 use App\Features\Note\Commands\UpdateTextNoteContentCommand;
 use App\Features\Note\Models\Note;
+use Illuminate\Support\Facades\DB;
 
 readonly class UpdateNoteByIdAction
 {
@@ -15,12 +16,14 @@ readonly class UpdateNoteByIdAction
 
     public function handle(string $noteId, array $data): Note
     {
-        $note = Note::findOrFail($noteId);
+        return DB::transaction(function () use ($noteId, $data): Note {
+            $note = Note::findOrFail($noteId);
 
-        $note = $this->updateNoteCommand->handle($note, $data);
+            $note = $this->updateNoteCommand->handle($note, $data);
 
-        $this->updateTextNoteContentCommand->handle($note->textContent, $data);
+            $this->updateTextNoteContentCommand->handle($note->textContent, $data);
 
-        return $note;
+            return $note;
+        });
     }
 }
