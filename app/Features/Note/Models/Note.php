@@ -7,6 +7,7 @@ use App\Features\NoteType\Models\NoteType;
 use App\Features\User\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Note extends Model
@@ -42,5 +43,12 @@ class Note extends Model
     public function type(): BelongsTo
     {
         return $this->belongsTo(NoteType::class, 'type_id', 'id');
+    }
+
+    const string RELATION_TEXT_CONTENT = 'textContent';
+
+    public function textContent(): HasOne
+    {
+        return $this->hasOne(TextNoteContent::class, TextNoteContent::NOTE_ID, 'id');
     }
 }
