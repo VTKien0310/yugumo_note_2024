@@ -5,10 +5,10 @@
         <div class="w-full flex flex-col justify-start content-center items-center">
             <p class="mb-3 text-center text-sm font-bold">{{ $noteType->name }}</p>
             @switch($note->type_id)
-                @case(1)
+                @case(\App\Features\NoteType\Enums\NoteTypeIdEnum::SIMPLE->value)
                     <livewire:edit-simple-note-form-livewire :note="$note"/>
                     @break
-                @case(2)
+                @case(\App\Features\NoteType\Enums\NoteTypeIdEnum::ADVANCED->value)
                     <livewire:edit-advanced-note-form-livewire :note="$note"/>
                     @break
                 @default
