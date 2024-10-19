@@ -22,8 +22,6 @@ class Note extends Model
 
     const string TITLE = 'title';
 
-    const string CONTENT = 'content';
-
     protected $table = 'notes';
 
     protected $guarded = [
@@ -31,13 +29,6 @@ class Note extends Model
         'created_at',
         'updated_at',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'content' => 'array',
-        ];
-    }
 
     const string RELATION_USER = 'user';
 
