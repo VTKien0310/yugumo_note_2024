@@ -8,7 +8,7 @@
                 @case(1)
                     <livewire:edit-simple-note-form-livewire :note="$note"/>
                     @break
-                @case(3)
+                @case(2)
                     <livewire:edit-advanced-note-form-livewire :note="$note"/>
                     @break
                 @default
