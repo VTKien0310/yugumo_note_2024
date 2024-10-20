@@ -2,7 +2,6 @@
 
 use Livewire\Volt\Component;
 use App\Features\Note\Models\Note;
-use App\Features\Note\Actions\UpdateNoteByIdAction;
 use Illuminate\Database\Eloquent\Collection;
 
 new class extends Component {
@@ -21,10 +20,6 @@ new class extends Component {
 
     public function updated(): void
     {
-//        app()->make(UpdateNoteByIdAction::class)->handle($this->id, [
-//            'title' => $this->title,
-//            'content' => $this->content,
-//        ]);
     }
 }; ?>
 
@@ -46,11 +41,27 @@ new class extends Component {
                             class="input input-ghost"
                             style="width: 100%;" {{-- workaround for style overriding from packages and libraries --}}
                         />
-                        <input
-                            type="checkbox"
-                            @checked($checklistItem->is_completed)
-                            class="checkbox checkbox-primary"
-                        />
+                        <div class="flex flex-row justify-end items-center content-center">
+                            <input
+                                type="checkbox"
+                                @checked($checklistItem->is_completed)
+                                class="checkbox checkbox-primary"
+                            />
+                            <button class="btn btn-error btn-xs btn-square btn-outline ml-1">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="h-6 w-6"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </label>
                 @endforeach
             </div>
