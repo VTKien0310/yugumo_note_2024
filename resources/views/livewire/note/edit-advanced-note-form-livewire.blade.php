@@ -22,7 +22,7 @@ new class extends Component {
     {
         app()->make(UpdateNoteAction::class)->handle($this->note, [
             'title' => $this->title,
-            'content' => $this->content,
+            'text_content' => $this->content,
         ]);
     }
 }; ?>

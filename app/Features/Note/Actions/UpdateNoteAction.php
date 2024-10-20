@@ -30,7 +30,7 @@ readonly class UpdateNoteAction
         match ($note->type_id) {
             NoteTypeEnum::SIMPLE->value, NoteTypeEnum::ADVANCED->value => $this->updateTextNoteContentAction->handle(
                 $note->textContent,
-                $data['content']
+                $data['text_content']
             ),
             default => null
         };
