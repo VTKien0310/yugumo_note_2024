@@ -51,4 +51,12 @@ class Note extends Model
     {
         return $this->hasOne(TextNoteContent::class, TextNoteContent::NOTE_ID, 'id');
     }
+
+    const string RELATION_CHECKLIST_CONTENT = 'checklistContent';
+
+    public function checklistContent(): HasOne
+    {
+        return $this->hasOne(ChecklistNoteContent::class, ChecklistNoteContent::NOTE_ID, 'id');
+
+    }
 }
