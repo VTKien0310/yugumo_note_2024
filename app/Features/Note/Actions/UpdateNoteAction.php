@@ -28,11 +28,22 @@ readonly class UpdateNoteAction
     private function updateNoteContentBasedOnNoteType(Note $note, array $data): void
     {
         match ($note->type_id) {
-            NoteTypeEnum::SIMPLE->value, NoteTypeEnum::ADVANCED->value => $this->updateTextNoteContentAction->handle(
-                $note->textContent,
-                $data['text_content']
-            ),
+            NoteTypeEnum::SIMPLE->value, NoteTypeEnum::ADVANCED->value => $this->updateTextNoteContent($note, $data),
             default => null
         };
+    }
+
+    private function updateTextNoteContent(Note $note, array $data): void
+    {
+        $validTextContent = isset($data['text_content']) && is_string($data['text_content']);
+
+        if (! $validTextContent) {
+            return;
+        }
+
+        $this->updateTextNoteContentAction->handle(
+            $note->textContent,
+            $data['text_content']
+        );
     }
 }
