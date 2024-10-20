@@ -2,10 +2,10 @@
 
 use Livewire\Volt\Component;
 use App\Features\Note\Models\Note;
-use App\Features\Note\Actions\UpdateNoteByIdAction;
+use App\Features\Note\Actions\UpdateNoteAction;
 
 new class extends Component {
-    public string $id;
+    public Note $note;
 
     public string $title;
 
@@ -13,14 +13,14 @@ new class extends Component {
 
     public function mount(Note $note): void
     {
-        $this->id = $note->id;
+        $this->note = $note;
         $this->title = $note->title;
         $this->content = $note->textContent->content;
     }
 
     public function updated(): void
     {
-        app()->make(UpdateNoteByIdAction::class)->handle($this->id, [
+        app()->make(UpdateNoteAction::class)->handle($this->note, [
             'title' => $this->title,
             'content' => $this->content,
         ]);

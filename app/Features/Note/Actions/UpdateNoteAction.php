@@ -7,29 +7,22 @@ use App\Features\Note\Models\Note;
 use App\Features\NoteType\Enums\NoteTypeEnum;
 use Illuminate\Support\Facades\DB;
 
-readonly class UpdateNoteByIdAction
+readonly class UpdateNoteAction
 {
     public function __construct(
         private UpdateNoteCommand $updateNoteCommand,
         private UpdateTextNoteContentAction $updateTextNoteContentAction
     ) {}
 
-    public function handle(string $noteId, array $data): Note
+    public function handle(Note $note, array $data): Note
     {
-        return DB::transaction(function () use ($noteId, $data): Note {
-            $note = $this->updateNote($noteId, $data);
+        return DB::transaction(function () use ($note, $data): Note {
+            $note = $this->updateNoteCommand->handle($note, $data);
 
             $this->updateNoteContentBasedOnNoteType($note, $data);
 
             return $note;
         });
-    }
-
-    private function updateNote(string $noteId, array $data): Note
-    {
-        $note = Note::findOrFail($noteId);
-
-        return $this->updateNoteCommand->handle($note, $data);
     }
 
     private function updateNoteContentBasedOnNoteType(Note $note, array $data): void
