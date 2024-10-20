@@ -17,14 +17,19 @@ readonly class UpdateNoteByIdAction
     public function handle(string $noteId, array $data): Note
     {
         return DB::transaction(function () use ($noteId, $data): Note {
-            $note = Note::findOrFail($noteId);
-
-            $note = $this->updateNoteCommand->handle($note, $data);
+            $note = $this->updateNote($noteId, $data);
 
             $this->updateNoteContentBasedOnNoteType($note, $data);
 
             return $note;
         });
+    }
+
+    private function updateNote(string $noteId, array $data): Note
+    {
+        $note = Note::findOrFail($noteId);
+
+        return $this->updateNoteCommand->handle($note, $data);
     }
 
     private function updateNoteContentBasedOnNoteType(Note $note, array $data): void
