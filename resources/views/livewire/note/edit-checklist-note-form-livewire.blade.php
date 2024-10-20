@@ -1,11 +1,14 @@
 <?php
 
+use App\Features\Note\Actions\UpdateNoteAction;
 use Livewire\Volt\Component;
 use App\Features\Note\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
+use App\Features\Note\Actions\UpdateChecklistNoteContentByIdAction;
+use App\Features\Note\Actions\FindChecklistContentOfNoteForDisplayAction;
 
 new class extends Component {
-    public string $id;
+    public Note $note;
 
     public string $title;
 
@@ -13,13 +16,30 @@ new class extends Component {
 
     public function mount(Note $note): void
     {
-        $this->id = $note->id;
+        $this->note = $note;
         $this->title = $note->title;
-        $this->content = $note->checklistContent;
+        $this->content = $this->loadChecklistContent($this->note);
+    }
+
+    private function loadChecklistContent(Note $note): Collection
+    {
+        return app()->make(FindChecklistContentOfNoteForDisplayAction::class)->handle($note);
     }
 
     public function updated(): void
     {
+        app()->make(UpdateNoteAction::class)->handle($this->note, [
+            'title' => $this->title,
+        ]);
+    }
+
+    public function updateChecklistItemContent(string $id, string $content, int $isCompleted): void
+    {
+        app()->make(UpdateChecklistNoteContentByIdAction::class)->handle($id, [
+            'content' => $content,
+            'is_completed' => $isCompleted
+        ]);
+        $this->content = $this->loadChecklistContent($this->note);
     }
 }; ?>
 
@@ -58,7 +78,7 @@ new class extends Component {
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                         stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
+                                        d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             </button>
                         </div>
