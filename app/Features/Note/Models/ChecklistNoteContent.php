@@ -3,7 +3,7 @@
 namespace App\Features\Note\Models;
 
 use App\Extendables\Core\Models\Traits\UlidEloquent;
-use App\Features\Note\Models\Casts\ChecklistItemCast;
+use App\Extendables\Core\Utils\BoolIntValueEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -19,6 +19,8 @@ class ChecklistNoteContent extends Model
 
     const string CONTENT = 'content';
 
+    const string IS_COMPLETED = 'is_completed';
+
     protected $table = 'checklist_note_contents';
 
     protected $guarded = [
@@ -30,7 +32,7 @@ class ChecklistNoteContent extends Model
     protected function casts(): array
     {
         return [
-            'content' => ChecklistItemCast::class,
+            'is_completed' => BoolIntValueEnum::class,
         ];
     }
 

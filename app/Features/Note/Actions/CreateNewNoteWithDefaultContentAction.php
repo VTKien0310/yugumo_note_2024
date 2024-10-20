@@ -13,7 +13,8 @@ readonly class CreateNewNoteWithDefaultContentAction
 {
     public function __construct(
         private CreateNoteCommand $createNoteCommand,
-        private CreateEmptyTextNoteContentAction $createEmptyTextNoteContentAction
+        private CreateEmptyTextNoteContentAction $createEmptyTextNoteContentAction,
+        private CreateEmptyChecklistNoteContentAction $createEmptyChecklistNoteContentAction
     ) {}
 
     public function handle(User $user, NoteType $noteType): Note
@@ -41,8 +42,8 @@ readonly class CreateNewNoteWithDefaultContentAction
     private function createDefaultContentForNewlyCreatedNote(NoteType $noteType, Note $note): void
     {
         match ($noteType->id) {
-            NoteTypeEnum::SIMPLE->value, NoteTypeEnum::ADVANCED->value => $this->createEmptyTextNoteContentAction->handle($note),
-            default => null
+            NoteTypeEnum::CHECKLIST->value => $this->createEmptyChecklistNoteContentAction->handle($note),
+            default => $this->createEmptyTextNoteContentAction->handle($note)
         };
     }
 }

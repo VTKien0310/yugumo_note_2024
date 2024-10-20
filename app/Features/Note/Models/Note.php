@@ -7,6 +7,7 @@ use App\Features\NoteType\Models\NoteType;
 use App\Features\User\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -54,9 +55,9 @@ class Note extends Model
 
     const string RELATION_CHECKLIST_CONTENT = 'checklistContent';
 
-    public function checklistContent(): HasOne
+    public function checklistContent(): HasMany
     {
-        return $this->hasOne(ChecklistNoteContent::class, ChecklistNoteContent::NOTE_ID, 'id');
+        return $this->hasMany(ChecklistNoteContent::class, ChecklistNoteContent::NOTE_ID, 'id');
 
     }
 }

@@ -17,7 +17,8 @@ return new class extends Migration
                 ->constrained('notes')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->json('content');
+            $table->string('content');
+            $table->tinyInteger('is_completed')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

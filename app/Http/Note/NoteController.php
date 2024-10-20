@@ -5,6 +5,7 @@ namespace App\Http\Note;
 use App\Extendables\Core\Http\Controllers\WebController;
 use App\Features\Note\Authorizers\ViewNoteAuthorizer;
 use App\Features\Note\Models\Note;
+use App\Features\NoteType\Enums\NoteTypeEnum;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -43,7 +44,10 @@ class NoteController extends WebController
 
         $noteType = $note->type;
 
-        $note->load(Note::RELATION_TEXT_CONTENT);
+        match ($noteType->id) {
+            NoteTypeEnum::CHECKLIST->value => $note->load(Note::RELATION_CHECKLIST_CONTENT),
+            default => $note->load(Note::RELATION_TEXT_CONTENT)
+        };
 
         return view('modules.note.pages.edit-note-page', compact('note', 'noteType'));
     }

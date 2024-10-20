@@ -13,6 +13,9 @@
                 @case(NoteTypeEnum::ADVANCED->value)
                     <livewire:edit-advanced-note-form-livewire :note="$note"/>
                     @break
+                @case(NoteTypeEnum::CHECKLIST->value)
+                    <livewire:edit-checklist-note-form-livewire :note="$note"/>
+                    @break
                 @default
                     <p>Work in progress ...</p>
             @endswitch
