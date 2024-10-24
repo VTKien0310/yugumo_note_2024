@@ -11,3 +11,10 @@
 .trix-content {
     height: 550px;
 }
+
+.delete-checklist-item-btn {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+}
