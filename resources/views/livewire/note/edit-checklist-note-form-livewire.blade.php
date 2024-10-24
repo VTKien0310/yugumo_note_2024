@@ -4,7 +4,6 @@ use App\Features\Note\Actions\UpdateNoteAction;
 use Livewire\Volt\Component;
 use App\Features\Note\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
-use App\Features\Note\Actions\UpdateChecklistNoteContentByIdAction;
 use App\Features\Note\Actions\FindChecklistContentOfNoteForDisplayAction;
 
 new class extends Component {
@@ -32,15 +31,6 @@ new class extends Component {
             'title' => $this->title,
         ]);
     }
-
-    public function updateChecklistItemContent(string $id, string $content, int $isCompleted): void
-    {
-        app()->make(UpdateChecklistNoteContentByIdAction::class)->handle($id, [
-            'content' => $content,
-            'is_completed' => $isCompleted
-        ]);
-        $this->content = $this->loadChecklistContent($this->note);
-    }
 }; ?>
 
 <div class="w-3/4 xl:w-1/2">
@@ -53,25 +43,7 @@ new class extends Component {
             <x-label for="content" class="font-bold text-xs"/>
             <div class="w-full flex flex-col">
                 @foreach($content as $checklistItem)
-                    <label data-checklist-item-id="{{ $checklistItem->id }}" class="label cursor-pointer">
-                        <input
-                            type="text"
-                            value="{{ $checklistItem->content }}"
-                            @class(['text-decoration-line: line-through'=> $checklistItem->is_completed])
-                            class="input input-ghost"
-                            style="width: 100%;" {{-- workaround for style overriding from packages and libraries --}}
-                        />
-                        <div class="flex flex-row justify-end items-center content-center">
-                            <input
-                                type="checkbox"
-                                @checked($checklistItem->is_completed)
-                                class="checkbox checkbox-primary ml-1"
-                            />
-                            <button class="delete-checklist-item-btn btn btn-error btn-xs btn-square btn-outline ml-1">
-                                <x-ionicon-close class="h-6 w-6"/>
-                            </button>
-                        </div>
-                    </label>
+                    <livewire:checklist-item-form-livewire :checklist-item="$checklistItem"/>
                 @endforeach
             </div>
         </div>
