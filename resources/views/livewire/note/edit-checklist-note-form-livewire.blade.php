@@ -5,6 +5,7 @@ use Livewire\Volt\Component;
 use App\Features\Note\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
 use App\Features\Note\Actions\FindChecklistContentOfNoteForDisplayAction;
+use App\Features\Note\Actions\CreateEmptyChecklistNoteContentAction;
 
 new class extends Component {
     public Note $note;
@@ -31,6 +32,12 @@ new class extends Component {
             'title' => $this->title,
         ]);
     }
+
+    public function addNewChecklistItem(): void
+    {
+        app()->make(CreateEmptyChecklistNoteContentAction::class)->handle($this->note);
+        $this->content = $this->loadChecklistContent($this->note);
+    }
 }; ?>
 
 <div class="w-3/4 xl:w-1/2">
@@ -43,9 +50,18 @@ new class extends Component {
             <x-label for="content" class="font-bold text-xs"/>
             <div class="w-full flex flex-col">
                 @foreach($content as $checklistItem)
-                    <livewire:checklist-item-form-livewire :checklist-item="$checklistItem"/>
+                    <livewire:checklist-item-form-livewire
+                        :checklist-item="$checklistItem"
+                        :key="$checklistItem->id"
+                    />
                 @endforeach
             </div>
         </div>
     </x-form>
+
+    <div class="flex flex-row justify-end items-center content-center mt-2">
+        <button wire:click="addNewChecklistItem" class="btn btn-sm btn-primary">
+            <x-ionicon-add class="w-6 h-6"/>
+        </button>
+    </div>
 </div>
