@@ -37,7 +37,7 @@ new class extends Component {
 }
 ?>
 
-<div class="card w-1/4 h-1/2 min-h-fit flex flex-col justify-center items-center bg-base-100 rounded-lg shadow-xl">
+<div class="card w-full lg:w-1/2 xl:w-1/4 h-1/2 min-h-fit flex flex-col justify-center items-center bg-base-100 rounded-lg shadow-xl">
     <h1 class="mb-16 text-4xl brand-name-font">YUGUMO</h1>
 
     <x-form wire:submit="loginAttempt" id="login-form" class="flex flex-col justify-around items-center mb-8">
