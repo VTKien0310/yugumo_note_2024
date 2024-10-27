@@ -22,31 +22,60 @@
     ];
 @endphp
 
-<div>
-    <div class="navbar bg-base-100 shadow-lg mb-8">
+<div class="drawer">
+    <input id="drawer-toggle-input" type="checkbox" class="drawer-toggle"/>
 
-        <h1 class="brand-name-font flex-1 text-xl text-primary">YUGUMO</h1>
+    <div class="drawer-content flex flex-col min-h-dvh">
 
-        <div class="flex-none">
+        <div class="navbar bg-base-100 w-full shadow-lg mb-8">
+            <div class="flex-none lg:hidden">
+                <label for="drawer-toggle-input" aria-label="open sidebar" class="btn btn-square btn-ghost">
+                    <x-ionicon-menu class="inline-block h-6 w-6 stroke-current"/>
+                </label>
+            </div>
+            <div class="brand-name-font flex-1 text-xl text-primary mx-2 px-2">YUGUMO</div>
+            <div class="hidden flex-none lg:block">
+                <ul class="menu menu-horizontal">
+                    @foreach($navigationItems as $navigationItem)
+                        <li>
+                            <a
+                                href="{{ route($navigationItem['route']) }}"
+                                role="button"
+                                class="w-20 text-primary btn btn-ghost {{ $disableNavWhenAlreadyAtRoute($navigationItem['route']) }}"
+                            >
+                                {{ $navigationItem['label'] }}
+                            </a>
+                        </li>
+                    @endforeach
 
-            @foreach($navigationItems as $navigationItem)
-                <a
-                    href="{{ route($navigationItem['route']) }}"
-                    role="button"
-                    class="w-20 text-primary btn btn-ghost {{ $disableNavWhenAlreadyAtRoute($navigationItem['route']) }}"
-                >
-                    {{ $navigationItem['label'] }}
-                </a>
-            @endforeach
-
-            <label class="input input-bordered flex items-center gap-2 ml-2">
-                <input type="text" class="grow" placeholder="Search"/>
-                <x-ionicon-search class="h-4 w-4"/>
-            </label>
-
+                    <li>
+                        <label class="input input-bordered flex items-center gap-2 ml-2">
+                            <input type="text" class="grow" placeholder="Search"/>
+                            <x-ionicon-search class="h-4 w-4"/>
+                        </label>
+                    </li>
+                </ul>
+            </div>
         </div>
+
+        {{ $slot }}
 
     </div>
 
-    {{ $slot }}
+    <div class="drawer-side">
+        <label for="drawer-toggle-input" aria-label="close sidebar" class="drawer-overlay"></label>
+        <ul class="menu bg-base-100 min-h-full w-80 p-4">
+            @foreach($navigationItems as $navigationItem)
+                <li>
+                    <a
+                        href="{{ route($navigationItem['route']) }}"
+                        role="button"
+                        class="w-full justify-start text-primary btn btn-ghost {{ $disableNavWhenAlreadyAtRoute($navigationItem['route']) }}"
+                    >
+                        {{ $navigationItem['label'] }}
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
 </div>
