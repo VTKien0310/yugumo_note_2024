@@ -29,6 +29,10 @@ class ChecklistNoteContent extends Model
         'updated_at',
     ];
 
+    protected $touches = [
+        'note',
+    ];
+
     protected function casts(): array
     {
         return [

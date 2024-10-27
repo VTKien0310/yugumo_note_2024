@@ -26,6 +26,10 @@ class TextNoteContent extends Model
         'updated_at',
     ];
 
+    protected $touches = [
+        'note',
+    ];
+
     const string RELATION_NOTE = 'note';
 
     public function note(): BelongsTo
