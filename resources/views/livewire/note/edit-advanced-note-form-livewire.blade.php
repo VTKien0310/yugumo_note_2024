@@ -28,7 +28,7 @@ new class extends Component {
 }; ?>
 
 <div class="w-3/4 xl:w-1/2">
-    <x-form class="w-full flex flex-col justify-start items-center">
+    <div class="w-full flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-label for="title" class="font-bold text-xs mb-1"/>
             <x-input
@@ -45,5 +45,5 @@ new class extends Component {
                 class="block w-full"
             />
         </div>
-    </x-form>
+    </div>
 </div>
