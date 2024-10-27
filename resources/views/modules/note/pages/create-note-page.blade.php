@@ -11,7 +11,7 @@
             </div>
             @endsession
 
-            <h1 class="text-4xl mb-10">Which note type would you like to add?</h1>
+            <h1 class="text-center text-4xl mb-10">Which note type would you like to add?</h1>
 
             <livewire:create-note-for-type-livewire/>
 

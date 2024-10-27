@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Note\NoteController;
+use Illuminate\Support\Facades\Route;
 
 Route::as('notes.')
     ->controller(NoteController::class)
@@ -10,5 +11,6 @@ Route::as('notes.')
         Route::prefix('notes')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
+            Route::get('/{note}', 'show')->name('show');
         });
     });

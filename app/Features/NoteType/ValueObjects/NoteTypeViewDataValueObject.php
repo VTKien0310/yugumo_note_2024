@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Features\Note\ValueObjects;
+namespace App\Features\NoteType\ValueObjects;
 
 use App\Extendables\Core\Utils\ValueObject;
 

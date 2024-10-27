@@ -15,15 +15,15 @@ class User extends Authenticatable
         SoftDeletes,
         UlidEloquent;
 
-    const ID = 'id';
+    const string ID = 'id';
 
-    const NAME = 'name';
+    const string NAME = 'name';
 
-    const EMAIL = 'email';
+    const string EMAIL = 'email';
 
-    const PASSWORD = 'password';
+    const string PASSWORD = 'password';
 
-    const REMEMBER_TOKEN = 'remember_token';
+    const string REMEMBER_TOKEN = 'remember_token';
 
     protected $table = 'users';
 
@@ -60,7 +60,7 @@ class User extends Authenticatable
         ];
     }
 
-    const RELATION_NOTES = 'notes';
+    const string RELATION_NOTES = 'notes';
 
     public function notes(): HasMany
     {

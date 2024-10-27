@@ -7,3 +7,14 @@
     font-weight: 400;
     font-style: normal;
 }
+
+.trix-content {
+    height: 550px;
+}
+
+.btn-with-centered-icon {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+}

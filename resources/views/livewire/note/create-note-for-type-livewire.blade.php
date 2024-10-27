@@ -1,12 +1,12 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Features\Note\Actions\MakeAllNoteTypeViewDataAction;
-use App\Features\Note\ValueObjects\NoteTypeViewDataValueObject;
-use App\Features\Note\Actions\CreateNoteAction;
+use App\Features\Note\Actions\CreateNewNoteWithDefaultContentAction;
+use App\Features\NoteType\Actions\FindNoteTypeByIdAction;
+use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
+use App\Features\NoteType\Models\NoteType;
+use App\Features\NoteType\ValueObjects\NoteTypeViewDataValueObject;
 use Illuminate\Support\Facades\Auth;
-use App\Features\Note\Actions\FindNoteTypeByIdAction;
-use App\Features\Note\Models\NoteType;
+use Livewire\Volt\Component;
 
 new class extends Component {
     /**
@@ -35,9 +35,11 @@ new class extends Component {
 
     private function noteTypeFound(NoteType $noteType): void
     {
-        app()->make(CreateNoteAction::class)->handle(Auth::user(), $noteType);
+        $newlyCreatedNote = app()->make(CreateNewNoteWithDefaultContentAction::class)->handle(Auth::user(), $noteType);
 
-        $this->redirectRoute('notes.home');
+        $this->redirectRoute('notes.show', [
+            'note' => $newlyCreatedNote->id
+        ]);
     }
 
     private function noteTypeNotFound(): void
@@ -48,7 +50,7 @@ new class extends Component {
     }
 }; ?>
 
-<div class="w-full flex flex-row justify-center content-center items-center gap-5">
+<div class="w-full flex flex-wrap flex-row justify-center content-center items-center gap-5 px-5 pb-8">
     @foreach($noteTypes as $noteType)
         <div class="card bg-base-100 w-96 shadow-xl">
             <figure>
@@ -56,7 +58,7 @@ new class extends Component {
             </figure>
             <div class="card-body">
                 <h2 class="card-title">{{ $noteType->name }}</h2>
-                <p>{{ $noteType->description }}</p>
+                <p class="mt-1">{{ $noteType->description }}</p>
                 <div class="card-actions justify-center">
                     <button wire:click="addNoteForType({{ $noteType->id }})" class="btn btn-primary btn-block">
                         Add

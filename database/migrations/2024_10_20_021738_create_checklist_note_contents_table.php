@@ -11,20 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notes', function (Blueprint $table) {
+        Schema::create('checklist_note_contents', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('user_id')
-                ->nullable()
-                ->constrained('users')
+            $table->foreignUlid('note_id')
+                ->constrained('notes')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->foreignId('type_id')
-                ->nullable()
-                ->constrained('note_types')
-                ->cascadeOnUpdate()
-                ->cascadeOnDelete();
-            $table->string('title')->default('Untitled');
-            $table->json('content')->default('{}');
+            $table->string('content');
+            $table->tinyInteger('is_completed')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -35,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notes');
+        Schema::dropIfExists('checklist_note_contents');
     }
 };
