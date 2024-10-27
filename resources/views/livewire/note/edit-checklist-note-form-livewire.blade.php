@@ -6,6 +6,7 @@ use App\Features\Note\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
 use App\Features\Note\Actions\FindChecklistContentOfNoteForDisplayAction;
 use App\Features\Note\Actions\CreateEmptyChecklistNoteContentAction;
+use App\Features\Note\Models\ChecklistNoteContent;
 
 new class extends Component {
     public Note $note;
@@ -18,12 +19,12 @@ new class extends Component {
     {
         $this->note = $note;
         $this->title = $note->title;
-        $this->refreshChecklistContent($this->note);
+        $this->refreshChecklistContent();
     }
 
-    private function refreshChecklistContent(Note $note): void
+    private function refreshChecklistContent(): void
     {
-        $this->content = app()->make(FindChecklistContentOfNoteForDisplayAction::class)->handle($note);
+        $this->content = app()->make(FindChecklistContentOfNoteForDisplayAction::class)->handle($this->note);
     }
 
     public function updated(): void
@@ -36,8 +37,14 @@ new class extends Component {
     public function addNewChecklistItem(): void
     {
         app()->make(CreateEmptyChecklistNoteContentAction::class)->handle($this->note);
+        $this->refreshChecklistContent();
+    }
 
-        $this->refreshChecklistContent($this->note);
+    public function removeChecklistItemFromContent(string $checklistItemId): void
+    {
+        $this->content = $this->content->reject(
+            fn(ChecklistNoteContent $checklistItem): bool => $checklistItem->id === $checklistItemId
+        );
     }
 }; ?>
 
@@ -59,8 +66,9 @@ new class extends Component {
             <div class="w-full flex flex-col">
                 @foreach($content as $checklistItem)
                     <livewire:checklist-item-form-livewire
-                        :checklist-item="$checklistItem"
-                        :key="$checklistItem->id"
+                            :checklist-item="$checklistItem"
+                            :key="$checklistItem->id"
+                            @checklist-item-deleted="removeChecklistItemFromContent($event.detail.id)"
                     />
                 @endforeach
             </div>
