@@ -11,6 +11,7 @@ class FindChecklistContentOfNoteForDisplayAction
 {
     public function handle(Note $note): Collection
     {
+        // display incomplete items on top and then sort the items by id
         return $note
             ->checklistContent()
             ->orderBy(ChecklistNoteContent::IS_COMPLETED, SortDirectionEnum::ASC->value)
