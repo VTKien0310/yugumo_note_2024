@@ -18,12 +18,12 @@ new class extends Component {
     {
         $this->note = $note;
         $this->title = $note->title;
-        $this->content = $this->loadChecklistContent($this->note);
+        $this->refreshChecklistContent($this->note);
     }
 
-    private function loadChecklistContent(Note $note): Collection
+    private function refreshChecklistContent(Note $note): void
     {
-        return app()->make(FindChecklistContentOfNoteForDisplayAction::class)->handle($note);
+        $this->content = app()->make(FindChecklistContentOfNoteForDisplayAction::class)->handle($note);
     }
 
     public function updated(): void
@@ -36,16 +36,20 @@ new class extends Component {
     public function addNewChecklistItem(): void
     {
         app()->make(CreateEmptyChecklistNoteContentAction::class)->handle($this->note);
-        $this->content = $this->loadChecklistContent($this->note);
+
+        $this->refreshChecklistContent($this->note);
     }
 }; ?>
 
 <div class="w-3/4 xl:w-1/2">
+
     <x-form class="w-full flex flex-col justify-start items-center">
+
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-label for="title" class="font-bold text-xs"/>
             <x-input wire:model.live.debounce.500ms="title" name="title" class="input input-bordered w-full mt-1"/>
         </div>
+
         <div class="w-full flex flex-col justify-start items-start">
             <x-label for="content" class="font-bold text-xs"/>
             <div class="w-full flex flex-col">
@@ -57,6 +61,7 @@ new class extends Component {
                 @endforeach
             </div>
         </div>
+
     </x-form>
 
     <div class="flex flex-row justify-end items-center content-center mt-2">
@@ -64,4 +69,5 @@ new class extends Component {
             <x-ionicon-add class="w-6 h-6"/>
         </button>
     </div>
+
 </div>

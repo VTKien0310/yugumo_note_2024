@@ -7,11 +7,14 @@ use App\Extendables\Core\Utils\BoolIntValueEnum;
 
 new class extends Component {
     public ChecklistNoteContent $checklistItem;
+
     public string $content;
+
     public int $isCompleted;
 
     public function mount(ChecklistNoteContent $checklistItem): void
     {
+        $this->checklistItem = $checklistItem;
         $this->extractDataFromChecklistContent($checklistItem);
     }
 
@@ -27,7 +30,6 @@ new class extends Component {
 
     private function extractDataFromChecklistContent(ChecklistNoteContent $checklistItem): void
     {
-        $this->checklistItem = $checklistItem;
         $this->content = $checklistItem->content;
         $this->isCompleted = $checklistItem->is_completed->value;
     }
