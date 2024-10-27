@@ -12,7 +12,7 @@
     height: 550px;
 }
 
-.delete-checklist-item-btn {
+.btn-with-centered-icon {
     display: flex;
     flex-flow: row;
     justify-content: center;

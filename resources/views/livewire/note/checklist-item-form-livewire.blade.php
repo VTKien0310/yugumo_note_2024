@@ -51,7 +51,7 @@ new class extends Component {
             @checked($isCompleted)
             class="checkbox checkbox-primary ml-1"
         />
-        <button class="delete-checklist-item-btn btn btn-error btn-xs btn-square btn-outline ml-1">
+        <button class="btn-with-centered-icon btn btn-error btn-xs btn-square btn-outline ml-1">
             <x-ionicon-close class="h-6 w-6"/>
         </button>
     </div>
