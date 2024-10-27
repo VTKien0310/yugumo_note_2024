@@ -50,7 +50,7 @@ new class extends Component {
     }
 }; ?>
 
-<div class="w-full flex flex-row justify-center content-center items-center gap-5 px-5">
+<div class="w-full flex flex-wrap flex-row justify-center content-center items-center gap-5 px-5 pb-8">
     @foreach($noteTypes as $noteType)
         <div class="card bg-base-100 w-96 shadow-xl">
             <figure>
