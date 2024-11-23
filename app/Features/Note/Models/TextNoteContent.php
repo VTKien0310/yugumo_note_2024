@@ -2,12 +2,13 @@
 
 namespace App\Features\Note\Models;
 
+use App\Extendables\Core\Models\Interfaces\HasPolymorphicRelationship;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TextNoteContent extends Model
+class TextNoteContent extends Model implements HasPolymorphicRelationship
 {
     use SoftDeletes,
         UlidEloquent;
@@ -35,5 +36,10 @@ class TextNoteContent extends Model
     public function note(): BelongsTo
     {
         return $this->belongsTo(Note::class, 'note_id', Note::ID);
+    }
+
+    public static function morphType(): string
+    {
+        return 'text_note_content';
     }
 }

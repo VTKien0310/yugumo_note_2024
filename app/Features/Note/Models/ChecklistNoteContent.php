@@ -2,13 +2,14 @@
 
 namespace App\Features\Note\Models;
 
+use App\Extendables\Core\Models\Interfaces\HasPolymorphicRelationship;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
 use App\Extendables\Core\Utils\BoolIntValueEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ChecklistNoteContent extends Model
+class ChecklistNoteContent extends Model implements HasPolymorphicRelationship
 {
     use SoftDeletes,
         UlidEloquent;
@@ -45,5 +46,10 @@ class ChecklistNoteContent extends Model
     public function note(): BelongsTo
     {
         return $this->belongsTo(Note::class, 'note_id', Note::ID);
+    }
+
+    public static function morphType(): string
+    {
+        return 'checklist_note_content';
     }
 }
