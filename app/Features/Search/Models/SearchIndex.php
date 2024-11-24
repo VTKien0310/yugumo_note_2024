@@ -37,6 +37,8 @@ class SearchIndex extends Model
         return $this->belongsTo(Note::class, 'note_id', Note::ID);
     }
 
+    const string RELATION_SEARCHABLE = 'searchable';
+
     public function searchable(): MorphTo
     {
         return $this->morphTo(__FUNCTION__);

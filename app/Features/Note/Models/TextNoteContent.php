@@ -4,11 +4,14 @@ namespace App\Features\Note\Models;
 
 use App\Extendables\Core\Models\Interfaces\HasPolymorphicRelationship;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
+use App\Features\Search\Models\SearchIndex;
+use App\Features\Search\Relationships\HasSearchIndex;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TextNoteContent extends Model implements HasPolymorphicRelationship
+class TextNoteContent extends Model implements HasPolymorphicRelationship, HasSearchIndex
 {
     use SoftDeletes,
         UlidEloquent;
@@ -31,6 +34,11 @@ class TextNoteContent extends Model implements HasPolymorphicRelationship
         'note',
     ];
 
+    public static function morphType(): string
+    {
+        return 'text_note_content';
+    }
+
     const string RELATION_NOTE = 'note';
 
     public function note(): BelongsTo
@@ -38,8 +46,8 @@ class TextNoteContent extends Model implements HasPolymorphicRelationship
         return $this->belongsTo(Note::class, 'note_id', Note::ID);
     }
 
-    public static function morphType(): string
+    public function searchIndex(): MorphOne
     {
-        return 'text_note_content';
+        return $this->morphOne(SearchIndex::class, SearchIndex::RELATION_SEARCHABLE);
     }
 }
