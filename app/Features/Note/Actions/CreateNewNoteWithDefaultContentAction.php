@@ -46,7 +46,10 @@ readonly class CreateNewNoteWithDefaultContentAction
     private function createDefaultContentForNewlyCreatedNote(NoteType $noteType, Note $note): void
     {
         match ($noteType->id) {
-            NoteTypeEnum::CHECKLIST->value => $this->createEmptyChecklistNoteContentAction->handle($note, false),
+            NoteTypeEnum::CHECKLIST->value => $this->createEmptyChecklistNoteContentAction->handle(
+                note: $note,
+                useTransaction: false
+            ),
             default => $this->createEmptyTextNoteContentAction->handle($note)
         };
     }
