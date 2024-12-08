@@ -6,6 +6,7 @@ use App\Features\Note\Commands\CreateNoteCommand;
 use App\Features\Note\Models\Note;
 use App\Features\NoteType\Enums\NoteTypeEnum;
 use App\Features\NoteType\Models\NoteType;
+use App\Features\Search\Actions\CreateSearchIndexForNoteTitleAction;
 use App\Features\User\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -14,7 +15,8 @@ readonly class CreateNewNoteWithDefaultContentAction
     public function __construct(
         private CreateNoteCommand $createNoteCommand,
         private CreateEmptyTextNoteContentAction $createEmptyTextNoteContentAction,
-        private CreateEmptyChecklistNoteContentAction $createEmptyChecklistNoteContentAction
+        private CreateEmptyChecklistNoteContentAction $createEmptyChecklistNoteContentAction,
+        private CreateSearchIndexForNoteTitleAction $createSearchIndexForNoteTitleAction
     ) {}
 
     public function handle(User $user, NoteType $noteType): Note
@@ -23,6 +25,8 @@ readonly class CreateNewNoteWithDefaultContentAction
             $note = $this->createNewNoteWithDefaultTitle($user, $noteType);
 
             $this->createDefaultContentForNewlyCreatedNote($noteType, $note);
+
+            $this->createSearchIndexForNoteTitleAction->handle($note);
 
             return $note;
         });

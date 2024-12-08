@@ -5,6 +5,7 @@ namespace App\Features\Note\Models;
 use App\Extendables\Core\Models\Interfaces\HasPolymorphicRelationship;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
 use App\Extendables\Core\Utils\BoolIntValueEnum;
+use App\Features\Note\Relationships\BelongsToNote;
 use App\Features\Search\Models\SearchIndex;
 use App\Features\Search\Relationships\HasSearchIndex;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ChecklistNoteContent extends Model implements HasPolymorphicRelationship, HasSearchIndex
+class ChecklistNoteContent extends Model implements BelongsToNote, HasPolymorphicRelationship, HasSearchIndex
 {
     use SoftDeletes,
         UlidEloquent;
@@ -48,8 +49,6 @@ class ChecklistNoteContent extends Model implements HasPolymorphicRelationship, 
     {
         return 'checklist_note_content';
     }
-
-    const string RELATION_NOTE = 'note';
 
     public function note(): BelongsTo
     {

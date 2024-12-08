@@ -8,9 +8,7 @@ use App\Features\Search\Models\SearchIndex;
 
 readonly class CreateSearchIndexForChecklistNoteContentAction
 {
-    public function __construct(private CreateSearchIndexCommand $createSearchIndexCommand)
-    {
-    }
+    public function __construct(private CreateSearchIndexCommand $createSearchIndexCommand) {}
 
     public function handle(ChecklistNoteContent $checklistNoteContent): SearchIndex
     {

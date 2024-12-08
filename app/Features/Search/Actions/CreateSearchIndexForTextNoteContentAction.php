@@ -10,9 +10,7 @@ use DOMXPath;
 
 readonly class CreateSearchIndexForTextNoteContentAction
 {
-    public function __construct(private CreateSearchIndexCommand $createSearchIndexCommand)
-    {
-    }
+    public function __construct(private CreateSearchIndexCommand $createSearchIndexCommand) {}
 
     public function handle(TextNoteContent $textNoteContent): SearchIndex
     {
@@ -26,6 +24,10 @@ readonly class CreateSearchIndexForTextNoteContentAction
 
     private function getRawTextFromWYSIWYGContent(string $wysiwygContent): string
     {
+        if (empty($wysiwygContent)) {
+            return '';
+        }
+
         // load WYSIWYG content into DOMDocument
         $dom = new DOMDocument;
         @$dom->loadHTML($wysiwygContent);

@@ -8,9 +8,7 @@ use App\Features\Search\Models\SearchIndex;
 
 readonly class CreateSearchIndexForNoteTitleAction
 {
-    public function __construct(private CreateSearchIndexCommand $createSearchIndexCommand)
-    {
-    }
+    public function __construct(private CreateSearchIndexCommand $createSearchIndexCommand) {}
 
     public function handle(Note $note): SearchIndex
     {
