@@ -4,13 +4,13 @@ namespace App\Features\Search\Actions;
 
 use App\Extendables\Core\Utils\GetRawTextFromWYSIWYGContentAction;
 use App\Features\Note\Models\TextNoteContent;
-use App\Features\Search\Commands\CreateSearchIndexCommand;
+use App\Features\Search\Commands\UpdateSearchIndexCommand;
 use App\Features\Search\Models\SearchIndex;
 
-readonly class CreateSearchIndexForTextNoteContentAction
+readonly class UpdateSearchIndexForTextNoteContentAction
 {
     public function __construct(
-        private CreateSearchIndexCommand $createSearchIndexCommand,
+        private UpdateSearchIndexCommand $updateSearchIndexCommand,
         private GetRawTextFromWYSIWYGContentAction $getRawTextFromWYSIWYGContentAction
     ) {}
 
@@ -18,8 +18,7 @@ readonly class CreateSearchIndexForTextNoteContentAction
     {
         $rawTextContent = $this->getRawTextFromWYSIWYGContentAction->handle($textNoteContent->content);
 
-        return $this->createSearchIndexCommand->handle($textNoteContent, [
-            SearchIndex::NOTE_ID => $textNoteContent->note_id,
+        return $this->updateSearchIndexCommand->handle($textNoteContent->searchIndex, [
             SearchIndex::CONTENT => $rawTextContent,
         ]);
     }
