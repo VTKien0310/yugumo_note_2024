@@ -10,14 +10,19 @@
         [
             'route'=>'notes.home',
             'label'=>'Home',
+            'params'=>[],
         ],
         [
             'route'=>'notes.create',
             'label'=>'Add',
+            'params'=>[],
         ],
         [
             'route'=>'notes.index',
             'label'=>'Notes',
+            'params'=>[
+                'sort'=>'-created_at',
+            ],
         ],
     ];
 @endphp
@@ -39,7 +44,7 @@
                     @foreach($navigationItems as $navigationItem)
                         <li>
                             <a
-                                href="{{ route($navigationItem['route']) }}"
+                                href="{{ route($navigationItem['route'], $navigationItem['params']) }}"
                                 role="button"
                                 class="w-20 text-primary btn btn-ghost {{ $disableNavWhenAlreadyAtRoute($navigationItem['route']) }}"
                             >

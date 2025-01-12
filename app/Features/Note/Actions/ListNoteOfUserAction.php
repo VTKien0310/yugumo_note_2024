@@ -15,9 +15,11 @@ readonly class ListNoteOfUserAction
         private PaginateQuery $paginateQuery
     ) {}
 
-    public function handle(User $user): LengthAwarePaginator
+    public function handle(?User $user = null): LengthAwarePaginator
     {
-        $query = Note::query()->where(Note::USER_ID, $user->id);
+        $user ??= request()->user();
+
+        $query = Note::query()->where(Note::USER_ID, $user?->id ?? '');
 
         $query = $this->indexNoteQuery->handle($query);
 
