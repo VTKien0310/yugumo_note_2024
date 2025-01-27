@@ -21,8 +21,8 @@ class ExtendedLengthAwarePaginator extends LengthAwarePaginator
             'path' => $this->path(),
             'next_page_url' => $this->buildNextPageUrl($requestQueryString),
             'previous_page_url' => $this->buildPreviousPageUrl($requestQueryString),
-            'first_page_url' => $this->buildFirstPageUrl(),
-            'last_page_url' => $this->buildLastPageUrl(),
+            'first_page_url' => $this->buildFirstPageUrl($requestQueryString),
+            'last_page_url' => $this->buildLastPageUrl($requestQueryString),
         ];
     }
 
@@ -48,7 +48,7 @@ class ExtendedLengthAwarePaginator extends LengthAwarePaginator
         return $this->path().'?'.Arr::query($requestQueryString);
     }
 
-    private function buildFirstPageUrl(): string
+    private function buildFirstPageUrl(array $requestQueryString): string
     {
         $requestQueryString['page']['number'] = 1;
         $requestQueryString['page']['size'] = $this->perPage();
@@ -56,7 +56,7 @@ class ExtendedLengthAwarePaginator extends LengthAwarePaginator
         return $this->path().'?'.Arr::query($requestQueryString);
     }
 
-    private function buildLastPageUrl(): string
+    private function buildLastPageUrl(array $requestQueryString): string
     {
         $requestQueryString['page']['number'] = $this->lastPage();
         $requestQueryString['page']['size'] = $this->perPage();
