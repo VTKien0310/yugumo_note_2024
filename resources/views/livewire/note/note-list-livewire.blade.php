@@ -35,6 +35,7 @@ new class extends Component {
             <th>Content</th>
             <th>Updated at</th>
             <th>Created at</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -46,6 +47,21 @@ new class extends Component {
                 <td>{{ $note->shortenedContent }}</td>
                 <td>{{ $note->updatedAt }}</td>
                 <td>{{ $note->createdAt }}</td>
+                <td>
+                    <div class="w-full h-full flex flex-row justify-start items-center">
+                        <a href="{{ route('notes.show', ['note' => $note->id]) }}">
+                            <button class="btn btn-sm btn-square btn-primary">
+                                <x-ionicon-information class="h-3 w-3"/>
+                            </button>
+                        </a>
+
+                        <div>
+                            <button class="btn btn-sm btn-square btn-error ml-2">
+                                <x-ionicon-trash class="h-3 w-3"/>
+                            </button>
+                        </div>
+                    </div>
+                </td>
             </tr>
         @endforeach
         </tbody>

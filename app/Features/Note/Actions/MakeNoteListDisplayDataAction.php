@@ -11,6 +11,7 @@ readonly class MakeNoteListDisplayDataAction
     public function handle(Note $note): NoteListDisplayDataValueObject
     {
         return new NoteListDisplayDataValueObject(
+            id: $note->id,
             title: $note->title,
             type: $note->type->name,
             shortenedContent: $this->makeNoteShortenedContent($note),
