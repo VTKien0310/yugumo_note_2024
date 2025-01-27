@@ -22,6 +22,10 @@
             'label'=>'Notes',
             'params'=>[
                 'sort'=>'-created_at',
+                'page'=>[
+                    'size'=>25,
+                    'number'=>1,
+                ]
             ],
         ],
     ];
