@@ -20,50 +20,113 @@ new class extends Component {
             $paginatedNotes->items()
         );
 
-        return [
-            'notes' => $notes,
-        ];
+        $requestQueryString = (array) request()->query();
+
+        $currentPage = $paginatedNotes->currentPage();
+        $lastPage = $paginatedNotes->lastPage();
+
+        $selectablePageRange = $this->buildSelectablePageRange($requestQueryString, $currentPage, $lastPage);
+
+        $firstPageUrl = $this->buildPageUrl($requestQueryString, 1);
+        $lastPageUrl = $this->buildPageUrl($requestQueryString, $lastPage);
+
+        return compact('notes', 'selectablePageRange', 'firstPageUrl', 'lastPageUrl');
+    }
+
+    private function buildSelectablePageRange(array $requestQueryString, int $currentPage, int $lastPage): array
+    {
+        $maxSelectablePageRangeSize = 5;
+        $selectablePageRangeCountToCenter = 2;
+
+        $selectablePageRangeEnd = min($currentPage + $selectablePageRangeCountToCenter, $lastPage);
+        $selectablePageRangeStart = max($selectablePageRangeEnd - $maxSelectablePageRangeSize, 0) + 1;
+
+        $selectablePage = $selectablePageRangeStart;
+        $selectablePageRange = [];
+        while ($selectablePage <= $lastPage && count($selectablePageRange) < $maxSelectablePageRangeSize) {
+            $selectablePageRange[] = [
+                'number' => $selectablePage,
+                'url' => $this->buildPageUrl($requestQueryString, $selectablePage),
+                'is_current_page' => $selectablePage === $currentPage
+            ];
+
+            $selectablePage++;
+        }
+
+        return $selectablePageRange;
+    }
+
+    private function buildPageUrl(array $requestQueryString, int $pageNumber): string
+    {
+        $requestQueryString['page']['number'] = $pageNumber;
+
+        return route('notes.index', $requestQueryString);
     }
 }; ?>
 
-<div class="overflow-x-auto px-5">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Content</th>
-            <th>Updated at</th>
-            <th>Created at</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        @php /* @var NoteListDisplayDataValueObject[] $notes */ @endphp
-        @foreach ($notes as $note)
-            <tr class="hover">
-                <td>{{ $note->title }}</td>
-                <td>{{ $note->type }}</td>
-                <td>{{ $note->shortenedContent }}</td>
-                <td>{{ $note->updatedAt }}</td>
-                <td>{{ $note->createdAt }}</td>
-                <td>
-                    <div class="w-full h-full flex flex-row justify-start items-center">
-                        <a href="{{ route('notes.show', ['note' => $note->id]) }}">
-                            <button class="btn btn-sm btn-square btn-primary">
-                                <x-ionicon-information class="h-3 w-3"/>
-                            </button>
-                        </a>
+<div>
 
-                        <div>
-                            <button class="btn btn-sm btn-square btn-error ml-2">
-                                <x-ionicon-trash class="h-3 w-3"/>
-                            </button>
-                        </div>
-                    </div>
-                </td>
+    {{-- Pagination --}}
+    <div class="flex flex-row justify-end items-center mb-5">
+        <div class="join mr-5">
+            <a href="{{ $firstPageUrl }}" class="join-item btn">«</a>
+            @foreach($selectablePageRange as $page)
+                <a
+                        href="{{ $page['url'] }}"
+                        @class([
+                            'join-item',
+                             'btn',
+                             'btn-disabled'=>$page['is_current_page'],
+                        ])
+                >
+                    {{ $page['number'] }}
+                </a>
+            @endforeach
+            <a href="{{ $lastPageUrl }}" class="join-item btn">»</a>
+        </div>
+    </div>
+
+    {{-- Table --}}
+    <div class="overflow-x-auto px-5">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Content</th>
+                <th>Updated at</th>
+                <th>Created at</th>
+                <th>Actions</th>
             </tr>
-        @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @php /* @var NoteListDisplayDataValueObject[] $notes */ @endphp
+            @foreach ($notes as $note)
+                <tr class="hover">
+                    <td>{{ $note->title }}</td>
+                    <td>{{ $note->type }}</td>
+                    <td>{{ $note->shortenedContent }}</td>
+                    <td>{{ $note->updatedAt }}</td>
+                    <td>{{ $note->createdAt }}</td>
+                    <td>
+                        <div class="w-full h-full flex flex-row justify-start items-center">
+                            <a href="{{ route('notes.show', ['note' => $note->id]) }}">
+                                <button class="btn btn-sm btn-square btn-primary">
+                                    <x-ionicon-information class="h-3 w-3"/>
+                                </button>
+                            </a>
+
+                            <div>
+                                <button class="btn btn-sm btn-square btn-error ml-2">
+                                    <x-ionicon-trash class="h-3 w-3"/>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+
 </div>

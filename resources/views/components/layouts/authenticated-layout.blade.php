@@ -23,7 +23,7 @@
             'params'=>[
                 'sort'=>'-created_at',
                 'page'=>[
-                    'size'=>25,
+                    'size'=>20,
                     'number'=>1,
                 ]
             ],

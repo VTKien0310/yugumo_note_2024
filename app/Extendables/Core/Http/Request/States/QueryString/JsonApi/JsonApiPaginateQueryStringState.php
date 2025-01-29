@@ -14,7 +14,7 @@ class JsonApiPaginateQueryStringState implements PaginateQueryStringState
     public function __construct(
         mixed $paginateRequestData,
         int $defaultPageNumber = 1,
-        int $defaultPageSize = 30
+        int $defaultPageSize = 20
     ) {
         if (! empty($paginateRequestData) && is_array($paginateRequestData) && Arr::isAssoc($paginateRequestData)) {
             $this->pageNumber = $this->processRequestData($paginateRequestData, 'number', $defaultPageNumber);
