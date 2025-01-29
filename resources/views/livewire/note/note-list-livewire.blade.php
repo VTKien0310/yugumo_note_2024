@@ -30,7 +30,9 @@ new class extends Component {
         $firstPageUrl = $this->buildPageUrl($requestQueryString, 1);
         $lastPageUrl = $this->buildPageUrl($requestQueryString, $lastPage);
 
-        return compact('notes', 'selectablePageRange', 'firstPageUrl', 'lastPageUrl');
+        $totalCount = $paginatedNotes->total();
+
+        return compact('notes', 'selectablePageRange', 'firstPageUrl', 'lastPageUrl', 'totalCount');
     }
 
     private function buildSelectablePageRange(array $requestQueryString, int $currentPage, int $lastPage): array
@@ -67,8 +69,11 @@ new class extends Component {
 <div>
 
     {{-- Pagination --}}
-    <div class="flex flex-row justify-end items-center mb-5">
-        <div class="join mr-5">
+    <div class="flex flex-row justify-between items-center mb-5 px-5">
+        <div>
+            <p class="font-semibold">Total: {{ $totalCount }}</p>
+        </div>
+        <div class="join">
             <a href="{{ $firstPageUrl }}" class="join-item btn">«</a>
             @foreach($selectablePageRange as $page)
                 <a
