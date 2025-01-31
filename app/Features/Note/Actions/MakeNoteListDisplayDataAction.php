@@ -12,7 +12,7 @@ readonly class MakeNoteListDisplayDataAction
     {
         return new NoteListDisplayDataValueObject(
             id: $note->id,
-            title: $this->makeNoteShortenedTitle($note),
+            shortenedTitle: $this->makeNoteShortenedTitle($note),
             type: $note->type->name,
             shortenedContent: $this->makeNoteShortenedContent($note),
             createdAt: $note->created_at->toLocalizedString(),

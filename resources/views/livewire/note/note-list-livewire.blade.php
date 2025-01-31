@@ -37,8 +37,8 @@ new class extends Component {
 
     private function buildSelectablePageRange(array $requestQueryString, int $currentPage, int $lastPage): array
     {
-        $maxSelectablePageRangeSize = 5;
-        $selectablePageRangeCountToCenter = 2;
+        $maxSelectablePageRangeSize = 3;
+        $selectablePageRangeCountToCenter = 1;
 
         $selectablePageRangeEnd = min($currentPage + $selectablePageRangeCountToCenter, $lastPage);
         $selectablePageRangeStart = max($selectablePageRangeEnd - $maxSelectablePageRangeSize, 0) + 1;
@@ -68,8 +68,34 @@ new class extends Component {
 
 <div>
 
+    {{-- Grid --}}
+    <div class="grid lg:hidden grid-cols-1 md:grid-cols-2 gap-2 mb-5 px-5">
+        @php /* @var NoteListDisplayDataValueObject[] $notes */ @endphp
+        @foreach ($notes as $note)
+            <div class="card bg-base-100 w-full shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">{{ $note->shortenedTitle }}</h2>
+                    <p>{{ $note->shortenedContent }}</p>
+                    <div class="card-actions justify-end">
+                        <a href="{{ route('notes.show', ['note' => $note->id]) }}">
+                            <button class="btn btn-sm btn-square btn-primary">
+                                <x-ionicon-information class="h-4 w-4"/>
+                            </button>
+                        </a>
+
+                        <div>
+                            <button class="btn btn-sm btn-square btn-error">
+                                <x-ionicon-trash class="h-4 w-4"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
     {{-- Table --}}
-    <div class="overflow-x-auto mb-5 px-5">
+    <div id="notes-list-table" class="overflow-x-auto mb-5 px-5 hidden lg:block">
         <table class="table">
             <thead>
             <tr>
@@ -85,7 +111,7 @@ new class extends Component {
             @php /* @var NoteListDisplayDataValueObject[] $notes */ @endphp
             @foreach ($notes as $note)
                 <tr class="hover">
-                    <td>{{ $note->title }}</td>
+                    <td>{{ $note->shortenedTitle }}</td>
                     <td>{{ $note->type }}</td>
                     <td>{{ $note->shortenedContent }}</td>
                     <td>{{ $note->updatedAt }}</td>
