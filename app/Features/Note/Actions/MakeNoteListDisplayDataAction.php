@@ -12,7 +12,7 @@ readonly class MakeNoteListDisplayDataAction
     {
         return new NoteListDisplayDataValueObject(
             id: $note->id,
-            title: $note->title,
+            title: $this->makeNoteShortenedTitle($note),
             type: $note->type->name,
             shortenedContent: $this->makeNoteShortenedContent($note),
             createdAt: $note->created_at->toLocalizedString(),
@@ -26,22 +26,13 @@ readonly class MakeNoteListDisplayDataAction
             NoteTypeEnum::CHECKLIST->value => $this->makeRepresentingContentForChecklistNote($note),
             default => $this->makeRepresentingContentForTextNote($note),
         };
-        $representingContent = trim($representingContent);
 
-        // the note has no content yet
-        if (empty($representingContent)) {
-            return '';
-        }
+        return $this->shortenTextData($representingContent, 100);
+    }
 
-        $shortenedContent = substr($representingContent, 0, 100);
-
-        // the representing content is short
-        if ($shortenedContent === $representingContent) {
-            return $shortenedContent;
-        }
-
-        // the representing content is long
-        return trim($shortenedContent).'...';
+    private function makeNoteShortenedTitle(Note $note): string
+    {
+        return $this->shortenTextData($note->title, 50);
     }
 
     private function makeRepresentingContentForTextNote(Note $note): string
@@ -52,5 +43,24 @@ readonly class MakeNoteListDisplayDataAction
     private function makeRepresentingContentForChecklistNote(Note $note): string
     {
         return $note->checklistContent()->first()?->content ?? '';
+    }
+
+    private function shortenTextData(string $textData, int $maxLength): string
+    {
+        $textData = trim($textData);
+
+        if (empty($textData)) {
+            return '';
+        }
+
+        $shortenedData = substr($textData, 0, $maxLength);
+
+        // the text data is short
+        if ($shortenedData === $textData) {
+            return $shortenedData;
+        }
+
+        // the text data is long
+        return trim($shortenedData).'...';
     }
 }

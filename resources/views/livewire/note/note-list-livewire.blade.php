@@ -68,31 +68,8 @@ new class extends Component {
 
 <div>
 
-    {{-- Pagination --}}
-    <div class="flex flex-row justify-between items-center mb-5 px-5">
-        <div>
-            <p class="font-semibold">Total: {{ $totalCount }}</p>
-        </div>
-        <div class="join">
-            <a href="{{ $firstPageUrl }}" class="join-item btn">«</a>
-            @foreach($selectablePageRange as $page)
-                <a
-                        href="{{ $page['url'] }}"
-                        @class([
-                            'join-item',
-                             'btn',
-                             'btn-disabled'=>$page['is_current_page'],
-                        ])
-                >
-                    {{ $page['number'] }}
-                </a>
-            @endforeach
-            <a href="{{ $lastPageUrl }}" class="join-item btn">»</a>
-        </div>
-    </div>
-
     {{-- Table --}}
-    <div class="overflow-x-auto px-5">
+    <div class="overflow-x-auto mb-5 px-5">
         <table class="table">
             <thead>
             <tr>
@@ -132,6 +109,29 @@ new class extends Component {
             @endforeach
             </tbody>
         </table>
+    </div>
+
+    {{-- Pagination --}}
+    <div class="flex flex-row justify-between items-center mb-5 px-5">
+        <div>
+            <p class="font-semibold">Total: {{ $totalCount }}</p>
+        </div>
+        <div class="join">
+            <a href="{{ $firstPageUrl }}" class="join-item btn">«</a>
+            @foreach($selectablePageRange as $page)
+                <a
+                    href="{{ $page['url'] }}"
+                    @class([
+                        'join-item',
+                         'btn',
+                         'btn-disabled'=>$page['is_current_page'],
+                    ])
+                >
+                    {{ $page['number'] }}
+                </a>
+            @endforeach
+            <a href="{{ $lastPageUrl }}" class="join-item btn">»</a>
+        </div>
     </div>
 
 </div>
