@@ -12,25 +12,44 @@ readonly class MakeNoteListDisplayDataAction
     {
         return new NoteListDisplayDataValueObject(
             id: $note->id,
-            shortenedTitle: $this->makeNoteShortenedTitle($note),
+            shortTitle: $this->makeNoteShortTitle($note),
+            mediumTitle: $this->makeNoteMediumTitle($note),
             type: $note->type->name,
-            shortenedContent: $this->makeNoteShortenedContent($note),
+            shortContent: $this->makeNoteShortContent($note),
+            mediumContent: $this->makeNoteMediumContent($note),
             createdAt: $note->created_at->toLocalizedString(),
             updatedAt: $note->updated_at->toLocalizedString(),
         );
     }
 
-    private function makeNoteShortenedContent(Note $note): string
+    private function makeNoteShortContent(Note $note): string
     {
-        $representingContent = match ($note->type->id) {
-            NoteTypeEnum::CHECKLIST->value => $this->makeRepresentingContentForChecklistNote($note),
-            default => $this->makeRepresentingContentForTextNote($note),
-        };
+        $representingContent = $this->getNoteRepresentingContent($note);
+
+        return $this->shortenTextData($representingContent, 50);
+    }
+
+    private function makeNoteMediumContent(Note $note): string
+    {
+        $representingContent = $this->getNoteRepresentingContent($note);
 
         return $this->shortenTextData($representingContent, 100);
     }
 
-    private function makeNoteShortenedTitle(Note $note): string
+    private function getNoteRepresentingContent(Note $note): string
+    {
+        return match ($note->type->id) {
+            NoteTypeEnum::CHECKLIST->value => $this->makeRepresentingContentForChecklistNote($note),
+            default => $this->makeRepresentingContentForTextNote($note),
+        };
+    }
+
+    private function makeNoteShortTitle(Note $note): string
+    {
+        return $this->shortenTextData($note->title, 25);
+    }
+
+    private function makeNoteMediumTitle(Note $note): string
     {
         return $this->shortenTextData($note->title, 50);
     }

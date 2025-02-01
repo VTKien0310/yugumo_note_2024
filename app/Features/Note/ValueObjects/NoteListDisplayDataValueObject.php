@@ -8,9 +8,11 @@ class NoteListDisplayDataValueObject extends ValueObject
 {
     public function __construct(
         public readonly string $id,
-        public readonly string $shortenedTitle,
+        public readonly string $shortTitle,
+        public readonly string $mediumTitle,
         public readonly string $type,
-        public readonly string $shortenedContent,
+        public readonly string $shortContent,
+        public readonly string $mediumContent,
         public readonly string $createdAt,
         public readonly string $updatedAt,
     ) {}

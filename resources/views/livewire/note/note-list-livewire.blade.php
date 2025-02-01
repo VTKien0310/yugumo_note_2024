@@ -1,15 +1,12 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\WithPagination;
 use App\Features\Note\Actions\ListNoteOfUserAction;
 use App\Features\Note\Actions\MakeNoteListDisplayDataAction;
 use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
 
 new class extends Component {
-    use WithPagination;
-
     public function with(): array
     {
         $paginatedNotes = app()->make(ListNoteOfUserAction::class)->handle();
@@ -68,14 +65,22 @@ new class extends Component {
 
 <div>
 
+    {{-- Total --}}
+    <div class="mb-5 px-5">
+        <p class="font-semibold">Total: {{ $totalCount }}</p>
+    </div>
+
     {{-- Grid --}}
     <div class="grid lg:hidden grid-cols-1 md:grid-cols-2 gap-2 mb-5 px-5">
         @php /* @var NoteListDisplayDataValueObject[] $notes */ @endphp
         @foreach ($notes as $note)
             <div class="card bg-base-100 w-full shadow-xl">
                 <div class="card-body">
-                    <h2 class="card-title">{{ $note->shortenedTitle }}</h2>
-                    <p>{{ $note->shortenedContent }}</p>
+                    <div class="badge badge-ghost">{{ $note->type }}</div>
+                    <h2 class="card-title">{{ $note->shortTitle }}</h2>
+                    <p>{{ $note->shortContent }}</p>
+                    <p>--------------------</p>
+                    <p>Updated at: {{ $note->updatedAt }} <br/> Created at: {{ $note->createdAt }}</p>
                     <div class="card-actions justify-end">
                         <a href="{{ route('notes.show', ['note' => $note->id]) }}">
                             <button class="btn btn-sm btn-square btn-primary">
@@ -111,9 +116,9 @@ new class extends Component {
             @php /* @var NoteListDisplayDataValueObject[] $notes */ @endphp
             @foreach ($notes as $note)
                 <tr class="hover">
-                    <td>{{ $note->shortenedTitle }}</td>
+                    <td>{{ $note->mediumTitle }}</td>
                     <td>{{ $note->type }}</td>
-                    <td>{{ $note->shortenedContent }}</td>
+                    <td>{{ $note->mediumContent }}</td>
                     <td>{{ $note->updatedAt }}</td>
                     <td>{{ $note->createdAt }}</td>
                     <td>
@@ -138,10 +143,7 @@ new class extends Component {
     </div>
 
     {{-- Pagination --}}
-    <div class="flex flex-row justify-between items-center mb-5 px-5">
-        <div>
-            <p class="font-semibold">Total: {{ $totalCount }}</p>
-        </div>
+    <div class="flex flex-row justify-end items-center mb-5 px-5">
         <div class="join">
             <a href="{{ $firstPageUrl }}" class="join-item btn">«</a>
             @foreach($selectablePageRange as $page)
