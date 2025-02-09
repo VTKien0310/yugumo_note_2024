@@ -7,13 +7,23 @@ use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
 
 new class extends Component {
-    public function with(): array
+    public string $firstPageUrl;
+
+    public string $lastPageUrl;
+
+    public int $totalCount;
+
+    public array $selectablePageRange;
+
+    public array $notes;
+
+    public function mount(): void
     {
         $paginatedNotes = app()->make(ListNoteOfUserAction::class)->handle();
 
         $makeNoteListDisplayDataAction = app()->make(MakeNoteListDisplayDataAction::class);
-        $notes = array_map(
-            fn(Note $note): NoteListDisplayDataValueObject => $makeNoteListDisplayDataAction->handle($note),
+        $this->notes = array_map(
+            fn(Note $note): array => $makeNoteListDisplayDataAction->handle($note)->toResponseDataRecursive(),
             $paginatedNotes->items()
         );
 
@@ -21,15 +31,12 @@ new class extends Component {
 
         $currentPage = $paginatedNotes->currentPage();
         $lastPage = $paginatedNotes->lastPage();
+        $this->selectablePageRange = $this->buildSelectablePageRange($requestQueryString, $currentPage, $lastPage);
 
-        $selectablePageRange = $this->buildSelectablePageRange($requestQueryString, $currentPage, $lastPage);
+        $this->firstPageUrl = $this->buildPageUrl($requestQueryString, 1);
+        $this->lastPageUrl = $this->buildPageUrl($requestQueryString, $lastPage);
 
-        $firstPageUrl = $this->buildPageUrl($requestQueryString, 1);
-        $lastPageUrl = $this->buildPageUrl($requestQueryString, $lastPage);
-
-        $totalCount = $paginatedNotes->total();
-
-        return compact('notes', 'selectablePageRange', 'firstPageUrl', 'lastPageUrl', 'totalCount');
+        $this->totalCount = $paginatedNotes->total();
     }
 
     private function buildSelectablePageRange(array $requestQueryString, int $currentPage, int $lastPage): array
@@ -72,17 +79,16 @@ new class extends Component {
 
     {{-- Grid --}}
     <div class="grid lg:hidden grid-cols-1 md:grid-cols-2 gap-2 mb-5 px-5">
-        @php /* @var NoteListDisplayDataValueObject[] $notes */ @endphp
         @foreach ($notes as $note)
             <div class="card bg-base-100 w-full shadow-xl">
                 <div class="card-body">
-                    <div class="badge badge-ghost">{{ $note->type }}</div>
-                    <h2 class="card-title">{{ $note->shortTitle }}</h2>
-                    <p>{{ $note->shortContent }}</p>
-                    <p>--------------------</p>
-                    <p>Updated at: {{ $note->updatedAt }} <br/> Created at: {{ $note->createdAt }}</p>
+                    <div class="badge badge-ghost">{{ $note['type'] }}</div>
+                    <h2 class="card-title">{{ $note['short_title'] }}</h2>
+                    <p>{{ $note['short_content'] }}</p>
+                    <div class="divider"></div>
+                    <p class="italic mb-2">Updated at: {{ $note['updated_at'] }} <br/> Created at: {{ $note['created_at'] }}</p>
                     <div class="card-actions justify-end">
-                        <a href="{{ route('notes.show', ['note' => $note->id]) }}">
+                        <a href="{{ route('notes.show', ['note' => $note['id']]) }}">
                             <button class="btn btn-sm btn-square btn-primary">
                                 <x-ionicon-information class="h-4 w-4"/>
                             </button>
@@ -113,17 +119,16 @@ new class extends Component {
             </tr>
             </thead>
             <tbody>
-            @php /* @var NoteListDisplayDataValueObject[] $notes */ @endphp
             @foreach ($notes as $note)
                 <tr class="hover">
-                    <td>{{ $note->mediumTitle }}</td>
-                    <td>{{ $note->type }}</td>
-                    <td>{{ $note->mediumContent }}</td>
-                    <td>{{ $note->updatedAt }}</td>
-                    <td>{{ $note->createdAt }}</td>
+                    <td>{{ $note['medium_title'] }}</td>
+                    <td>{{ $note['type'] }}</td>
+                    <td>{{ $note['medium_content'] }}</td>
+                    <td>{{ $note['updated_at'] }}</td>
+                    <td>{{ $note['created_at'] }}</td>
                     <td>
                         <div class="w-full h-full flex flex-row justify-start items-center">
-                            <a href="{{ route('notes.show', ['note' => $note->id]) }}">
+                            <a href="{{ route('notes.show', ['note' => $note['id']]) }}">
                                 <button class="btn btn-sm btn-square btn-primary">
                                     <x-ionicon-information class="h-3 w-3"/>
                                 </button>
