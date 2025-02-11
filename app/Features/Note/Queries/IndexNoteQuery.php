@@ -24,7 +24,7 @@ readonly class IndexNoteQuery
                 'type' => $this->exactFilter,
             ],
             allowedSorts: [
-                'type' => $this->basicSort,
+                'id' => $this->basicSort,
                 'created_at' => $this->basicSort,
                 'updated_at' => $this->basicSort,
             ]

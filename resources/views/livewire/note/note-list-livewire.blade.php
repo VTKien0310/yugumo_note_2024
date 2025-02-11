@@ -6,12 +6,9 @@ use App\Features\Note\Actions\MakeNoteListDisplayDataAction;
 use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
 use App\Features\Note\Actions\DeleteNoteByIdAction;
+use App\Extendables\Core\Http\Enums\HttpRequestHeaderEnum;
 
 new class extends Component {
-    protected $listeners = [
-        'note-deleted' => '$refresh'
-    ];
-
     public function with(): array
     {
         $paginatedNotes = app()->make(ListNoteOfUserAction::class)->handle();
@@ -40,7 +37,8 @@ new class extends Component {
     {
         app()->make(DeleteNoteByIdAction::class)->handle($id);
 
-        $this->dispatch('note-deleted');
+        // refresh page
+        $this->redirect(request()->header(HttpRequestHeaderEnum::REFERER->value));
     }
 
     private function buildSelectablePageRange(array $requestQueryString, int $currentPage, int $lastPage): array

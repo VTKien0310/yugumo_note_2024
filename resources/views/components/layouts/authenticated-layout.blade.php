@@ -21,7 +21,7 @@
             'route'=>'notes.index',
             'label'=>'Notes',
             'params'=>[
-                'sort'=>'-created_at',
+                'sort'=>'-updated_at,-created_at,type,id',
                 'page'=>[
                     'size'=>20,
                     'number'=>1,

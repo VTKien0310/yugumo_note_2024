@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Features\Note\Models\ChecklistNoteContent;
 use App\Features\Note\Models\Note;
 use App\Features\Note\Models\TextNoteContent;
@@ -31,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Carbon::macro('toLocalizedString', function (): string {
-            $timezone = request()->query('timezone', 'Asia/Ho_Chi_Minh');
+            $timezone = request()->query(HttpRequestParamEnum::TIMEZONE->value, 'Asia/Ho_Chi_Minh');
 
             return $this->setTimezone($timezone)->toDateTimeString();
         });
