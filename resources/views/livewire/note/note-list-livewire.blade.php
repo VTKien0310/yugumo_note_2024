@@ -18,8 +18,11 @@ new class extends Component {
 
     public array $typesFilter = [];
 
+    public string $keywordFilter = '';
+
     public function mount(): void
     {
+        $this->keywordFilter = $this->filterQueryString['keyword'] ?? '';
         $this->typesFilter = explode(',', $this->filterQueryString['type_id'] ?? '');
     }
 
@@ -93,13 +96,13 @@ new class extends Component {
     {{-- Filters --}}
     <div class="mb-5 px-5">
         <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-            <input type="checkbox" />
+            <input type="checkbox"/>
             <div class="collapse-title text-xl font-medium">Advanced search</div>
             <div class="collapse-content">
                 <div class="w-full md:w-1/3 lg:w-1/3 mb-3">
                     <p class="font-semibold">Keyword:</p>
                     <div class="pt-2">
-                        <input type="text" class="input input-bordered w-full" />
+                        <input type="text" class="input input-bordered w-full"/>
                     </div>
                 </div>
                 <div class="w-full md:w-1/3 lg:w-1/3">
