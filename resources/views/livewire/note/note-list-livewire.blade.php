@@ -10,16 +10,17 @@ use App\Features\Note\Actions\DeleteNoteByIdAction;
 use App\Extendables\Core\Http\Enums\HttpRequestHeaderEnum;
 use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
 use Livewire\Attributes\Url;
+use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 
 new class extends Component {
-    #[Url(as: 'filter')]
+    #[Url(as: HttpRequestParamEnum::FILTER->value)]
     public array $filterQueryString = [];
 
     public array $typesFilter = [];
 
     public function mount(): void
     {
-        $this->typesFilter = explode(',', $this->filterQueryString['type_id'] ?? []);
+        $this->typesFilter = explode(',', $this->filterQueryString['type_id'] ?? '');
     }
 
     public function with(): array
@@ -88,20 +89,36 @@ new class extends Component {
 }; ?>
 
 <div>
+
+    {{-- Filters --}}
     <div class="mb-5 px-5">
-        <div class="form-control">
-            <p class="font-semibold">Type:</p>
-            <div class="flex flex-row justify-start items-center pt-2">
-                @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
-                @foreach($noteTypes as $noteType)
-                    <label class="w-1/12 p-0 label cursor-pointer">
-                        <span class="label-text">{{ $noteType->name }}</span>
-                        <input type="checkbox" class="checkbox" @checked(in_array($noteType->id, $typesFilter))/>
-                    </label>
-                    @if (! $loop->last)
-                        <div class="divider divider-horizontal"></div>
-                    @endif
-                @endforeach
+        <div class="collapse collapse-arrow bg-base-200 border border-base-300">
+            <input type="checkbox" />
+            <div class="collapse-title text-xl font-medium">Advanced search</div>
+            <div class="collapse-content">
+                <div class="w-full md:w-1/3 lg:w-1/3 mb-3">
+                    <p class="font-semibold">Keyword:</p>
+                    <div class="pt-2">
+                        <input type="text" class="input input-bordered w-full" />
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 lg:w-1/3">
+                    <p class="font-semibold">Type:</p>
+                    <div class="flex flex-col justify-start items-start pt-2">
+                        @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
+                        @foreach($noteTypes as $noteType)
+                            <label class="w-full p-0 pt-1 label cursor-pointer">
+                                <span class="label-text">{{ $noteType->name }}</span>
+                                <input
+                                    type="checkbox"
+                                    value="{{ $noteType->id }}"
+                                    x-model="$wire.typesFilter"
+                                    class="checkbox"
+                                />
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
     </div>
