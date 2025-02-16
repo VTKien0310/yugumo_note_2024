@@ -1,5 +1,6 @@
 <?php
 
+use App\Features\NoteType\ValueObjects\NoteTypeViewDataValueObject;
 use Livewire\Volt\Component;
 use App\Features\Note\Actions\ListNoteOfUserAction;
 use App\Features\Note\Actions\MakeNoteListDisplayDataAction;
@@ -7,8 +8,20 @@ use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
 use App\Features\Note\Actions\DeleteNoteByIdAction;
 use App\Extendables\Core\Http\Enums\HttpRequestHeaderEnum;
+use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
+use Livewire\Attributes\Url;
 
 new class extends Component {
+    #[Url(as: 'filter')]
+    public array $filterQueryString = [];
+
+    public array $typesFilter = [];
+
+    public function mount(): void
+    {
+        $this->typesFilter = explode(',', $this->filterQueryString['type_id'] ?? []);
+    }
+
     public function with(): array
     {
         $paginatedNotes = app()->make(ListNoteOfUserAction::class)->handle();
@@ -30,7 +43,9 @@ new class extends Component {
 
         $totalCount = $paginatedNotes->total();
 
-        return compact('notes', 'selectablePageRange', 'firstPageUrl', 'lastPageUrl', 'totalCount');
+        $noteTypes = app()->make(MakeAllNoteTypeViewDataAction::class)->handle();
+
+        return compact('notes', 'selectablePageRange', 'firstPageUrl', 'lastPageUrl', 'totalCount', 'noteTypes');
     }
 
     public function deleteNote(string $id): void
@@ -73,13 +88,30 @@ new class extends Component {
 }; ?>
 
 <div>
+    <div class="mb-5 px-5">
+        <div class="form-control">
+            <p class="font-semibold">Type:</p>
+            <div class="flex flex-row justify-start items-center pt-2">
+                @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
+                @foreach($noteTypes as $noteType)
+                    <label class="w-1/12 p-0 label cursor-pointer">
+                        <span class="label-text">{{ $noteType->name }}</span>
+                        <input type="checkbox" class="checkbox" @checked(in_array($noteType->id, $typesFilter))/>
+                    </label>
+                    @if (! $loop->last)
+                        <div class="divider divider-horizontal"></div>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+    </div>
 
-    {{-- Total --}}
+    {{-- Total number of records --}}
     <div class="mb-5 px-5">
         <p class="font-semibold">Total: {{ $totalCount }}</p>
     </div>
 
-    {{-- Grid --}}
+    {{-- Grid for smaller screen --}}
     <div class="grid lg:hidden grid-cols-1 md:grid-cols-2 gap-2 mb-5 px-5">
         @php /** @var NoteListDisplayDataValueObject $note */ @endphp
         @foreach ($notes as $note)
@@ -114,7 +146,7 @@ new class extends Component {
         @endforeach
     </div>
 
-    {{-- Table --}}
+    {{-- Table for larger screen --}}
     <div id="notes-list-table" class="overflow-x-auto mb-5 px-5 hidden lg:block">
         <table class="table">
             <thead>
@@ -160,7 +192,7 @@ new class extends Component {
         </table>
     </div>
 
-    {{-- Pagination --}}
+    {{-- Paginator --}}
     <div class="flex flex-row justify-end items-center mb-5 px-5">
         <div class="join">
             <a href="{{ $firstPageUrl }}" class="join-item btn">«</a>
@@ -180,6 +212,7 @@ new class extends Component {
         </div>
     </div>
 
+    {{-- Delete confirmation dialog --}}
     @php /** @var NoteListDisplayDataValueObject $note */ @endphp
     @foreach($notes as $note)
         <dialog id="{{ "delete_confirmation_$note->id" }}" class="modal">

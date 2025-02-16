@@ -21,12 +21,13 @@ readonly class IndexNoteQuery
         return $this->indexQuery->handle(
             $builder,
             allowedFilters: [
-                'type' => $this->exactFilter,
+                'type_id' => $this->exactFilter,
             ],
             allowedSorts: [
                 'id' => $this->basicSort,
                 'created_at' => $this->basicSort,
                 'updated_at' => $this->basicSort,
+                'type_id' => $this->basicSort,
             ]
         );
     }
