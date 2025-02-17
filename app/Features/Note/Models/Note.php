@@ -69,6 +69,8 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
         return $this->hasMany(ChecklistNoteContent::class, ChecklistNoteContent::NOTE_ID, 'id');
     }
 
+    const string RELATION_SEARCH_INDEX = 'searchIndex';
+
     public function searchIndex(): MorphOne
     {
         return $this->morphOne(SearchIndex::class, SearchIndex::RELATION_SEARCHABLE);

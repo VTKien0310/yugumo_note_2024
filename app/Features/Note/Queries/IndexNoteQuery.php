@@ -5,6 +5,7 @@ namespace App\Features\Note\Queries;
 use App\Extendables\Core\Models\Queries\Filters\ExactFilter;
 use App\Extendables\Core\Models\Queries\IndexQuery;
 use App\Extendables\Core\Models\Queries\Sorts\BasicSort;
+use App\Features\Note\Queries\Filters\NoteKeywordFilter;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 
@@ -14,14 +15,17 @@ readonly class IndexNoteQuery
         private IndexQuery $indexQuery,
         private BasicSort $basicSort,
         private ExactFilter $exactFilter,
-    ) {}
+        private NoteKeywordFilter $noteKeywordFilter
+    ) {
+    }
 
     public function handle(EloquentBuilder|Builder $builder): EloquentBuilder|Builder
     {
         return $this->indexQuery->handle(
             $builder,
             allowedFilters: [
-                'type_id' => $this->exactFilter,
+                NoteFilterParamEnum::TYPE_ID->value => $this->exactFilter,
+                NoteFilterParamEnum::KEYWORD->value => $this->noteKeywordFilter,
             ],
             allowedSorts: [
                 'id' => $this->basicSort,

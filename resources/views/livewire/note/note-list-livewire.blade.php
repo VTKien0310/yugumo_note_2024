@@ -11,6 +11,7 @@ use App\Extendables\Core\Http\Enums\HttpRequestHeaderEnum;
 use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
 use Livewire\Attributes\Url;
 use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+use App\Features\Note\Queries\NoteFilterParamEnum;
 
 new class extends Component {
     #[Url(as: HttpRequestParamEnum::FILTER->value)]
@@ -22,8 +23,8 @@ new class extends Component {
 
     public function mount(): void
     {
-        $this->keywordFilter = $this->filterQueryString['keyword'] ?? '';
-        $this->typesFilter = explode(',', $this->filterQueryString['type_id'] ?? '');
+        $this->keywordFilter = $this->filterQueryString[NoteFilterParamEnum::KEYWORD->value] ?? '';
+        $this->typesFilter = explode(',', $this->filterQueryString[NoteFilterParamEnum::TYPE_ID->value] ?? '');
     }
 
     public function with(): array
