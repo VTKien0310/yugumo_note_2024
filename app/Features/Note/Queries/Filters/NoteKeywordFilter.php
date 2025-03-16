@@ -13,7 +13,7 @@ class NoteKeywordFilter extends Filter
 {
     public function handle(EloquentBuilder|Builder $builder, FilterCondition $filterCondition): Builder|EloquentBuilder
     {
-        $matchContentUsingFullText = fn(EloquentBuilder $searchIndexQuery) => $searchIndexQuery->whereFullText(
+        $matchContentUsingFullText = fn (EloquentBuilder $searchIndexQuery) => $searchIndexQuery->whereFullText(
             SearchIndex::CONTENT,
             (string) $filterCondition->condition
         );

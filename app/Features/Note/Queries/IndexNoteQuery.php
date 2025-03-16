@@ -16,8 +16,7 @@ readonly class IndexNoteQuery
         private BasicSort $basicSort,
         private ExactFilter $exactFilter,
         private NoteKeywordFilter $noteKeywordFilter
-    ) {
-    }
+    ) {}
 
     public function handle(EloquentBuilder|Builder $builder): EloquentBuilder|Builder
     {

@@ -97,33 +97,114 @@ new class extends Component {
     {{-- Filters --}}
     <div class="mb-5 px-5">
         <div class="collapse collapse-arrow bg-base-200 border border-base-300">
+
+            {{-- Collapse trigger --}}
             <input type="checkbox"/>
-            <div class="collapse-title text-xl font-medium">Advanced search</div>
+            <div class="collapse-title text-xl font-medium">Advanced</div>
+
+            {{-- Collapse content --}}
             <div class="collapse-content">
-                <div class="w-full md:w-1/3 lg:w-1/3 mb-3">
-                    <p class="font-semibold">Keyword:</p>
-                    <div class="pt-2">
-                        <input type="text" class="input input-bordered w-full"/>
+                <div class="block lg:flex flex-row justify-between items-start">
+                    {{-- Keyword filter --}}
+                    <div class="w-full md:w-1/3 lg:w-1/3 p-3">
+                        <p class="font-semibold">Keyword:</p>
+                        <div class="pt-2">
+                            <input type="text" class="input input-bordered w-full"/>
+                        </div>
                     </div>
-                </div>
-                <div class="w-full md:w-1/3 lg:w-1/3">
-                    <p class="font-semibold">Type:</p>
-                    <div class="flex flex-col justify-start items-start pt-2">
-                        @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
-                        @foreach($noteTypes as $noteType)
-                            <label class="w-full p-0 pt-1 label cursor-pointer">
-                                <span class="label-text">{{ $noteType->name }}</span>
+
+                    {{-- Type filter --}}
+                    <div class="w-full md:w-1/3 lg:w-1/3 p-3">
+                        <p class="font-semibold">Type:</p>
+                        <div class="flex flex-col justify-start items-start pt-2">
+                            @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
+                            @foreach($noteTypes as $noteType)
+                                <label class="w-full p-0 pt-1 label cursor-pointer">
+                                    <span class="label-text">{{ $noteType->name }}</span>
+                                    <input
+                                        type="checkbox"
+                                        value="{{ $noteType->id }}"
+                                        x-model="$wire.typesFilter"
+                                        class="checkbox"
+                                    />
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Sort --}}
+                    <div class="w-full md:w-1/3 lg:w-1/3 p-3">
+                        <p class="font-semibold">Sort:</p>
+
+                        {{-- Sort field --}}
+                        <p class="pt-2">Field:</p>
+                        <div class="flex flex-row flex-wrap justify-start items-center gap-4">
+                            <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    type="checkbox"
-                                    value="{{ $noteType->id }}"
-                                    x-model="$wire.typesFilter"
-                                    class="checkbox"
+                                    type="radio"
+                                    name="sortField"
+                                    value="desc"
+                                    class="radio"
                                 />
+                                <span class="label-text">Updated at</span>
                             </label>
-                        @endforeach
+                            <label class="label cursor-pointer inline-flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="sortField"
+                                    value="asc"
+                                    class="radio"
+                                />
+                                <span class="label-text">Created at</span>
+                            </label>
+                            <label class="label cursor-pointer inline-flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="sortField"
+                                    value="desc"
+                                    class="radio"
+                                />
+                                <span class="label-text">Type</span>
+                            </label>
+                            <label class="label cursor-pointer inline-flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="sortField"
+                                    value="desc"
+                                    class="radio"
+                                />
+                                <span class="label-text">Title</span>
+                            </label>
+                        </div>
+
+                        {{-- Sort direction --}}
+                        <p class="pt-2">Direction:</p>
+                        <div class="flex flex-row flex-wrap justify-start items-center gap-4">
+                            <label class="label cursor-pointer inline-flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="sortDirection"
+                                    value="asc"
+                                    class="radio"
+                                />
+                                <span class="label-text">Ascending</span>
+                            </label>
+
+                            <label class="label cursor-pointer inline-flex items-center gap-2">
+                                <input
+                                    type="radio"
+                                    name="sortDirection"
+                                    value="desc"
+                                    class="radio"
+                                />
+                                <span class="label-text">Descending</span>
+                            </label>
+                        </div>
+
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
