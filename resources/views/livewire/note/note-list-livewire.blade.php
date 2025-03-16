@@ -133,44 +133,52 @@ new class extends Component {
                     </div>
 
                     {{-- Sort --}}
-                    <div class="w-full md:w-1/3 lg:w-1/3 p-3">
+                    <div class="w-full md:w-1/3 lg:w-1/3 p-3" x-data="{ sortField: null, sortDirection: null }">
                         <p class="font-semibold">Sort:</p>
+
+                        <button @click="sortField = null; sortDirection = null" class="btn btn-outline btn-primary btn-circle">
+                            <x-ionicon-refresh class="h-4 w-4"/>
+                        </button>
 
                         {{-- Sort field --}}
                         <p class="pt-2">Field:</p>
                         <div class="flex flex-row flex-wrap justify-start items-center gap-4">
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
+                                    x-model="sortField"
                                     type="radio"
                                     name="sortField"
-                                    value="desc"
+                                    value="updated_at"
                                     class="radio"
                                 />
                                 <span class="label-text">Updated at</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
+                                    x-model="sortField"
                                     type="radio"
                                     name="sortField"
-                                    value="asc"
+                                    value="created_at"
                                     class="radio"
                                 />
                                 <span class="label-text">Created at</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
+                                    x-model="sortField"
                                     type="radio"
                                     name="sortField"
-                                    value="desc"
+                                    value="type"
                                     class="radio"
                                 />
                                 <span class="label-text">Type</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
+                                    x-model="sortField"
                                     type="radio"
                                     name="sortField"
-                                    value="desc"
+                                    value="title"
                                     class="radio"
                                 />
                                 <span class="label-text">Title</span>
@@ -182,6 +190,7 @@ new class extends Component {
                         <div class="flex flex-row flex-wrap justify-start items-center gap-4">
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
+                                    x-model="sortDirection"
                                     type="radio"
                                     name="sortDirection"
                                     value="asc"
@@ -192,6 +201,7 @@ new class extends Component {
 
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
+                                    x-model="sortDirection"
                                     type="radio"
                                     name="sortDirection"
                                     value="desc"
