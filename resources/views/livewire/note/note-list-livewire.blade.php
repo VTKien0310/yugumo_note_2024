@@ -31,27 +31,37 @@ new class extends Component {
     public function mount(): void
     {
         $this->keywordFilter = $this->filterQueryString[NoteFilterParamEnum::KEYWORD->value] ?? '';
+
         $this->typesFilter = explode(',', $this->filterQueryString[NoteFilterParamEnum::TYPE_ID->value] ?? '');
 
-        $requestedSorts = explode(',', $this->sortQueryString);
-        $requestedSorts = array_map(
-            function (string $sort): array {
-                $isDescSort = str_starts_with($sort, '-');
+        [
+            'field' => $this->sortField,
+            'direction' => $this->sortDirection
+        ] = $this->makeSortConfig($this->sortQueryString);
+    }
 
-                return [
-                    'direction' => $isDescSort ? 'desc' : 'asc',
-                    'field' => $isDescSort ? substr($sort, 1) : $sort,
-                ];
-            },
-            $requestedSorts
-        );
+    private function makeSortConfig(string $sortQueryString): array
+    {
+        $requestedSorts = explode(',', $sortQueryString);
+
+        $transformStringRequestDataToArrayForm = function (string $sort): array {
+            $isDescSort = str_starts_with($sort, '-');
+
+            return [
+                'direction' => $isDescSort ? 'desc' : 'asc',
+                'field' => $isDescSort ? substr($sort, 1) : $sort,
+            ];
+        };
+        $requestedSorts = array_map($transformStringRequestDataToArrayForm, $requestedSorts);
+
+        // remove default appended "id" sort
         $requestedSorts = array_filter($requestedSorts, fn(array $sort): bool => $sort['field'] !== 'id');
-        $sort = $requestedSorts[0] ?? [
+
+        // only use the 1st requested sort, default to sort "updated_at" desc if no sort are requested
+        return $requestedSorts[0] ?? [
             'direction' => 'desc',
             'field' => 'updated_at',
         ];
-        $this->sortField = $sort['field'];
-        $this->sortDirection = $sort['direction'];
     }
 
     public function with(): array
@@ -160,12 +170,15 @@ new class extends Component {
                     </div>
 
                     {{-- Sort --}}
-                    <div class="w-full md:w-1/3 lg:w-1/3 p-3" x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }">
+                    <div
+                        class="w-full md:w-1/3 lg:w-1/3 p-3"
+                        x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }"
+                    >
                         <div class="flex flex-row justify-start items-center">
                             <p class="font-semibold">Sort</p>
 
                             <button
-                                @click="sortField = null; sortDirection = null"
+                                @click="sortField = $wire.sortField; sortDirection = $wire.sortDirection"
                                 class="btn btn-sm lg:btn-xs btn-outline btn-circle ml-2"
                             >
                                 <x-ionicon-refresh class="h-5 w-5 lg:h-4 lg:w-4"/>
