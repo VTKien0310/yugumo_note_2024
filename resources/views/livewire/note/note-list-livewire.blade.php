@@ -160,10 +160,10 @@ new class extends Component {
                                 <label class="w-full lg:w-fit p-0 pt-1 lg:pt-0 label cursor-pointer">
                                     <span class="label-text lg:pr-2">{{ $noteType->name }}</span>
                                     <input
-                                            type="checkbox"
-                                            value="{{ $noteType->id }}"
-                                            x-model="$wire.typesFilter"
-                                            class="checkbox"
+                                        type="checkbox"
+                                        value="{{ $noteType->id }}"
+                                        x-model="$wire.typesFilter"
+                                        class="checkbox"
                                     />
                                 </label>
                             @endforeach
@@ -172,15 +172,15 @@ new class extends Component {
 
                     {{-- Sort --}}
                     <div
-                            class="w-full md:w-1/3 lg:w-1/3 p-4"
-                            x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }"
+                        class="w-full md:w-1/3 lg:w-1/3 p-4"
+                        x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }"
                     >
                         <div class="flex flex-row justify-start items-center">
                             <p class="font-semibold">Sort</p>
 
                             <button
-                                    @click="sortField = $wire.sortField; sortDirection = $wire.sortDirection"
-                                    class="btn btn-sm lg:btn-xs btn-outline btn-circle ml-2"
+                                @click="sortField = $wire.sortField; sortDirection = $wire.sortDirection"
+                                class="btn btn-sm lg:btn-xs btn-outline btn-circle ml-2"
                             >
                                 <x-ionicon-refresh class="h-5 w-5 lg:h-4 lg:w-4"/>
                             </button>
@@ -191,41 +191,41 @@ new class extends Component {
                         <div class="flex flex-row flex-wrap justify-start items-center gap-4">
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                        x-model="sortField"
-                                        type="radio"
-                                        name="sortField"
-                                        value="updated_at"
-                                        class="radio"
+                                    x-model="sortField"
+                                    type="radio"
+                                    name="sortField"
+                                    value="updated_at"
+                                    class="radio"
                                 />
                                 <span class="label-text">Updated at</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                        x-model="sortField"
-                                        type="radio"
-                                        name="sortField"
-                                        value="created_at"
-                                        class="radio"
+                                    x-model="sortField"
+                                    type="radio"
+                                    name="sortField"
+                                    value="created_at"
+                                    class="radio"
                                 />
                                 <span class="label-text">Created at</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                        x-model="sortField"
-                                        type="radio"
-                                        name="sortField"
-                                        value="type"
-                                        class="radio"
+                                    x-model="sortField"
+                                    type="radio"
+                                    name="sortField"
+                                    value="type"
+                                    class="radio"
                                 />
                                 <span class="label-text">Type</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                        x-model="sortField"
-                                        type="radio"
-                                        name="sortField"
-                                        value="title"
-                                        class="radio"
+                                    x-model="sortField"
+                                    type="radio"
+                                    name="sortField"
+                                    value="title"
+                                    class="radio"
                                 />
                                 <span class="label-text">Title</span>
                             </label>
@@ -236,28 +236,31 @@ new class extends Component {
                         <div class="flex flex-row flex-wrap justify-start items-center gap-4">
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                        x-model="sortDirection"
-                                        type="radio"
-                                        name="sortDirection"
-                                        value="asc"
-                                        class="radio"
+                                    x-model="sortDirection"
+                                    type="radio"
+                                    name="sortDirection"
+                                    value="asc"
+                                    class="radio"
                                 />
                                 <span class="label-text">Ascending</span>
                             </label>
 
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                        x-model="sortDirection"
-                                        type="radio"
-                                        name="sortDirection"
-                                        value="desc"
-                                        class="radio"
+                                    x-model="sortDirection"
+                                    type="radio"
+                                    name="sortDirection"
+                                    value="desc"
+                                    class="radio"
                                 />
                                 <span class="label-text">Descending</span>
                             </label>
                         </div>
 
                     </div>
+                </div>
+                <div class="flex flex-row justify-end items-center pt-4">
+                    <button class="btn btn-primary">Apply</button>
                 </div>
             </div>
 
@@ -292,8 +295,8 @@ new class extends Component {
 
                         <div>
                             <button
-                                    onclick="{{ "delete_confirmation_$note->id.showModal()" }}"
-                                    class="btn btn-sm btn-square btn-error"
+                                onclick="{{ "delete_confirmation_$note->id.showModal()" }}"
+                                class="btn btn-sm btn-square btn-error"
                             >
                                 <x-ionicon-trash class="h-4 w-4"/>
                             </button>
@@ -336,8 +339,8 @@ new class extends Component {
 
                             <div>
                                 <button
-                                        onclick="{{ "delete_confirmation_$note->id.showModal()" }}"
-                                        class="btn btn-sm btn-square btn-error ml-2"
+                                    onclick="{{ "delete_confirmation_$note->id.showModal()" }}"
+                                    class="btn btn-sm btn-square btn-error ml-2"
                                 >
                                     <x-ionicon-trash class="h-3 w-3"/>
                                 </button>
@@ -356,12 +359,12 @@ new class extends Component {
             <a href="{{ $firstPageUrl }}" class="join-item btn">«</a>
             @foreach($selectablePageRange as $page)
                 <a
-                        href="{{ $page['url'] }}"
-                        @class([
-                            'join-item',
-                             'btn',
-                             'btn-disabled'=>$page['is_current_page'],
-                        ])
+                    href="{{ $page['url'] }}"
+                    @class([
+                        'join-item',
+                         'btn',
+                         'btn-disabled'=>$page['is_current_page'],
+                    ])
                 >
                     {{ $page['number'] }}
                 </a>
