@@ -17,14 +17,41 @@ new class extends Component {
     #[Url(as: HttpRequestParamEnum::FILTER->value)]
     public array $filterQueryString = [];
 
+    #[Url(as: HttpRequestParamEnum::SORT->value)]
+    public string $sortQueryString = '';
+
     public array $typesFilter = [];
 
     public string $keywordFilter = '';
+
+    public string $sortField = '';
+
+    public string $sortDirection = '';
 
     public function mount(): void
     {
         $this->keywordFilter = $this->filterQueryString[NoteFilterParamEnum::KEYWORD->value] ?? '';
         $this->typesFilter = explode(',', $this->filterQueryString[NoteFilterParamEnum::TYPE_ID->value] ?? '');
+
+        $requestedSorts = explode(',', $this->sortQueryString);
+        $requestedSorts = array_map(
+            function (string $sort): array {
+                $isDescSort = str_starts_with($sort, '-');
+
+                return [
+                    'direction' => $isDescSort ? 'desc' : 'asc',
+                    'field' => $isDescSort ? substr($sort, 1) : $sort,
+                ];
+            },
+            $requestedSorts
+        );
+        $requestedSorts = array_filter($requestedSorts, fn(array $sort): bool => $sort['field'] !== 'id');
+        $sort = $requestedSorts[0] ?? [
+            'direction' => 'desc',
+            'field' => 'updated_at',
+        ];
+        $this->sortField = $sort['field'];
+        $this->sortDirection = $sort['direction'];
     }
 
     public function with(): array
@@ -133,7 +160,7 @@ new class extends Component {
                     </div>
 
                     {{-- Sort --}}
-                    <div class="w-full md:w-1/3 lg:w-1/3 p-3" x-data="{ sortField: null, sortDirection: null }">
+                    <div class="w-full md:w-1/3 lg:w-1/3 p-3" x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }">
                         <div class="flex flex-row justify-start items-center">
                             <p class="font-semibold">Sort</p>
 
