@@ -144,7 +144,7 @@ new class extends Component {
             <div class="collapse-content">
                 <div class="block lg:flex flex-row justify-between items-start">
                     {{-- Keyword filter --}}
-                    <div class="w-full md:w-1/3 lg:w-1/3 p-3">
+                    <div class="w-full md:w-1/3 lg:w-1/3 p-4">
                         <p class="font-semibold">Keyword</p>
                         <div class="pt-2">
                             <input type="text" class="input input-bordered w-full"/>
@@ -152,13 +152,13 @@ new class extends Component {
                     </div>
 
                     {{-- Type filter --}}
-                    <div class="w-full md:w-1/3 lg:w-1/3 p-3">
+                    <div class="w-full md:w-1/3 lg:w-1/3 p-4">
                         <p class="font-semibold">Type</p>
-                        <div class="flex flex-col justify-start items-start pt-2">
+                        <div class="flex flex-col lg:flex-row justify-start lg:justify-between items-start pt-2">
                             @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
                             @foreach($noteTypes as $noteType)
-                                <label class="w-full p-0 pt-1 label cursor-pointer">
-                                    <span class="label-text">{{ $noteType->name }}</span>
+                                <label class="w-full lg:w-fit p-0 pt-1 lg:pt-0 label cursor-pointer">
+                                    <span class="label-text lg:pr-2">{{ $noteType->name }}</span>
                                     <input
                                             type="checkbox"
                                             value="{{ $noteType->id }}"
@@ -172,7 +172,7 @@ new class extends Component {
 
                     {{-- Sort --}}
                     <div
-                            class="w-full md:w-1/3 lg:w-1/3 p-3"
+                            class="w-full md:w-1/3 lg:w-1/3 p-4"
                             x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }"
                     >
                         <div class="flex flex-row justify-start items-center">
