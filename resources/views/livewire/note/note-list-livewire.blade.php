@@ -107,7 +107,7 @@ new class extends Component {
                 <div class="block lg:flex flex-row justify-between items-start">
                     {{-- Keyword filter --}}
                     <div class="w-full md:w-1/3 lg:w-1/3 p-3">
-                        <p class="font-semibold">Keyword:</p>
+                        <p class="font-semibold">Keyword</p>
                         <div class="pt-2">
                             <input type="text" class="input input-bordered w-full"/>
                         </div>
@@ -115,7 +115,7 @@ new class extends Component {
 
                     {{-- Type filter --}}
                     <div class="w-full md:w-1/3 lg:w-1/3 p-3">
-                        <p class="font-semibold">Type:</p>
+                        <p class="font-semibold">Type</p>
                         <div class="flex flex-col justify-start items-start pt-2">
                             @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
                             @foreach($noteTypes as $noteType)
@@ -134,11 +134,16 @@ new class extends Component {
 
                     {{-- Sort --}}
                     <div class="w-full md:w-1/3 lg:w-1/3 p-3" x-data="{ sortField: null, sortDirection: null }">
-                        <p class="font-semibold">Sort:</p>
+                        <div class="flex flex-row justify-start items-center">
+                            <p class="font-semibold">Sort</p>
 
-                        <button @click="sortField = null; sortDirection = null" class="btn btn-outline btn-primary btn-circle">
-                            <x-ionicon-refresh class="h-4 w-4"/>
-                        </button>
+                            <button
+                                @click="sortField = null; sortDirection = null"
+                                class="btn btn-sm lg:btn-xs btn-outline btn-circle ml-2"
+                            >
+                                <x-ionicon-refresh class="h-5 w-5 lg:h-4 lg:w-4"/>
+                            </button>
+                        </div>
 
                         {{-- Sort field --}}
                         <p class="pt-2">Field:</p>
