@@ -12,6 +12,8 @@ use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
 use Livewire\Attributes\Url;
 use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Features\Note\Queries\NoteFilterParamEnum;
+use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
+use App\Extendables\Core\Utils\SortDirectionEnum;
 
 new class extends Component {
     #[Url(as: HttpRequestParamEnum::FILTER->value)]
@@ -34,34 +36,33 @@ new class extends Component {
 
         $this->typesFilter = explode(',', $this->filterQueryString[NoteFilterParamEnum::TYPE_ID->value] ?? '');
 
-        [
-            'field' => $this->sortField,
-            'direction' => $this->sortDirection
-        ] = $this->makeSortConfig($this->sortQueryString);
+        $sortConfig = $this->makeSortConfig($this->sortQueryString);
+        $this->sortField = $sortConfig->field;
+        $this->sortDirection = $sortConfig->direction->value;
     }
 
-    private function makeSortConfig(string $sortQueryString): array
+    private function makeSortConfig(string $sortQueryString): SortCondition
     {
         $requestedSorts = explode(',', $sortQueryString);
 
-        $transformStringRequestDataToArrayForm = function (string $sort): array {
-            $isDescSort = str_starts_with($sort, '-');
+        $transformRequestDataToSortCondition = function (string $requestedSort): SortCondition {
+            $isDescSort = str_starts_with($requestedSort, '-');
 
-            return [
-                'direction' => $isDescSort ? 'desc' : 'asc',
-                'field' => $isDescSort ? substr($sort, 1) : $sort,
-            ];
+            return new SortCondition(
+                field: $isDescSort ? substr($requestedSort, 1) : $requestedSort,
+                direction: $isDescSort ? SortDirectionEnum::DESC : SortDirectionEnum::ASC
+            );
         };
-        $requestedSorts = array_map($transformStringRequestDataToArrayForm, $requestedSorts);
+        $requestedSorts = array_map($transformRequestDataToSortCondition, $requestedSorts);
 
         // remove default appended "id" sort
-        $requestedSorts = array_filter($requestedSorts, fn(array $sort): bool => $sort['field'] !== 'id');
+        $requestedSorts = array_filter($requestedSorts, fn(SortCondition $sort): bool => $sort->field !== 'id');
 
         // only use the 1st requested sort, default to sort "updated_at" desc if no sort are requested
-        return $requestedSorts[0] ?? [
-            'direction' => 'desc',
-            'field' => 'updated_at',
-        ];
+        return array_values($requestedSorts)[0] ?? new SortCondition(
+            field: 'updated_at',
+            direction: SortDirectionEnum::DESC
+        );
     }
 
     public function with(): array
@@ -159,10 +160,10 @@ new class extends Component {
                                 <label class="w-full p-0 pt-1 label cursor-pointer">
                                     <span class="label-text">{{ $noteType->name }}</span>
                                     <input
-                                        type="checkbox"
-                                        value="{{ $noteType->id }}"
-                                        x-model="$wire.typesFilter"
-                                        class="checkbox"
+                                            type="checkbox"
+                                            value="{{ $noteType->id }}"
+                                            x-model="$wire.typesFilter"
+                                            class="checkbox"
                                     />
                                 </label>
                             @endforeach
@@ -171,15 +172,15 @@ new class extends Component {
 
                     {{-- Sort --}}
                     <div
-                        class="w-full md:w-1/3 lg:w-1/3 p-3"
-                        x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }"
+                            class="w-full md:w-1/3 lg:w-1/3 p-3"
+                            x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }"
                     >
                         <div class="flex flex-row justify-start items-center">
                             <p class="font-semibold">Sort</p>
 
                             <button
-                                @click="sortField = $wire.sortField; sortDirection = $wire.sortDirection"
-                                class="btn btn-sm lg:btn-xs btn-outline btn-circle ml-2"
+                                    @click="sortField = $wire.sortField; sortDirection = $wire.sortDirection"
+                                    class="btn btn-sm lg:btn-xs btn-outline btn-circle ml-2"
                             >
                                 <x-ionicon-refresh class="h-5 w-5 lg:h-4 lg:w-4"/>
                             </button>
@@ -190,41 +191,41 @@ new class extends Component {
                         <div class="flex flex-row flex-wrap justify-start items-center gap-4">
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortField"
-                                    type="radio"
-                                    name="sortField"
-                                    value="updated_at"
-                                    class="radio"
+                                        x-model="sortField"
+                                        type="radio"
+                                        name="sortField"
+                                        value="updated_at"
+                                        class="radio"
                                 />
                                 <span class="label-text">Updated at</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortField"
-                                    type="radio"
-                                    name="sortField"
-                                    value="created_at"
-                                    class="radio"
+                                        x-model="sortField"
+                                        type="radio"
+                                        name="sortField"
+                                        value="created_at"
+                                        class="radio"
                                 />
                                 <span class="label-text">Created at</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortField"
-                                    type="radio"
-                                    name="sortField"
-                                    value="type"
-                                    class="radio"
+                                        x-model="sortField"
+                                        type="radio"
+                                        name="sortField"
+                                        value="type"
+                                        class="radio"
                                 />
                                 <span class="label-text">Type</span>
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortField"
-                                    type="radio"
-                                    name="sortField"
-                                    value="title"
-                                    class="radio"
+                                        x-model="sortField"
+                                        type="radio"
+                                        name="sortField"
+                                        value="title"
+                                        class="radio"
                                 />
                                 <span class="label-text">Title</span>
                             </label>
@@ -235,22 +236,22 @@ new class extends Component {
                         <div class="flex flex-row flex-wrap justify-start items-center gap-4">
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortDirection"
-                                    type="radio"
-                                    name="sortDirection"
-                                    value="asc"
-                                    class="radio"
+                                        x-model="sortDirection"
+                                        type="radio"
+                                        name="sortDirection"
+                                        value="asc"
+                                        class="radio"
                                 />
                                 <span class="label-text">Ascending</span>
                             </label>
 
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortDirection"
-                                    type="radio"
-                                    name="sortDirection"
-                                    value="desc"
-                                    class="radio"
+                                        x-model="sortDirection"
+                                        type="radio"
+                                        name="sortDirection"
+                                        value="desc"
+                                        class="radio"
                                 />
                                 <span class="label-text">Descending</span>
                             </label>
@@ -291,8 +292,8 @@ new class extends Component {
 
                         <div>
                             <button
-                                onclick="{{ "delete_confirmation_$note->id.showModal()" }}"
-                                class="btn btn-sm btn-square btn-error"
+                                    onclick="{{ "delete_confirmation_$note->id.showModal()" }}"
+                                    class="btn btn-sm btn-square btn-error"
                             >
                                 <x-ionicon-trash class="h-4 w-4"/>
                             </button>
@@ -335,8 +336,8 @@ new class extends Component {
 
                             <div>
                                 <button
-                                    onclick="{{ "delete_confirmation_$note->id.showModal()" }}"
-                                    class="btn btn-sm btn-square btn-error ml-2"
+                                        onclick="{{ "delete_confirmation_$note->id.showModal()" }}"
+                                        class="btn btn-sm btn-square btn-error ml-2"
                                 >
                                     <x-ionicon-trash class="h-3 w-3"/>
                                 </button>
@@ -355,12 +356,12 @@ new class extends Component {
             <a href="{{ $firstPageUrl }}" class="join-item btn">«</a>
             @foreach($selectablePageRange as $page)
                 <a
-                    href="{{ $page['url'] }}"
-                    @class([
-                        'join-item',
-                         'btn',
-                         'btn-disabled'=>$page['is_current_page'],
-                    ])
+                        href="{{ $page['url'] }}"
+                        @class([
+                            'join-item',
+                             'btn',
+                             'btn-disabled'=>$page['is_current_page'],
+                        ])
                 >
                     {{ $page['number'] }}
                 </a>
