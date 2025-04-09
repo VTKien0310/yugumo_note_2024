@@ -128,6 +128,37 @@ new class extends Component {
 
         return route('notes.index', $requestQueryString);
     }
+
+    public function applyAdvancedConfig(): void
+    {
+        $filter = [];
+        if (!empty($this->keywordFilter)) {
+            $filter[NoteFilterParamEnum::KEYWORD->value] = $this->keywordFilter;
+        }
+        if (!empty($this->typesFilter)) {
+            $filter[NoteFilterParamEnum::TYPE_ID->value] = collect($this->typesFilter)->filter()->implode(',');
+        }
+
+        $sort = '-updated_at,id';
+        if (!empty($this->sortField)) {
+            $sortDirection = $this->sortDirection === SortDirectionEnum::DESC->value ? '-' : '';
+            // default appended "id" sort
+            $sort = $sortDirection.$this->sortField.',id';
+        }
+
+        $params = [
+            HttpRequestParamEnum::PAGINATE->value => [
+                'size' => 20,
+                'number' => 1,
+            ],
+            HttpRequestParamEnum::SORT->value => $sort,
+        ];
+        if (!empty($filter)) {
+            $params[HttpRequestParamEnum::FILTER->value] = $filter;
+        }
+
+        $this->redirectRoute('notes.index', $params);
+    }
 }; ?>
 
 <div>
@@ -147,7 +178,7 @@ new class extends Component {
                     <div class="w-full md:w-1/3 lg:w-1/3 p-4">
                         <p class="font-semibold">Keyword</p>
                         <div class="pt-2">
-                            <input type="text" class="input input-bordered w-full"/>
+                            <input wire:model="keywordFilter" type="text" class="input input-bordered w-full"/>
                         </div>
                     </div>
 
@@ -260,7 +291,7 @@ new class extends Component {
                     </div>
                 </div>
                 <div class="flex flex-row justify-end items-center pt-4">
-                    <button class="btn btn-primary">Apply</button>
+                    <button wire:click="applyAdvancedConfig" class="btn btn-primary">Apply</button>
                 </div>
             </div>
 
