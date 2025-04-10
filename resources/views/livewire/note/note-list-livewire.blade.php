@@ -172,7 +172,7 @@ new class extends Component {
             <div class="collapse-title text-xl font-medium">Advanced</div>
 
             {{-- Collapse content --}}
-            <div class="collapse-content">
+            <div class="collapse-content" x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }">
                 <div class="block lg:flex flex-row justify-between items-start">
                     {{-- Keyword filter --}}
                     <div class="w-full md:w-1/3 lg:w-1/3 p-4">
@@ -204,7 +204,6 @@ new class extends Component {
                     {{-- Sort --}}
                     <div
                         class="w-full md:w-1/3 lg:w-1/3 p-4"
-                        x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }"
                     >
                         <div class="flex flex-row justify-start items-center">
                             <p class="font-semibold">Sort</p>
@@ -291,7 +290,12 @@ new class extends Component {
                     </div>
                 </div>
                 <div class="flex flex-row justify-end items-center pt-4">
-                    <button wire:click="applyAdvancedConfig" class="btn btn-primary">Apply</button>
+                    <button
+                        @click="$wire.sortField = sortField; $wire.sortDirection = sortDirection; $wire.applyAdvancedConfig();"
+                        class="btn btn-primary"
+                    >
+                        Apply
+                    </button>
                 </div>
             </div>
 
