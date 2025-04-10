@@ -131,33 +131,49 @@ new class extends Component {
 
     public function applyAdvancedConfig(): void
     {
-        $filter = [];
-        if (!empty($this->keywordFilter)) {
-            $filter[NoteFilterParamEnum::KEYWORD->value] = $this->keywordFilter;
-        }
-        if (!empty($this->typesFilter)) {
-            $filter[NoteFilterParamEnum::TYPE_ID->value] = collect($this->typesFilter)->filter()->implode(',');
-        }
-
-        $sort = '-updated_at,id';
-        if (!empty($this->sortField)) {
-            $sortDirection = $this->sortDirection === SortDirectionEnum::DESC->value ? '-' : '';
-            // default appended "id" sort
-            $sort = $sortDirection.$this->sortField.',id';
-        }
-
         $params = [
             HttpRequestParamEnum::PAGINATE->value => [
                 'size' => 20,
                 'number' => 1,
             ],
-            HttpRequestParamEnum::SORT->value => $sort,
+            HttpRequestParamEnum::SORT->value => $this->buildSortParams(),
         ];
+
+        $filter = $this->buildFilterParams();
         if (!empty($filter)) {
             $params[HttpRequestParamEnum::FILTER->value] = $filter;
         }
 
         $this->redirectRoute('notes.index', $params);
+    }
+
+    private function buildFilterParams(): array
+    {
+        $filter = [];
+
+        if (!empty($this->keywordFilter)) {
+            $filter[NoteFilterParamEnum::KEYWORD->value] = $this->keywordFilter;
+        }
+
+        $validFilteringTypeIds = collect($this->typesFilter)->filter();
+        if ($validFilteringTypeIds->isNotEmpty()) {
+            $filter[NoteFilterParamEnum::TYPE_ID->value] = $validFilteringTypeIds->implode(',');
+        }
+
+        return $filter;
+    }
+
+    private function buildSortParams(): string
+    {
+        $defaultSort = '-updated_at,id';
+        if (empty($this->sortField)) {
+            return $defaultSort;
+        }
+
+        $sortDirection = $this->sortDirection === SortDirectionEnum::DESC->value ? '-' : '';
+
+        // append default "id" sort
+        return $sortDirection.$this->sortField.',id';
     }
 }; ?>
 
@@ -172,7 +188,8 @@ new class extends Component {
             <div class="collapse-title text-xl font-medium">Advanced</div>
 
             {{-- Collapse content --}}
-            <div class="collapse-content" x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }">
+            {{-- We need to keep the original data from Livewire for the sort config reset function --}}
+            <div x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }" class="collapse-content">
                 <div class="block lg:flex flex-row justify-between items-start">
                     {{-- Keyword filter --}}
                     <div class="w-full md:w-1/3 lg:w-1/3 p-4">

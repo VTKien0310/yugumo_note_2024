@@ -16,7 +16,8 @@ readonly class IndexNoteQuery
         private BasicSort $basicSort,
         private ExactFilter $exactFilter,
         private NoteKeywordFilter $noteKeywordFilter
-    ) {}
+    ) {
+    }
 
     public function handle(EloquentBuilder|Builder $builder): EloquentBuilder|Builder
     {
@@ -31,6 +32,7 @@ readonly class IndexNoteQuery
                 'created_at' => $this->basicSort,
                 'updated_at' => $this->basicSort,
                 'type_id' => $this->basicSort,
+                'title' => $this->basicSort,
             ]
         );
     }
