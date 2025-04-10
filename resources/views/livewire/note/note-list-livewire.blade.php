@@ -188,7 +188,7 @@ new class extends Component {
             <div class="collapse-title text-xl font-medium">Advanced</div>
 
             {{-- Collapse content --}}
-            {{-- We need to keep the original data from Livewire for the sort config reset function --}}
+            {{-- We need to keep the original data from Livewire for the sort config reset function --}}e
             <div x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }" class="collapse-content">
                 <div class="block lg:flex flex-row justify-between items-start">
                     {{-- Keyword filter --}}
