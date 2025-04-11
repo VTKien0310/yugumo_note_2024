@@ -2,6 +2,7 @@
 
 namespace App\Extendables\Core\Utils;
 
+use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 
@@ -31,8 +32,8 @@ class ExtendedLengthAwarePaginator extends LengthAwarePaginator
         $nextPageNumber = $this->currentPage() + 1;
         $noNextPageAvailable = null;
 
-        $requestQueryString['page']['number'] = $nextPageNumber <= $this->lastPage() ? $nextPageNumber : $noNextPageAvailable;
-        $requestQueryString['page']['size'] = $this->perPage();
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $nextPageNumber <= $this->lastPage() ? $nextPageNumber : $noNextPageAvailable;
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_SIZE->value] = $this->perPage();
 
         return $this->path().'?'.Arr::query($requestQueryString);
     }
@@ -42,24 +43,24 @@ class ExtendedLengthAwarePaginator extends LengthAwarePaginator
         $previousPageNumber = $this->currentPage() - 1;
         $noPreviousPageAvailable = null;
 
-        $requestQueryString['page']['number'] = $previousPageNumber >= 1 ? $previousPageNumber : $noPreviousPageAvailable;
-        $requestQueryString['page']['size'] = $this->perPage();
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $previousPageNumber >= 1 ? $previousPageNumber : $noPreviousPageAvailable;
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_SIZE->value] = $this->perPage();
 
         return $this->path().'?'.Arr::query($requestQueryString);
     }
 
     private function buildFirstPageUrl(array $requestQueryString): string
     {
-        $requestQueryString['page']['number'] = 1;
-        $requestQueryString['page']['size'] = $this->perPage();
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = 1;
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_SIZE->value] = $this->perPage();
 
         return $this->path().'?'.Arr::query($requestQueryString);
     }
 
     private function buildLastPageUrl(array $requestQueryString): string
     {
-        $requestQueryString['page']['number'] = $this->lastPage();
-        $requestQueryString['page']['size'] = $this->perPage();
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $this->lastPage();
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_SIZE->value] = $this->perPage();
 
         return $this->path().'?'.Arr::query($requestQueryString);
     }
