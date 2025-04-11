@@ -201,11 +201,11 @@ new class extends Component {
                     {{-- Type filter --}}
                     <div class="w-full md:w-1/3 lg:w-1/3 p-4">
                         <p class="font-semibold">Type</p>
-                        <div class="flex flex-col lg:flex-row justify-start lg:justify-between items-start pt-2">
+                        <div class="flex flex-col xl:flex-row justify-start xl:justify-between items-start pt-2">
                             @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
                             @foreach($noteTypes as $noteType)
-                                <label class="w-full lg:w-fit p-0 pt-1 lg:pt-0 label cursor-pointer">
-                                    <span class="label-text lg:pr-2">{{ $noteType->name }}</span>
+                                <label class="w-full xl:w-fit p-0 pt-1 xl:pt-0 label cursor-pointer">
+                                    <span class="label-text xl:pr-2">{{ $noteType->name }}</span>
                                     <input
                                         type="checkbox"
                                         value="{{ $noteType->id }}"
