@@ -5,13 +5,15 @@ namespace App\Features\Note\Actions;
 use App\Features\Note\Commands\UpdateNoteCommand;
 use App\Features\Note\Models\Note;
 use App\Features\NoteType\Enums\NoteTypeEnum;
+use App\Features\Search\Actions\UpdateSearchIndexForNoteTitleAction;
 use Illuminate\Support\Facades\DB;
 
 readonly class UpdateNoteAction
 {
     public function __construct(
         private UpdateNoteCommand $updateNoteCommand,
-        private UpdateTextNoteContentAction $updateTextNoteContentAction
+        private UpdateTextNoteContentAction $updateTextNoteContentAction,
+        private UpdateSearchIndexForNoteTitleAction $updateSearchIndexForNoteTitleAction
     ) {}
 
     public function handle(Note $note, array $data): Note
@@ -20,6 +22,8 @@ readonly class UpdateNoteAction
             $note = $this->updateNoteCommand->handle($note, $data);
 
             $this->updateNoteContentBasedOnNoteType($note, $data);
+
+            $this->updateSearchIndexForNoteTitleAction->handle($note);
 
             return $note;
         });

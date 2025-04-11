@@ -12,7 +12,8 @@
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.0",
         "livewire/livewire": "^3.5",
-        "livewire/volt": "^1.6"
+        "livewire/volt": "^1.6",
+        "ext-dom": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

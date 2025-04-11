@@ -6,6 +6,7 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@tailwindcss/typography": "^0.5.16",
         "autoprefixer": "^10.4.20",
         "axios": "^1.6.4",
         "daisyui": "^4.12.10",

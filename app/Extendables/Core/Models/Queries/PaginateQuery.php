@@ -31,7 +31,8 @@ class PaginateQuery
 
         return $builder->paginate(
             perPage: $pageSize,
-            page: $pageNumber
+            pageName: 'x-secret-page',      // needed to override Laravel default pagination behavior
+            page: $pageNumber,
         );
     }
 }

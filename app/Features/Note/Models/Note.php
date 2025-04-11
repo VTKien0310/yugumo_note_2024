@@ -2,16 +2,20 @@
 
 namespace App\Features\Note\Models;
 
+use App\Extendables\Core\Models\Interfaces\HasPolymorphicRelationship;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
 use App\Features\NoteType\Models\NoteType;
+use App\Features\Search\Models\SearchIndex;
+use App\Features\Search\Relationships\HasSearchIndex;
 use App\Features\User\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Note extends Model
+class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
 {
     use SoftDeletes,
         UlidEloquent;
@@ -31,6 +35,11 @@ class Note extends Model
         'created_at',
         'updated_at',
     ];
+
+    public static function morphType(): string
+    {
+        return 'note';
+    }
 
     const string RELATION_USER = 'user';
 
@@ -58,6 +67,12 @@ class Note extends Model
     public function checklistContent(): HasMany
     {
         return $this->hasMany(ChecklistNoteContent::class, ChecklistNoteContent::NOTE_ID, 'id');
+    }
 
+    const string RELATION_SEARCH_INDEX = 'searchIndex';
+
+    public function searchIndex(): MorphOne
+    {
+        return $this->morphOne(SearchIndex::class, SearchIndex::RELATION_SEARCHABLE);
     }
 }

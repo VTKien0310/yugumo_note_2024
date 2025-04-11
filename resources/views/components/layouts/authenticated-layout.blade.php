@@ -10,14 +10,23 @@
         [
             'route'=>'notes.home',
             'label'=>'Home',
+            'params'=>[],
         ],
         [
             'route'=>'notes.create',
             'label'=>'Add',
+            'params'=>[],
         ],
         [
             'route'=>'notes.index',
             'label'=>'Notes',
+            'params'=>[
+                'sort'=>'-updated_at,id',
+                'page'=>[
+                    'size'=>20,
+                    'number'=>1,
+                ]
+            ],
         ],
     ];
 @endphp
@@ -33,13 +42,13 @@
                     <x-ionicon-menu class="inline-block h-6 w-6 stroke-current"/>
                 </label>
             </div>
-            <div class="brand-name-font flex-1 text-xl text-primary mx-2 px-2">YUGUMO</div>
+            <div class="brand-name-font hidden lg:block flex-1 text-xl text-primary mx-2 px-2">YUGUMO</div>
             <div class="hidden flex-none lg:block">
                 <ul class="menu menu-horizontal">
                     @foreach($navigationItems as $navigationItem)
                         <li>
                             <a
-                                href="{{ route($navigationItem['route']) }}"
+                                href="{{ route($navigationItem['route'], $navigationItem['params']) }}"
                                 role="button"
                                 class="w-20 text-primary btn btn-ghost {{ $disableNavWhenAlreadyAtRoute($navigationItem['route']) }}"
                             >
@@ -56,6 +65,12 @@
                     </li>
                 </ul>
             </div>
+            <div class="w-full lg:hidden">
+                <label class="w-full input input-bordered flex items-center gap-2 ml-2">
+                    <input type="text" class="grow" placeholder="Search"/>
+                    <x-ionicon-search class="h-4 w-4"/>
+                </label>
+            </div>
         </div>
 
         {{ $slot }}
@@ -65,6 +80,9 @@
     <div class="drawer-side">
         <label for="drawer-toggle-input" aria-label="close sidebar" class="drawer-overlay"></label>
         <ul class="menu bg-base-100 min-h-full w-80 p-4">
+            <li class="mb-3">
+                <p class="brand-name-font text-xl text-primary">YUGUMO</p>
+            </li>
             @foreach($navigationItems as $navigationItem)
                 <li>
                     <a
