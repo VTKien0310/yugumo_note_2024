@@ -27,11 +27,11 @@ readonly class IndexNoteQuery
                 NoteFilterParamEnum::KEYWORD->value => $this->noteKeywordFilter,
             ],
             allowedSorts: [
-                'id' => $this->basicSort,
-                'created_at' => $this->basicSort,
-                'updated_at' => $this->basicSort,
-                'type_id' => $this->basicSort,
-                'title' => $this->basicSort,
+                NoteSortFieldEnum::ID->value => $this->basicSort,
+                NoteSortFieldEnum::CREATED_AT->value => $this->basicSort,
+                NoteSortFieldEnum::UPDATED_AT->value => $this->basicSort,
+                NoteSortFieldEnum::TYPE_ID->value => $this->basicSort,
+                NoteSortFieldEnum::TITLE->value => $this->basicSort,
             ]
         );
     }

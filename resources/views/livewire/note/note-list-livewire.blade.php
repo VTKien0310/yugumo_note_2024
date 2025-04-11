@@ -14,6 +14,7 @@ use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Features\Note\Queries\NoteFilterParamEnum;
 use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
 use App\Extendables\Core\Utils\SortDirectionEnum;
+use App\Features\Note\Queries\NoteSortFieldEnum;
 
 new class extends Component {
     #[Url(as: HttpRequestParamEnum::FILTER->value)]
@@ -56,11 +57,11 @@ new class extends Component {
         $requestedSorts = array_map($transformRequestDataToSortCondition, $requestedSorts);
 
         // remove default appended "id" sort
-        $requestedSorts = array_filter($requestedSorts, fn(SortCondition $sort): bool => $sort->field !== 'id');
+        $requestedSorts = array_filter($requestedSorts, fn(SortCondition $sort): bool => $sort->field !== NoteSortFieldEnum::ID->value);
 
         // only use the 1st requested sort, default to sort "updated_at" desc if no sort are requested
         return array_values($requestedSorts)[0] ?? new SortCondition(
-            field: 'updated_at',
+            field: NoteSortFieldEnum::UPDATED_AT->value,
             direction: SortDirectionEnum::DESC
         );
     }
@@ -124,7 +125,7 @@ new class extends Component {
 
     private function buildPageUrl(array $requestQueryString, int $pageNumber): string
     {
-        $requestQueryString['page']['number'] = $pageNumber;
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $pageNumber;
 
         return route('notes.index', $requestQueryString);
     }
@@ -133,8 +134,8 @@ new class extends Component {
     {
         $params = [
             HttpRequestParamEnum::PAGINATE->value => [
-                'size' => 20,
-                'number' => 1,
+                HttpRequestParamEnum::PAGE_SIZE->value => 20,
+                HttpRequestParamEnum::PAGE_NUMBER->value => 1,
             ],
             HttpRequestParamEnum::SORT->value => $this->buildSortParams(),
         ];
@@ -165,7 +166,7 @@ new class extends Component {
 
     private function buildSortParams(): string
     {
-        $defaultSort = '-updated_at,id';
+        $defaultSort = '-'.NoteSortFieldEnum::UPDATED_AT->value.','.NoteSortFieldEnum::ID->value;
         if (empty($this->sortField)) {
             return $defaultSort;
         }
@@ -173,7 +174,7 @@ new class extends Component {
         $sortDirection = $this->sortDirection === SortDirectionEnum::DESC->value ? '-' : '';
 
         // append default "id" sort
-        return $sortDirection.$this->sortField.',id';
+        return $sortDirection.$this->sortField.','.NoteSortFieldEnum::ID->value;
     }
 }; ?>
 
