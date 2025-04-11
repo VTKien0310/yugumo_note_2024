@@ -1,32 +1,36 @@
 @php
     use Illuminate\Support\Facades\Route;
+    use App\Features\Note\Queries\NoteSortFieldEnum;
+    use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 
     $currentRouteName = Route::currentRouteName() ?? '';
     $disableNavWhenAlreadyAtRoute = function (string $routeName) use ($currentRouteName): string {
         return $routeName === $currentRouteName ? 'btn-disabled' : '';
     };
 
+    $defaultNotesListParams = [
+        HttpRequestParamEnum::SORT->value => '-'.NoteSortFieldEnum::UPDATED_AT->value.','.NoteSortFieldEnum::ID->value,
+        HttpRequestParamEnum::PAGINATE->value => [
+            HttpRequestParamEnum::PAGE_SIZE->value => 20,
+            HttpRequestParamEnum::PAGE_NUMBER->value => 1,
+        ]
+    ];
+
     $navigationItems = [
         [
-            'route'=>'notes.home',
-            'label'=>'Home',
-            'params'=>[],
+            'route' => 'notes.home',
+            'label' => 'Home',
+            'params' => [],
         ],
         [
-            'route'=>'notes.create',
-            'label'=>'Add',
-            'params'=>[],
+            'route' => 'notes.create',
+            'label' => 'Add',
+            'params' => [],
         ],
         [
-            'route'=>'notes.index',
-            'label'=>'Notes',
-            'params'=>[
-                'sort'=>'-updated_at,id',
-                'page'=>[
-                    'size'=>20,
-                    'number'=>1,
-                ]
-            ],
+            'route' => 'notes.index',
+            'label' => 'Notes',
+            'params' => $defaultNotesListParams,
         ],
     ];
 @endphp
