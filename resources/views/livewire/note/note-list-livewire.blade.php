@@ -188,8 +188,7 @@ new class extends Component {
             <div class="collapse-title text-xl font-medium">Advanced</div>
 
             {{-- Collapse content --}}
-            {{-- We need to keep the original data from Livewire for the sort config reset function --}}e
-            <div x-data="{ sortField: $wire.sortField, sortDirection: $wire.sortDirection }" class="collapse-content">
+            <div class="collapse-content">
                 <div class="block lg:flex flex-row justify-between items-start">
                     {{-- Keyword filter --}}
                     <div class="w-full md:w-1/3 lg:w-1/3 p-4">
@@ -219,18 +218,9 @@ new class extends Component {
                     </div>
 
                     {{-- Sort --}}
-                    <div
-                        class="w-full md:w-1/3 lg:w-1/3 p-4"
-                    >
+                    <div class="w-full md:w-1/3 lg:w-1/3 p-4">
                         <div class="flex flex-row justify-start items-center">
                             <p class="font-semibold">Sort</p>
-
-                            <button
-                                @click="sortField = $wire.sortField; sortDirection = $wire.sortDirection"
-                                class="btn btn-sm lg:btn-xs btn-outline btn-circle ml-2"
-                            >
-                                <x-ionicon-refresh class="h-5 w-5 lg:h-4 lg:w-4"/>
-                            </button>
                         </div>
 
                         {{-- Sort field --}}
@@ -238,7 +228,7 @@ new class extends Component {
                         <div class="flex flex-row flex-wrap justify-start items-center gap-4">
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortField"
+                                    x-model="$wire.sortField"
                                     type="radio"
                                     name="sortField"
                                     value="updated_at"
@@ -248,7 +238,7 @@ new class extends Component {
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortField"
+                                    x-model="$wire.sortField"
                                     type="radio"
                                     name="sortField"
                                     value="created_at"
@@ -258,7 +248,7 @@ new class extends Component {
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortField"
+                                    x-model="$wire.sortField"
                                     type="radio"
                                     name="sortField"
                                     value="type"
@@ -268,7 +258,7 @@ new class extends Component {
                             </label>
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortField"
+                                    x-model="$wire.sortField"
                                     type="radio"
                                     name="sortField"
                                     value="title"
@@ -283,7 +273,7 @@ new class extends Component {
                         <div class="flex flex-row flex-wrap justify-start items-center gap-4">
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortDirection"
+                                    x-model="$wire.sortDirection"
                                     type="radio"
                                     name="sortDirection"
                                     value="asc"
@@ -294,7 +284,7 @@ new class extends Component {
 
                             <label class="label cursor-pointer inline-flex items-center gap-2">
                                 <input
-                                    x-model="sortDirection"
+                                    x-model="$wire.sortDirection"
                                     type="radio"
                                     name="sortDirection"
                                     value="desc"
@@ -307,12 +297,7 @@ new class extends Component {
                     </div>
                 </div>
                 <div class="flex flex-row justify-end items-center pt-4">
-                    <button
-                        @click="$wire.sortField = sortField; $wire.sortDirection = sortDirection; $wire.applyAdvancedConfig();"
-                        class="btn btn-primary"
-                    >
-                        Apply
-                    </button>
+                    <button wire:click="applyAdvancedConfig" class="btn btn-primary">Apply</button>
                 </div>
             </div>
 
