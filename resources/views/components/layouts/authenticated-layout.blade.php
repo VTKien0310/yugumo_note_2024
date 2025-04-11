@@ -62,18 +62,12 @@
                     @endforeach
 
                     <li>
-                        <label class="input input-bordered flex items-center gap-2 ml-2">
-                            <input type="text" class="grow" placeholder="Search"/>
-                            <x-ionicon-search class="h-4 w-4"/>
-                        </label>
+                        <livewire:quick-search-form-livewire/>
                     </li>
                 </ul>
             </div>
             <div class="w-full lg:hidden">
-                <label class="w-full input input-bordered flex items-center gap-2 ml-2">
-                    <input type="text" class="grow" placeholder="Search"/>
-                    <x-ionicon-search class="h-4 w-4"/>
-                </label>
+                <livewire:quick-search-form-livewire :full-width="true"/>
             </div>
         </div>
 
