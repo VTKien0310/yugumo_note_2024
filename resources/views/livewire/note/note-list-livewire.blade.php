@@ -184,7 +184,7 @@ new class extends Component {
         <div class="collapse collapse-arrow bg-base-200 border border-base-300">
 
             {{-- Collapse trigger --}}
-            <input type="checkbox"/>
+            <input type="checkbox" checked/>
             <div class="collapse-title text-xl font-medium">Advanced</div>
 
             {{-- Collapse content --}}
