@@ -14,20 +14,32 @@ readonly class BuildNoteSearchRequestParamAction
         private SortQueryStringBuilder $sortQueryStringBuilder
     ) {}
 
+    /**
+     * @param  array<string, mixed>  $filterConditions
+     * @param  SortCondition[]  $sortConditions
+     * @param  int  $pageNumber
+     * @param  int  $pageSize
+     * @return array<string, mixed>
+     */
     public function handle(
         array $filterConditions = [],
         array $sortConditions = [],
         int $pageNumber = 1,
         int $pageSize = 20
     ): array {
-        return [
+        $params = [
             HttpRequestParamEnum::PAGINATE->value => [
                 HttpRequestParamEnum::PAGE_SIZE->value => $pageSize,
                 HttpRequestParamEnum::PAGE_NUMBER->value => $pageNumber,
             ],
             HttpRequestParamEnum::SORT->value => $this->buildSortParam($sortConditions),
-            HttpRequestParamEnum::FILTER->value => $filterConditions,
         ];
+
+        if (! empty($filterConditions)) {
+            $params[HttpRequestParamEnum::FILTER->value] = $filterConditions;
+        }
+
+        return $params;
     }
 
     private function buildSortParam(array $sortConditions): string
