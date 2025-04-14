@@ -194,7 +194,9 @@ new class extends Component {
                     <div class="w-full md:w-1/3 lg:w-1/3 p-4">
                         <p class="font-semibold">Keyword</p>
                         <div class="pt-2">
-                            <input wire:model="keywordFilter" type="text" class="input input-bordered w-full"/>
+                            <input wire:model="keywordFilter" @keyup.enter="$wire.applyAdvancedConfig()" type="text"
+                                   class="input input-bordered w-full"
+                            />
                         </div>
                     </div>
 
