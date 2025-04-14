@@ -1,32 +1,31 @@
 @php
     use Illuminate\Support\Facades\Route;
+    use App\Features\Note\Queries\NoteSortFieldEnum;
+    use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+    use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 
     $currentRouteName = Route::currentRouteName() ?? '';
     $disableNavWhenAlreadyAtRoute = function (string $routeName) use ($currentRouteName): string {
         return $routeName === $currentRouteName ? 'btn-disabled' : '';
     };
 
+    $defaultNotesListParams = app()->make(BuildNoteSearchRequestParamAction::class)->handle();
+
     $navigationItems = [
         [
-            'route'=>'notes.home',
-            'label'=>'Home',
-            'params'=>[],
+            'route' => 'notes.home',
+            'label' => 'Home',
+            'params' => [],
         ],
         [
-            'route'=>'notes.create',
-            'label'=>'Add',
-            'params'=>[],
+            'route' => 'notes.create',
+            'label' => 'Add',
+            'params' => [],
         ],
         [
-            'route'=>'notes.index',
-            'label'=>'Notes',
-            'params'=>[
-                'sort'=>'-updated_at,id',
-                'page'=>[
-                    'size'=>20,
-                    'number'=>1,
-                ]
-            ],
+            'route' => 'notes.index',
+            'label' => 'Notes',
+            'params' => $defaultNotesListParams,
         ],
     ];
 @endphp
@@ -58,18 +57,12 @@
                     @endforeach
 
                     <li>
-                        <label class="input input-bordered flex items-center gap-2 ml-2">
-                            <input type="text" class="grow" placeholder="Search"/>
-                            <x-ionicon-search class="h-4 w-4"/>
-                        </label>
+                        <livewire:quick-search-form-livewire/>
                     </li>
                 </ul>
             </div>
             <div class="w-full lg:hidden">
-                <label class="w-full input input-bordered flex items-center gap-2 ml-2">
-                    <input type="text" class="grow" placeholder="Search"/>
-                    <x-ionicon-search class="h-4 w-4"/>
-                </label>
+                <livewire:quick-search-form-livewire :full-width="true"/>
             </div>
         </div>
 

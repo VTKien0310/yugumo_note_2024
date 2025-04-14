@@ -20,5 +20,9 @@ enum HttpRequestParamEnum: string
 
     case PAGINATE = 'page';
 
+    case PAGE_SIZE = 'size';
+
+    case PAGE_NUMBER = 'number';
+
     case TIMEZONE = 'timezone';
 }

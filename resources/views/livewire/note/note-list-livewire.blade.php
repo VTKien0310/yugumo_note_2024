@@ -14,6 +14,8 @@ use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Features\Note\Queries\NoteFilterParamEnum;
 use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
 use App\Extendables\Core\Utils\SortDirectionEnum;
+use App\Features\Note\Queries\NoteSortFieldEnum;
+use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 
 new class extends Component {
     #[Url(as: HttpRequestParamEnum::FILTER->value)]
@@ -56,11 +58,12 @@ new class extends Component {
         $requestedSorts = array_map($transformRequestDataToSortCondition, $requestedSorts);
 
         // remove default appended "id" sort
-        $requestedSorts = array_filter($requestedSorts, fn(SortCondition $sort): bool => $sort->field !== 'id');
+        $requestedSorts = array_filter($requestedSorts,
+            fn(SortCondition $sort): bool => $sort->field !== NoteSortFieldEnum::ID->value);
 
         // only use the 1st requested sort, default to sort "updated_at" desc if no sort are requested
         return array_values($requestedSorts)[0] ?? new SortCondition(
-            field: 'updated_at',
+            field: NoteSortFieldEnum::UPDATED_AT->value,
             direction: SortDirectionEnum::DESC
         );
     }
@@ -124,25 +127,17 @@ new class extends Component {
 
     private function buildPageUrl(array $requestQueryString, int $pageNumber): string
     {
-        $requestQueryString['page']['number'] = $pageNumber;
+        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $pageNumber;
 
         return route('notes.index', $requestQueryString);
     }
 
     public function applyAdvancedConfig(): void
     {
-        $params = [
-            HttpRequestParamEnum::PAGINATE->value => [
-                'size' => 20,
-                'number' => 1,
-            ],
-            HttpRequestParamEnum::SORT->value => $this->buildSortParams(),
-        ];
-
-        $filter = $this->buildFilterParams();
-        if (!empty($filter)) {
-            $params[HttpRequestParamEnum::FILTER->value] = $filter;
-        }
+        $params = app()->make(BuildNoteSearchRequestParamAction::class)->handle(
+            filterConditions: $this->buildFilterParams(),
+            sortConditions: $this->buildSortParams()
+        );
 
         $this->redirectRoute('notes.index', $params);
     }
@@ -155,6 +150,7 @@ new class extends Component {
             $filter[NoteFilterParamEnum::KEYWORD->value] = $this->keywordFilter;
         }
 
+        // prevent passing of empty string in the request
         $validFilteringTypeIds = collect($this->typesFilter)->filter();
         if ($validFilteringTypeIds->isNotEmpty()) {
             $filter[NoteFilterParamEnum::TYPE_ID->value] = $validFilteringTypeIds->implode(',');
@@ -163,17 +159,21 @@ new class extends Component {
         return $filter;
     }
 
-    private function buildSortParams(): string
+    /**
+     * @return SortCondition[]
+     */
+    private function buildSortParams(): array
     {
-        $defaultSort = '-updated_at,id';
         if (empty($this->sortField)) {
-            return $defaultSort;
+            return [];
         }
 
-        $sortDirection = $this->sortDirection === SortDirectionEnum::DESC->value ? '-' : '';
-
-        // append default "id" sort
-        return $sortDirection.$this->sortField.',id';
+        return [
+            new SortCondition(
+                field: $this->sortField,
+                direction: $this->sortDirection === 'asc' ? SortDirectionEnum::ASC : SortDirectionEnum::DESC
+            )
+        ];
     }
 }; ?>
 
@@ -184,7 +184,7 @@ new class extends Component {
         <div class="collapse collapse-arrow bg-base-200 border border-base-300">
 
             {{-- Collapse trigger --}}
-            <input type="checkbox"/>
+            <input type="checkbox" checked/>
             <div class="collapse-title text-xl font-medium">Advanced</div>
 
             {{-- Collapse content --}}
@@ -194,7 +194,9 @@ new class extends Component {
                     <div class="w-full md:w-1/3 lg:w-1/3 p-4">
                         <p class="font-semibold">Keyword</p>
                         <div class="pt-2">
-                            <input wire:model="keywordFilter" type="text" class="input input-bordered w-full"/>
+                            <input wire:model="keywordFilter" @keyup.enter="$wire.applyAdvancedConfig()" type="text"
+                                   class="input input-bordered w-full"
+                            />
                         </div>
                     </div>
 
