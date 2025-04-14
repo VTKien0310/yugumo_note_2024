@@ -2,19 +2,14 @@
     use Illuminate\Support\Facades\Route;
     use App\Features\Note\Queries\NoteSortFieldEnum;
     use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+    use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 
     $currentRouteName = Route::currentRouteName() ?? '';
     $disableNavWhenAlreadyAtRoute = function (string $routeName) use ($currentRouteName): string {
         return $routeName === $currentRouteName ? 'btn-disabled' : '';
     };
 
-    $defaultNotesListParams = [
-        HttpRequestParamEnum::SORT->value => '-'.NoteSortFieldEnum::UPDATED_AT->value.','.NoteSortFieldEnum::ID->value,
-        HttpRequestParamEnum::PAGINATE->value => [
-            HttpRequestParamEnum::PAGE_SIZE->value => 20,
-            HttpRequestParamEnum::PAGE_NUMBER->value => 1,
-        ]
-    ];
+    $defaultNotesListParams = app()->make(BuildNoteSearchRequestParamAction::class)->handle();
 
     $navigationItems = [
         [

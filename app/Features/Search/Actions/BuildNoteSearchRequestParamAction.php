@@ -6,7 +6,7 @@ use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Extendables\Core\Http\Request\Builders\QueryString\JsonApi\SortQueryStringBuilder;
 use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
 use App\Extendables\Core\Utils\SortDirectionEnum;
-use App\Features\Note\Models\Note;
+use App\Features\Note\Queries\NoteSortFieldEnum;
 
 readonly class BuildNoteSearchRequestParamAction
 {
@@ -35,14 +35,14 @@ readonly class BuildNoteSearchRequestParamAction
         // default to sort by "updated_at" in descending order
         if (empty($sortConditions)) {
             $sortConditions[] = new SortCondition(
-                field: Note::UPDATED_AT,
+                field: NoteSortFieldEnum::UPDATED_AT->value,
                 direction: SortDirectionEnum::DESC
             );
         }
 
         // append default "id" sort to provide sorting consistency
         $sortConditions[] = new SortCondition(
-            field: Note::ID,
+            field: NoteSortFieldEnum::ID->value,
             direction: SortDirectionEnum::ASC
         );
 
