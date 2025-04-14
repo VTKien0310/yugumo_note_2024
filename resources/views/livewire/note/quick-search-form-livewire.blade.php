@@ -3,6 +3,7 @@
 use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Features\Note\Queries\NoteFilterParamEnum;
 use Livewire\Volt\Component;
+use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 
 new class extends Component {
     public bool $fullWidth;
@@ -20,16 +21,11 @@ new class extends Component {
             return;
         }
 
-        $params = [
-            HttpRequestParamEnum::PAGINATE->value => [
-                HttpRequestParamEnum::PAGE_SIZE->value => 20,
-                HttpRequestParamEnum::PAGE_NUMBER->value => 1,
-            ],
-            HttpRequestParamEnum::SORT->value => '-updated_at,id',
-            HttpRequestParamEnum::FILTER->value => [
+        $params = app()->make(BuildNoteSearchRequestParamAction::class)->handle(
+            filterConditions: [
                 NoteFilterParamEnum::KEYWORD->value => $this->keyword,
-            ],
-        ];
+            ]
+        );
 
         $this->redirectRoute('notes.index', $params);
     }
