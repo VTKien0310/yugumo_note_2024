@@ -17,8 +17,6 @@ readonly class BuildNoteSearchRequestParamAction
     /**
      * @param  array<string, mixed>  $filterConditions
      * @param  SortCondition[]  $sortConditions
-     * @param  int  $pageNumber
-     * @param  int  $pageSize
      * @return array<string, mixed>
      */
     public function handle(

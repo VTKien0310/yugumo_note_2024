@@ -15,6 +15,7 @@ use App\Features\Note\Queries\NoteFilterParamEnum;
 use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
 use App\Extendables\Core\Utils\SortDirectionEnum;
 use App\Features\Note\Queries\NoteSortFieldEnum;
+use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 
 new class extends Component {
     #[Url(as: HttpRequestParamEnum::FILTER->value)]
@@ -57,7 +58,8 @@ new class extends Component {
         $requestedSorts = array_map($transformRequestDataToSortCondition, $requestedSorts);
 
         // remove default appended "id" sort
-        $requestedSorts = array_filter($requestedSorts, fn(SortCondition $sort): bool => $sort->field !== NoteSortFieldEnum::ID->value);
+        $requestedSorts = array_filter($requestedSorts,
+            fn(SortCondition $sort): bool => $sort->field !== NoteSortFieldEnum::ID->value);
 
         // only use the 1st requested sort, default to sort "updated_at" desc if no sort are requested
         return array_values($requestedSorts)[0] ?? new SortCondition(
@@ -132,18 +134,10 @@ new class extends Component {
 
     public function applyAdvancedConfig(): void
     {
-        $params = [
-            HttpRequestParamEnum::PAGINATE->value => [
-                HttpRequestParamEnum::PAGE_SIZE->value => 20,
-                HttpRequestParamEnum::PAGE_NUMBER->value => 1,
-            ],
-            HttpRequestParamEnum::SORT->value => $this->buildSortParams(),
-        ];
-
-        $filter = $this->buildFilterParams();
-        if (!empty($filter)) {
-            $params[HttpRequestParamEnum::FILTER->value] = $filter;
-        }
+        $params = app()->make(BuildNoteSearchRequestParamAction::class)->handle(
+            filterConditions: $this->buildFilterParams(),
+            sortConditions: $this->buildSortParams()
+        );
 
         $this->redirectRoute('notes.index', $params);
     }
@@ -156,6 +150,7 @@ new class extends Component {
             $filter[NoteFilterParamEnum::KEYWORD->value] = $this->keywordFilter;
         }
 
+        // prevent passing of empty string in the request
         $validFilteringTypeIds = collect($this->typesFilter)->filter();
         if ($validFilteringTypeIds->isNotEmpty()) {
             $filter[NoteFilterParamEnum::TYPE_ID->value] = $validFilteringTypeIds->implode(',');
@@ -164,17 +159,21 @@ new class extends Component {
         return $filter;
     }
 
-    private function buildSortParams(): string
+    /**
+     * @return SortCondition[]
+     */
+    private function buildSortParams(): array
     {
-        $defaultSort = '-'.NoteSortFieldEnum::UPDATED_AT->value.','.NoteSortFieldEnum::ID->value;
         if (empty($this->sortField)) {
-            return $defaultSort;
+            return [];
         }
 
-        $sortDirection = $this->sortDirection === SortDirectionEnum::DESC->value ? '-' : '';
-
-        // append default "id" sort
-        return $sortDirection.$this->sortField.','.NoteSortFieldEnum::ID->value;
+        return [
+            new SortCondition(
+                field: $this->sortField,
+                direction: $this->sortDirection === 'asc' ? SortDirectionEnum::ASC : SortDirectionEnum::DESC
+            )
+        ];
     }
 }; ?>
 
