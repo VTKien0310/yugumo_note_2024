@@ -28,6 +28,10 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
 
     const string TITLE = 'title';
 
+    const string LAST_VIEWED_AT = 'last_viewed_at';
+
+    const string VIEWS = 'views';
+
     protected $table = 'notes';
 
     protected $guarded = [
@@ -35,6 +39,13 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
         'created_at',
         'updated_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'last_viewed_at' => 'datetime',
+        ];
+    }
 
     public static function morphType(): string
     {

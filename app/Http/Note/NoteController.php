@@ -3,6 +3,7 @@
 namespace App\Http\Note;
 
 use App\Extendables\Core\Http\Controllers\WebController;
+use App\Features\Note\Actions\ViewNoteAction;
 use App\Features\Note\Authorizers\ManageNoteAuthorizer;
 use App\Features\Note\Models\Note;
 use App\Features\NoteType\Enums\NoteTypeEnum;
@@ -38,9 +39,15 @@ class NoteController extends WebController
     /**
      * GET /notes/:id
      */
-    public function show(Note $note, Request $request, ManageNoteAuthorizer $manageNoteAuthorizer): View
-    {
+    public function show(
+        Note $note,
+        Request $request,
+        ManageNoteAuthorizer $manageNoteAuthorizer,
+        ViewNoteAction $viewNoteAction
+    ): View {
         $manageNoteAuthorizer->handle($note, $request->user());
+
+        $note = $viewNoteAction->handle($note);
 
         $noteType = $note->type;
 
