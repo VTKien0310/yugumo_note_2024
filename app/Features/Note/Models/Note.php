@@ -4,6 +4,7 @@ namespace App\Features\Note\Models;
 
 use App\Extendables\Core\Models\Interfaces\HasPolymorphicRelationship;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
+use App\Extendables\Core\Utils\BoolIntValueEnum;
 use App\Features\NoteType\Models\NoteType;
 use App\Features\Search\Models\SearchIndex;
 use App\Features\Search\Relationships\HasSearchIndex;
@@ -28,6 +29,8 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
 
     const string TITLE = 'title';
 
+    const string BOOKMARKED = 'bookmarked';
+
     const string LAST_VIEWED_AT = 'last_viewed_at';
 
     const string VIEWS = 'views';
@@ -44,6 +47,7 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
     {
         return [
             'last_viewed_at' => 'datetime',
+            'bookmarked' => BoolIntValueEnum::class,
         ];
     }
 
