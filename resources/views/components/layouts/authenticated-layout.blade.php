@@ -8,6 +8,9 @@
     $disableNavWhenAlreadyAtRoute = function (string $routeName) use ($currentRouteName): string {
         return $routeName === $currentRouteName ? 'btn-disabled' : '';
     };
+    $highlightNavWhenNotAtRoute = function (string $routeName) use ($currentRouteName): string {
+        return $routeName === $currentRouteName ? '' : 'text-primary';
+    };
 
     $defaultNotesListParams = app()->make(BuildNoteSearchRequestParamAction::class)->handle();
 
@@ -49,7 +52,7 @@
                             <a
                                 href="{{ route($navigationItem['route'], $navigationItem['params']) }}"
                                 role="button"
-                                class="w-20 text-primary btn btn-ghost {{ $disableNavWhenAlreadyAtRoute($navigationItem['route']) }}"
+                                class="w-20 btn btn-ghost {{ $disableNavWhenAlreadyAtRoute($navigationItem['route']) }} {{ $highlightNavWhenNotAtRoute($navigationItem['route']) }}"
                             >
                                 {{ $navigationItem['label'] }}
                             </a>
