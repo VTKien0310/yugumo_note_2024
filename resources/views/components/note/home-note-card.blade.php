@@ -12,8 +12,8 @@
         <p>{{ $note->mediumContent }}</p>
         <div class="card-actions justify-end">
             <a href="{{ route('notes.show', ['note' => $note->id]) }}">
-                <button class="btn btn-sm btn-square btn-primary">
-                    <x-ionicon-information class="h-4 w-4"/>
+                <button class="btn btn-sm btn-circle">
+                    <x-ionicon-arrow-forward class="w-4 h-4"/>
                 </button>
             </a>
         </div>

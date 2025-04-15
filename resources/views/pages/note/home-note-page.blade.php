@@ -15,7 +15,7 @@
                     @endforeach
                 </div>
                 <div class="w-full md:hidden lg:hidden xl:hidden mb-5 mt-5 px-5">
-                    <ul class="w-full list bg-base-100">
+                    <ul class="w-full list">
                         @php /** @var NoteListDisplayDataValueObject $note */ @endphp
                         @foreach($recentlyViewedNotes as $note)
                             <x-note.home-note-list-item :note="$note"/>
@@ -33,7 +33,7 @@
                     @endforeach
                 </div>
                 <div class="w-full md:hidden lg:hidden xl:hidden mb-5 mt-5 px-5">
-                    <ul class="w-full list bg-base-100">
+                    <ul class="w-full list">
                         @php /** @var NoteListDisplayDataValueObject $note */ @endphp
                         @foreach($trendingNotes as $note)
                             <x-note.home-note-list-item :note="$note"/>
