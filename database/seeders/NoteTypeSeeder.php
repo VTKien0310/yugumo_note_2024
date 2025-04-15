@@ -32,7 +32,7 @@ class NoteTypeSeeder extends Seeder
             [
                 NoteType::ID => NoteTypeEnum::CHECKLIST->value,
                 NoteType::NAME => 'Checklist',
-                NoteType::DESCRIPTION => 'A list with checkboxes to keep track of things you need',
+                NoteType::DESCRIPTION => 'A list with checkboxes to keep track of things',
                 NoteType::ILLUSTRATION_PATH => 'resources/images/checklist.svg',
             ],
         ];
