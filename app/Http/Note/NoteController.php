@@ -3,6 +3,10 @@
 namespace App\Http\Note;
 
 use App\Extendables\Core\Http\Controllers\WebController;
+use App\Features\Note\Actions\GetUserRecentlyViewedNotesAction;
+use App\Features\Note\Actions\GetUserTrendingNotesAction;
+use App\Features\Note\Actions\MakeNoteListDisplayDataAction;
+use App\Features\Note\Actions\ViewNoteAction;
 use App\Features\Note\Authorizers\ManageNoteAuthorizer;
 use App\Features\Note\Models\Note;
 use App\Features\NoteType\Enums\NoteTypeEnum;
@@ -14,9 +18,25 @@ class NoteController extends WebController
     /**
      * GET /
      */
-    public function home(): View
-    {
-        return view('modules.note.pages.home-note-page');
+    public function home(
+        Request $request,
+        GetUserRecentlyViewedNotesAction $getUserRecentlyViewedNotesAction,
+        GetUserTrendingNotesAction $getUserTrendingNotesAction,
+        MakeNoteListDisplayDataAction $makeNoteListDisplayDataAction
+    ): View {
+        $requestUser = $request->user();
+
+        $recentlyViewedNotes = $getUserRecentlyViewedNotesAction
+            ->handle($requestUser)
+            ->map(fn (Note $note) => $makeNoteListDisplayDataAction->handle($note))
+            ->all();
+
+        $trendingNotes = $getUserTrendingNotesAction
+            ->handle($requestUser)
+            ->map(fn (Note $note) => $makeNoteListDisplayDataAction->handle($note))
+            ->all();
+
+        return view('pages.note.home-note-page', compact('recentlyViewedNotes', 'trendingNotes'));
     }
 
     /**
@@ -24,7 +44,7 @@ class NoteController extends WebController
      */
     public function index(): View
     {
-        return view('modules.note.pages.list-note-page');
+        return view('pages.note.list-note-page');
     }
 
     /**
@@ -32,15 +52,21 @@ class NoteController extends WebController
      */
     public function create(): View
     {
-        return view('modules.note.pages.create-note-page');
+        return view('pages.note.create-note-page');
     }
 
     /**
      * GET /notes/:id
      */
-    public function show(Note $note, Request $request, ManageNoteAuthorizer $manageNoteAuthorizer): View
-    {
+    public function show(
+        Note $note,
+        Request $request,
+        ManageNoteAuthorizer $manageNoteAuthorizer,
+        ViewNoteAction $viewNoteAction
+    ): View {
         $manageNoteAuthorizer->handle($note, $request->user());
+
+        $note = $viewNoteAction->handle($note);
 
         $noteType = $note->type;
 
@@ -49,6 +75,6 @@ class NoteController extends WebController
             default => $note->load(Note::RELATION_TEXT_CONTENT)
         };
 
-        return view('modules.note.pages.edit-note-page', compact('note', 'noteType'));
+        return view('pages.note.edit-note-page', compact('note', 'noteType'));
     }
 }

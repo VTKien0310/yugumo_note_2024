@@ -18,6 +18,6 @@ class AuthenticationController extends WebController
             return redirect()->route('note.list');
         }
 
-        return view('modules.authentication.pages.login-page');
+        return view('pages.authentication.login-page');
     }
 }
