@@ -17,6 +17,7 @@ readonly class GetUserRecentlyViewedNotesAction
 
         return Note::query()
             ->where(Note::USER_ID, $user?->id ?? '')
+            ->whereNotNull(Note::LAST_VIEWED_AT)
             ->orderByDesc(Note::LAST_VIEWED_AT)
             ->take($count)
             ->get();
