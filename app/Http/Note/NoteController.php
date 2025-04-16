@@ -3,6 +3,7 @@
 namespace App\Http\Note;
 
 use App\Extendables\Core\Http\Controllers\WebController;
+use App\Features\Note\Actions\GetUserBookmarkedNotesAction;
 use App\Features\Note\Actions\GetUserRecentlyViewedNotesAction;
 use App\Features\Note\Actions\GetUserTrendingNotesAction;
 use App\Features\Note\Actions\MakeNoteListDisplayDataAction;
@@ -22,6 +23,7 @@ class NoteController extends WebController
         Request $request,
         GetUserRecentlyViewedNotesAction $getUserRecentlyViewedNotesAction,
         GetUserTrendingNotesAction $getUserTrendingNotesAction,
+        GetUserBookmarkedNotesAction $getUserBookmarkedNotesAction,
         MakeNoteListDisplayDataAction $makeNoteListDisplayDataAction
     ): View {
         $requestUser = $request->user();
@@ -36,7 +38,14 @@ class NoteController extends WebController
             ->map(fn (Note $note) => $makeNoteListDisplayDataAction->handle($note))
             ->all();
 
-        return view('pages.note.home-note-page', compact('recentlyViewedNotes', 'trendingNotes'));
+        $bookmarkedNotes = $getUserBookmarkedNotesAction
+            ->handle($requestUser)
+            ->map(fn (Note $note) => $makeNoteListDisplayDataAction->handle($note))
+            ->all();
+
+        return view('pages.note.home-note-page',
+            compact('recentlyViewedNotes', 'trendingNotes', 'bookmarkedNotes')
+        );
     }
 
     /**
