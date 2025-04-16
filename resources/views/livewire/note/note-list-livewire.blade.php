@@ -16,6 +16,7 @@ use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
 use App\Extendables\Core\Utils\SortDirectionEnum;
 use App\Features\Note\Queries\NoteSortFieldEnum;
 use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
+use App\Extendables\Core\Utils\BoolIntValueEnum;
 
 new class extends Component {
     #[Url(as: HttpRequestParamEnum::FILTER->value)]
@@ -25,6 +26,8 @@ new class extends Component {
     public string $sortQueryString = '';
 
     public array $typesFilter = [];
+
+    public bool $bookmarkedOnly = false;
 
     public string $keywordFilter = '';
 
@@ -37,6 +40,8 @@ new class extends Component {
         $this->keywordFilter = $this->filterQueryString[NoteFilterParamEnum::KEYWORD->value] ?? '';
 
         $this->typesFilter = explode(',', $this->filterQueryString[NoteFilterParamEnum::TYPE_ID->value] ?? '');
+
+        $this->bookmarkedOnly = (bool) ($this->filterQueryString[NoteFilterParamEnum::BOOKMARKED->value] ?? false);
 
         $sortConfig = $this->makeSortConfig($this->sortQueryString);
         $this->sortField = $sortConfig->field;
@@ -156,6 +161,10 @@ new class extends Component {
             $filter[NoteFilterParamEnum::TYPE_ID->value] = $validFilteringTypeIds->implode(',');
         }
 
+        if ($this->bookmarkedOnly) {
+            $filter[NoteFilterParamEnum::BOOKMARKED->value] = BoolIntValueEnum::TRUE->value;
+        }
+
         return $filter;
     }
 
@@ -203,7 +212,7 @@ new class extends Component {
                     {{-- Type filter --}}
                     <div class="w-full md:w-1/3 lg:w-1/3 p-4">
                         <p class="font-semibold">Type</p>
-                        <div class="flex flex-col xl:flex-row justify-start xl:justify-between items-start pt-2">
+                        <div class="flex flex-col xl:flex-row justify-start xl:justify-between items-start pt-2 pb-10">
                             @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
                             @foreach($noteTypes as $noteType)
                                 <label class="w-full xl:w-fit p-0 pt-1 xl:pt-0 label cursor-pointer">
@@ -216,6 +225,10 @@ new class extends Component {
                                     />
                                 </label>
                             @endforeach
+                        </div>
+                        <div class="flex flex-row justify-start items-center">
+                            <p class="font-semibold">Bookmarked</p>
+                            <input wire:model="bookmarkedOnly" type="checkbox" class="toggle ml-2"/>
                         </div>
                     </div>
 
