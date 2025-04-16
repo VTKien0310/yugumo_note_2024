@@ -2,12 +2,11 @@
 
 namespace App\Features\Note\Actions;
 
+use App\Features\Note\Models\Note;
 use App\Features\User\Models\User;
 
 readonly class CheckUserHasReachedMaximumAllowedBookmarkedNotesAction
 {
-    private const int MAXIMUM_ALLOWED_BOOKMARKED = 10;
-
     public function __construct(
         private CountUserBookmarkedNoteAction $countUserBookmarkedNoteAction,
     ) {}
@@ -16,6 +15,6 @@ readonly class CheckUserHasReachedMaximumAllowedBookmarkedNotesAction
     {
         $userBookmarkedNote = $this->countUserBookmarkedNoteAction->handle($user);
 
-        return $userBookmarkedNote >= static::MAXIMUM_ALLOWED_BOOKMARKED;
+        return $userBookmarkedNote >= Note::maxBookmarkedNotesPerUser();
     }
 }

@@ -90,4 +90,9 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
     {
         return $this->morphOne(SearchIndex::class, SearchIndex::RELATION_SEARCHABLE);
     }
+
+    public static function maxBookmarkedNotesPerUser(): int
+    {
+        return 10;
+    }
 }
