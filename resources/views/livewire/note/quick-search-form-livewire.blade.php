@@ -6,13 +6,13 @@ use Livewire\Volt\Component;
 use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 
 new class extends Component {
-    public bool $fullWidth;
+    public bool $forMobile;
 
     public string $keyword = '';
 
-    public function mount(bool $fullWidth = false): void
+    public function mount(bool $forMobile = false): void
     {
-        $this->fullWidth = $fullWidth;
+        $this->forMobile = $forMobile;
     }
 
     public function search(): void
@@ -37,8 +37,8 @@ new class extends Component {
     'flex',
     'items-center',
     'gap-2',
-    'ml-2',
-    'w-full' => $fullWidth,
+    $forMobile ? 'ml-1' : 'ml-2',
+    'w-full' => $forMobile,
 ])>
     <input wire:model="keyword" @keyup.enter="$wire.search()" type="text" class="grow" placeholder="Search"/>
     <x-ionicon-search class="h-4 w-4"/>

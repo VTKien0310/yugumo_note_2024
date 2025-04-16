@@ -1,6 +1,4 @@
-@php
-    use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
-@endphp
+@use(App\Features\Note\ValueObjects\NoteListDisplayDataValueObject)
 <x-layouts.master-layout>
     <x-slot:pageTitle>Home</x-slot:pageTitle>
 

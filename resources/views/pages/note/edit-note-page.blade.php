@@ -4,8 +4,11 @@
     <x-slot:pageTitle>{{ $note->title }}</x-slot:pageTitle>
 
     <x-layouts.authenticated-layout>
-        <div class="w-full flex flex-col justify-start content-center items-center">
-            <p class="mb-3 text-center text-sm font-bold">{{ $noteType->name }}</p>
+        <div class="w-full flex flex-col justify-start items-center">
+            <div class="w-3/4 xl:w-1/2 flex justify-between items-center mb-3">
+                <p class="text-sm font-bold">{{ $noteType->name }}</p>
+                <livewire:bookmark-note-button-livewire :note="$note"/>
+            </div>
             @switch($note->type_id)
                 @case(NoteTypeEnum::SIMPLE->value)
                     <livewire:edit-simple-note-form-livewire :note="$note"/>

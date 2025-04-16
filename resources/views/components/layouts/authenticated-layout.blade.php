@@ -65,7 +65,7 @@
                 </ul>
             </div>
             <div class="w-full lg:hidden">
-                <livewire:quick-search-form-livewire :full-width="true"/>
+                <livewire:quick-search-form-livewire :for-mobile="true"/>
             </div>
         </div>
 
