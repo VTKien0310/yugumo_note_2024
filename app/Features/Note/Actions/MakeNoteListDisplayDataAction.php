@@ -2,12 +2,17 @@
 
 namespace App\Features\Note\Actions;
 
+use App\Extendables\Core\Utils\GetRawTextFromWYSIWYGContentAction;
 use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
 use App\Features\NoteType\Enums\NoteTypeEnum;
 
 readonly class MakeNoteListDisplayDataAction
 {
+    public function __construct(
+        private GetRawTextFromWYSIWYGContentAction $getRawTextFromWYSIWYGContentAction,
+    ) {}
+
     public function handle(Note $note): NoteListDisplayDataValueObject
     {
         return new NoteListDisplayDataValueObject(
@@ -40,6 +45,7 @@ readonly class MakeNoteListDisplayDataAction
     {
         return match ($note->type->id) {
             NoteTypeEnum::CHECKLIST->value => $this->makeRepresentingContentForChecklistNote($note),
+            NoteTypeEnum::ADVANCED->value => $this->makeRepresentingContentForAdvancedNote($note),
             default => $this->makeRepresentingContentForTextNote($note),
         };
     }
@@ -62,6 +68,13 @@ readonly class MakeNoteListDisplayDataAction
     private function makeRepresentingContentForChecklistNote(Note $note): string
     {
         return $note->checklistContent()->first()?->content ?? '';
+    }
+
+    private function makeRepresentingContentForAdvancedNote(Note $note): string
+    {
+        return $this->getRawTextFromWYSIWYGContentAction->handle(
+            $this->makeRepresentingContentForTextNote($note)
+        );
     }
 
     private function shortenTextData(string $textData, int $maxLength): string
