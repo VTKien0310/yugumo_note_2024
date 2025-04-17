@@ -3,15 +3,18 @@
 namespace App\Http\Note;
 
 use App\Extendables\Core\Http\Controllers\WebController;
+use App\Extendables\Core\Utils\BoolIntValueEnum;
 use App\Features\Note\Actions\GetUserBookmarkedNotesAction;
 use App\Features\Note\Actions\GetUserRecentlyViewedNotesAction;
 use App\Features\Note\Actions\GetUserTrendingNotesAction;
 use App\Features\Note\Actions\MakeNoteListDisplayDataAction;
+use App\Features\Note\Actions\UpdateNoteAction;
 use App\Features\Note\Actions\ViewNoteAction;
 use App\Features\Note\Authorizers\ManageNoteAuthorizer;
 use App\Features\Note\Models\Note;
 use App\Features\NoteType\Enums\NoteTypeEnum;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class NoteController extends WebController
@@ -85,5 +88,25 @@ class NoteController extends WebController
         };
 
         return view('pages.note.edit-note-page', compact('note', 'noteType'));
+    }
+
+    /**
+     * PUT /notes/:id/remove-bookmark
+     */
+    public function removeBookmark(
+        Note $note,
+        Request $request,
+        ManageNoteAuthorizer $manageNoteAuthorizer,
+        UpdateNoteAction $updateNoteAction
+    ): RedirectResponse {
+        $manageNoteAuthorizer->handle($note, $request->user());
+
+        $updateNoteAction->handle($note, [
+            Note::BOOKMARKED => BoolIntValueEnum::FALSE,
+        ]);
+
+        return redirect()
+            ->route('notes.home')
+            ->with('remove-bookmark-success', 'Remove note bookmark successfully.');
     }
 }

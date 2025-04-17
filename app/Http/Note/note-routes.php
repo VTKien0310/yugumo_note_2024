@@ -12,5 +12,6 @@ Route::as('notes.')
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
             Route::get('/{note}', 'show')->name('show');
+            Route::put('/{note}/remove-bookmark', 'removeBookmark')->name('remove-bookmark');
         });
     });
