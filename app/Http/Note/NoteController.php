@@ -5,6 +5,7 @@ namespace App\Http\Note;
 use App\Extendables\Core\Http\Controllers\WebController;
 use App\Extendables\Core\Utils\BoolIntValueEnum;
 use App\Features\Note\Actions\GetUserBookmarkedNotesAction;
+use App\Features\Note\Actions\GetUserNotesCountStatisticsAction;
 use App\Features\Note\Actions\GetUserRecentlyViewedNotesAction;
 use App\Features\Note\Actions\GetUserTrendingNotesAction;
 use App\Features\Note\Actions\MakeNoteListDisplayDataAction;
@@ -27,7 +28,8 @@ class NoteController extends WebController
         GetUserRecentlyViewedNotesAction $getUserRecentlyViewedNotesAction,
         GetUserTrendingNotesAction $getUserTrendingNotesAction,
         GetUserBookmarkedNotesAction $getUserBookmarkedNotesAction,
-        MakeNoteListDisplayDataAction $makeNoteListDisplayDataAction
+        MakeNoteListDisplayDataAction $makeNoteListDisplayDataAction,
+        GetUserNotesCountStatisticsAction $getUserNotesCountStatisticsAction
     ): View {
         $requestUser = $request->user();
 
@@ -46,8 +48,10 @@ class NoteController extends WebController
             ->map(fn (Note $note) => $makeNoteListDisplayDataAction->handle($note))
             ->all();
 
+        $notesCountStatistics = $getUserNotesCountStatisticsAction->handle($requestUser);
+
         return view('pages.note.home-note-page',
-            compact('recentlyViewedNotes', 'trendingNotes', 'bookmarkedNotes')
+            compact('recentlyViewedNotes', 'trendingNotes', 'bookmarkedNotes', 'notesCountStatistics')
         );
     }
 
