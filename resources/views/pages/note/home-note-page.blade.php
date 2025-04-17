@@ -4,6 +4,18 @@
     <x-slot:pageTitle>Home</x-slot:pageTitle>
 
     <x-layouts.authenticated-layout>
+
+        @if(session()->has('remove-bookmark-success'))
+            <div x-data="{ display: true }" class="toast toast-top toast-center">
+                <div x-show="display" class="alert alert-success">
+                    <p>{{ session('remove-bookmark-success') }}</p>
+                    <button @click="display = false" class="btn btn-circle btn-ghost btn-xs">
+                        <x-ionicon-close class="h-4 w-4"/>
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <div class="flex flex-col justify-center items-center">
 
             <div class="w-full mt-5">
