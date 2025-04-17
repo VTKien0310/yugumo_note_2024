@@ -93,6 +93,6 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
 
     public static function maxBookmarkedNotesPerUser(): int
     {
-        return 10;
+        return 20;
     }
 }
