@@ -18,11 +18,20 @@
 
         <div class="flex flex-col justify-center items-center">
 
-            <div class="w-full mt-5">
+            <div class="w-full px-5 mt-5 mb-5">
+                <p class="font-bold text-start text-xl">Total: {{ $notesCountStatistics->total }}</p>
+                <div class="flex flex-row justify-start items-center mt-1">
+                    @foreach($notesCountStatistics->byType as $typeStatistics)
+                        <p class="font-bold text-start text-l mr-5">{{ $typeStatistics->type }}: {{ $typeStatistics->count }}</p>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="w-full mt-5 md:mb-5 lg:mb-5 xl:mb-5">
                 <h1 class="w-full font-bold text-start text-2xl pl-5">
                     Bookmarked ({{ count($bookmarkedNotes) }}/{{ Note::maxBookmarkedNotesPerUser() }})
                 </h1>
-                <div class="w-full hidden md:block lg:block xl:block mb-5 px-5">
+                <div class="w-full hidden md:block lg:block xl:block px-5">
                     <ul class="w-full list">
                         @php /** @var NoteListDisplayDataValueObject $note */ @endphp
                         @foreach($bookmarkedNotes as $note)
@@ -40,9 +49,7 @@
                 </div>
             </div>
 
-            <div class="hidden md:block lg:block xl:block divider px-5"></div>
-
-            <div class="w-full mt-5">
+            <div class="w-full mt-5 md:mb-5 lg:mb-5 xl:mb-5">
                 <h1 class="w-full font-bold text-start text-2xl pl-5">Recently viewed</h1>
                 <div class="w-full hidden md:grid lg:grid xl:grid grid-cols-3 xl:grid-cols-6 gap-2 mb-5 px-5">
                     @php /** @var NoteListDisplayDataValueObject $note */ @endphp
@@ -60,9 +67,7 @@
                 </div>
             </div>
 
-            <div class="hidden md:block lg:block xl:block divider px-5"></div>
-
-            <div class="w-full mt-5">
+            <div class="w-full mt-5 md:mb-5 lg:mb-5 xl:mb-5">
                 <h1 class="w-full font-bold text-start text-2xl pl-5">Frequently viewed</h1>
                 <div class="w-full hidden md:grid lg:grid xl:grid grid-cols-3 xl:grid-cols-6 gap-2 mb-5 px-5">
                     @php /** @var NoteListDisplayDataValueObject $note */ @endphp
