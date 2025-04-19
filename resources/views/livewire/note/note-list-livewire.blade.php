@@ -96,7 +96,9 @@ new class extends Component {
 
         $noteTypes = app()->make(MakeAllNoteTypeViewDataAction::class)->handle();
 
-        return compact('notes', 'selectablePageRange', 'firstPageUrl', 'lastPageUrl', 'totalCount', 'noteTypes');
+        $bookmarkIconSize = 'w-5 h-5';
+
+        return compact('notes', 'selectablePageRange', 'firstPageUrl', 'lastPageUrl', 'totalCount', 'noteTypes', 'bookmarkIconSize');
     }
 
     public function deleteNote(string $id): void
@@ -330,7 +332,16 @@ new class extends Component {
         @foreach ($notes as $note)
             <div class="card bg-base-100 w-full shadow-xl">
                 <div class="card-body">
-                    <div class="badge badge-ghost">{{ $note->type }}</div>
+                    <div class="flex flex-row justify-between items-center mb-1">
+                        <div class="badge badge-ghost">{{ $note->type }}</div>
+                        @if($note->bookmarked)
+                            <x-ionicon-bookmark class="{{ $bookmarkIconSize }}"/>
+                        @else
+                            <div class="{{ $bookmarkIconSize }}">
+                                {{--                                Dummy element to maintain the same width and height as the bookmark icon.--}}
+                            </div>
+                        @endif
+                    </div>
                     <h2 class="card-title">{{ $note->shortTitle }}</h2>
                     <p>{{ $note->shortContent }}</p>
                     <div class="divider"></div>
@@ -376,7 +387,14 @@ new class extends Component {
             @php /** @var NoteListDisplayDataValueObject $note */ @endphp
             @foreach ($notes as $note)
                 <tr class="hover">
-                    <td>{{ $note->mediumTitle }}</td>
+                    <td>
+                        @if($note->bookmarked)
+                            <sup class="badge badge-xs border-none">
+                                <x-ionicon-bookmark class="h-3 w-3"/>
+                            </sup>
+                        @endif
+                        {{ $note->mediumTitle }}
+                    </td>
                     <td>{{ $note->type }}</td>
                     <td>{{ $note->mediumContent }}</td>
                     <td>{{ $note->updatedAt }}</td>

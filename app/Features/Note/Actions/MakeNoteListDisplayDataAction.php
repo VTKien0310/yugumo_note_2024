@@ -22,6 +22,7 @@ readonly class MakeNoteListDisplayDataAction
             type: $note->type->name,
             shortContent: $this->makeNoteShortContent($note),
             mediumContent: $this->makeNoteMediumContent($note),
+            bookmarked: (bool) $note->bookmarked->value,
             createdAt: $note->created_at->toLocalizedString(),
             updatedAt: $note->updated_at->toLocalizedString(),
         );

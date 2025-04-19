@@ -13,6 +13,7 @@ class NoteListDisplayDataValueObject extends ValueObject
         public readonly string $type,
         public readonly string $shortContent,
         public readonly string $mediumContent,
+        public readonly bool $bookmarked,
         public readonly string $createdAt,
         public readonly string $updatedAt,
     ) {}

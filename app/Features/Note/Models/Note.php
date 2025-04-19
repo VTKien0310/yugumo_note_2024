@@ -3,6 +3,7 @@
 namespace App\Features\Note\Models;
 
 use App\Extendables\Core\Models\Interfaces\HasPolymorphicRelationship;
+use App\Extendables\Core\Models\Traits\StaticColumnQualifier;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
 use App\Extendables\Core\Utils\BoolIntValueEnum;
 use App\Features\NoteType\Models\NoteType;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
 {
     use SoftDeletes,
+        StaticColumnQualifier,
         UlidEloquent;
 
     const string ID = 'id';
@@ -34,6 +36,8 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
     const string LAST_VIEWED_AT = 'last_viewed_at';
 
     const string VIEWS = 'views';
+
+    const string DELETED_AT = 'deleted_at';
 
     protected $table = 'notes';
 
@@ -93,6 +97,6 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
 
     public static function maxBookmarkedNotesPerUser(): int
     {
-        return 10;
+        return 20;
     }
 }

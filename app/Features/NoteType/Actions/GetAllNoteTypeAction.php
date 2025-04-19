@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Collection;
 
 class GetAllNoteTypeAction
 {
+    /**
+     * @return Collection<int, NoteType>
+     */
     public function handle(): Collection
     {
         return NoteType::all();
