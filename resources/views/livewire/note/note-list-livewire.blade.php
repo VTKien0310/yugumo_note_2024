@@ -387,7 +387,14 @@ new class extends Component {
             @php /** @var NoteListDisplayDataValueObject $note */ @endphp
             @foreach ($notes as $note)
                 <tr class="hover">
-                    <td>{{ $note->mediumTitle }}</td>
+                    <td>
+                        @if($note->bookmarked)
+                            <sup class="badge badge-xs border-none">
+                                <x-ionicon-bookmark class="h-3 w-3"/>
+                            </sup>
+                        @endif
+                        {{ $note->mediumTitle }}
+                    </td>
                     <td>{{ $note->type }}</td>
                     <td>{{ $note->mediumContent }}</td>
                     <td>{{ $note->updatedAt }}</td>
