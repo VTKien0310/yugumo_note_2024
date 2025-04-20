@@ -2,6 +2,7 @@
 
 namespace App\Features\Search\Models;
 
+use App\Extendables\Core\Models\Traits\StaticColumnQualifier;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
 use App\Features\Note\Models\Note;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class SearchIndex extends Model
 {
     use SoftDeletes,
+        StaticColumnQualifier,
         UlidEloquent;
 
     const string ID = 'id';
