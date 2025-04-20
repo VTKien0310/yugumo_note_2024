@@ -2,8 +2,7 @@
 
 namespace App\Extendables\Core\Utils;
 
-use DOMDocument;
-use DOMXPath;
+use Illuminate\Support\Str;
 
 class GetRawTextFromWYSIWYGContentAction
 {
@@ -13,20 +12,11 @@ class GetRawTextFromWYSIWYGContentAction
             return '';
         }
 
-        // load WYSIWYG content into DOMDocument
-        $dom = new DOMDocument;
-        @$dom->loadHTML($wysiwygContent);
+        $wysiwygContent = Str::of($wysiwygContent)
+            ->replace(['<br>', '<br/>', '<br />'], ' ')     // keep line breaks
+            ->stripTags()                                           // remove other markup
+            ->squish();                                             // collapse repeated whitespace
 
-        // use DOMXPath to query all text nodes
-        $xpath = new DOMXPath($dom);
-        $textNodes = $xpath->query('//text()');
-
-        $plainText = '';
-        foreach ($textNodes as $textNode) {
-            $plainText .= $textNode->nodeValue.' ';
-        }
-
-        // trim extra white spaces
-        return trim($plainText);
+        return html_entity_decode($wysiwygContent);                 // &amp; → &
     }
 }
