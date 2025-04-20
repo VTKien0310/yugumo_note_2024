@@ -200,9 +200,9 @@ new class extends Component {
 
             {{-- Collapse content --}}
             <div class="collapse-content">
-                <div class="block lg:flex flex-row justify-between items-start">
-                    {{-- Keyword filter --}}
-                    <div class="w-full md:w-1/3 lg:w-1/3 p-4">
+                <div class="flex flex-row justify-between items-start flex-wrap">
+                    {{-- Bookmark & keyword filter --}}
+                    <div class="p-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/3">
                         <div class="flex flex-row justify-start items-center pb-8">
                             <p class="font-semibold">Bookmarked</p>
                             <input wire:model="bookmarkedOnly" type="checkbox" class="toggle ml-2"/>
@@ -216,7 +216,7 @@ new class extends Component {
                     </div>
 
                     {{-- Type filter --}}
-                    <div class="w-full md:w-1/3 lg:w-1/3 p-4">
+                    <div class="p-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/3">
                         <p class="font-semibold">Type</p>
                         <div class="flex flex-col xl:flex-row justify-start xl:justify-between items-start pt-2">
                             @php /** @var NoteTypeViewDataValueObject $noteType */ @endphp
@@ -235,7 +235,7 @@ new class extends Component {
                     </div>
 
                     {{-- Sort --}}
-                    <div class="w-full md:w-1/3 lg:w-1/3 p-4">
+                    <div class="p-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/3">
                         <div class="flex flex-row justify-start items-center">
                             <p class="font-semibold">Sort</p>
                         </div>
