@@ -21,6 +21,11 @@
             'params' => [],
         ],
         [
+            'route' => 'profile.show',
+            'label' => 'Profile',
+            'params' => [],
+        ],
+        [
             'route' => 'notes.create',
             'label' => 'Add',
             'params' => [],
