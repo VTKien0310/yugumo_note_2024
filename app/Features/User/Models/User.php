@@ -2,6 +2,7 @@
 
 namespace App\Features\User\Models;
 
+use App\Extendables\Core\Models\Traits\StaticColumnQualifier;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
 use App\Features\Note\Models\Note;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,6 +14,7 @@ class User extends Authenticatable
 {
     use Notifiable,
         SoftDeletes,
+        StaticColumnQualifier,
         UlidEloquent;
 
     const string ID = 'id';
