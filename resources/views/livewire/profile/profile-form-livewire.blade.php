@@ -15,6 +15,8 @@ new class extends Component {
 
     public string $currentPassword = '';
 
+    public bool $showSuccessToast = false;
+
     public function mount(): void
     {
         $this->email = Auth::user()->email;
@@ -28,7 +30,9 @@ new class extends Component {
 
         $user = resolve(UpdateUserAction::class)->handle($user, $validatedData);
 
-        $this->resetProps($user);
+        $this->resetDataProps($user);
+
+        $this->showSuccessToast = true;
     }
 
     private function validatedData(User $user): array
@@ -57,7 +61,7 @@ new class extends Component {
         return array_filter($validated, fn(string $data) => !empty($data));
     }
 
-    private function resetProps(User $user): void
+    private function resetDataProps(User $user): void
     {
         $this->password = '';
         $this->currentPassword = '';
@@ -68,15 +72,26 @@ new class extends Component {
 
 <x-form wire:submit="updateProfile" class="w-full flex flex-col items-center justify-start">
 
+    {{-- Success toast --}}
+    <div x-data="{ display: $wire.entangle('showSuccessToast') }" class="toast toast-top toast-center">
+        <div x-show="display" class="alert alert-success">
+            <p>Profile updated successfully.</p>
+            <button @click="display = false" type="button" class="btn btn-circle btn-ghost btn-xs">
+                <x-ionicon-close class="h-4 w-4"/>
+            </button>
+        </div>
+    </div>
+
+
     {{-- Email input --}}
     <label class="w-full floating-label">
         <span>Your Email</span>
         <x-input
-            wire:model="email"
-            value="{{ $email }}"
-            id="email" name="email" type="email"
-            placeholder="Your Email"
-            class="input w-full"
+                wire:model="email"
+                value="{{ $email }}"
+                id="email" name="email" type="email"
+                placeholder="Your Email"
+                class="input w-full"
         />
     </label>
     @error('email')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
@@ -84,7 +99,8 @@ new class extends Component {
     {{-- New password input --}}
     <label class="w-full floating-label mt-2">
         <span>New password</span>
-        <x-password wire:model="password" id="password" name="password" placeholder="New password" class="input w-full"/>
+        <x-password wire:model="password" id="password" name="password" placeholder="New password"
+                    class="input w-full"/>
     </label>
     @error('password')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
 
@@ -92,10 +108,10 @@ new class extends Component {
     <label class="w-full floating-label mt-2">
         <span>Current password*</span>
         <x-password
-            wire:model="currentPassword"
-            id="current_password" name="current_password"
-            placeholder="Current password*" required
-            class="input w-full"
+                wire:model="currentPassword"
+                id="current_password" name="current_password"
+                placeholder="Current password*" required
+                class="input w-full"
         />
     </label>
     @error('currentPassword')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
