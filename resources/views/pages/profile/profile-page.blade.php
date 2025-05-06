@@ -7,7 +7,7 @@
                 <livewire:profile-form-livewire/>
                 <div class="divider"></div>
                 <x-form class="w-full" action="{{ route('auth.logout') }}" method="DELETE">
-                    <button class="btn btn-block btn-error">Logout</button>
+                    <button class="btn btn-block btn-error">Log out</button>
                 </x-form>
             </div>
         </div>

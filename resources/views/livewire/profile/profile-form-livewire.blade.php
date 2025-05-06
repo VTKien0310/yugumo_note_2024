@@ -87,9 +87,8 @@ new class extends Component {
     <label class="w-full floating-label">
         <span>Your Email</span>
         <x-input
-                wire:model="email"
-                value="{{ $email }}"
-                id="email" name="email" type="email"
+                wire:model="email" value="{{ $email }}"
+                name="email" type="email"
                 placeholder="Your Email"
                 class="input w-full"
         />
@@ -99,8 +98,12 @@ new class extends Component {
     {{-- New password input --}}
     <label class="w-full floating-label mt-2">
         <span>New password</span>
-        <x-password wire:model="password" id="password" name="password" placeholder="New password"
-                    class="input w-full"/>
+        <x-password
+                wire:model="password"
+                name="password"
+                placeholder="New password"
+                class="input w-full"
+        />
     </label>
     @error('password')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
 
@@ -109,7 +112,7 @@ new class extends Component {
         <span>Current password*</span>
         <x-password
                 wire:model="currentPassword"
-                id="current_password" name="current_password"
+                name="current_password"
                 placeholder="Current password*" required
                 class="input w-full"
         />
