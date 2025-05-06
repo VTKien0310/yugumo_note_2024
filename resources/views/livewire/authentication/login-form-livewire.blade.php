@@ -35,7 +35,6 @@ new class extends Component {
     private function onAuthAttemptFail(): void
     {
         $this->showFailedToast = true;
-        session()->flash('login-failed', 'Invalid email or password.');
     }
 }
 ?>
