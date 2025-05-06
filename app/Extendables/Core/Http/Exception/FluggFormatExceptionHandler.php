@@ -24,7 +24,7 @@ class FluggFormatExceptionHandler
 
     public function __construct()
     {
-        $this->responseBuilder = new FluggFormatResponseBuilder();
+        $this->responseBuilder = new FluggFormatResponseBuilder;
     }
 
     public function __invoke(Exceptions $exceptions): void

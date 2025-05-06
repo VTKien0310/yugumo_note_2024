@@ -2,10 +2,8 @@
 
 namespace App\Extendables\Core\Http\Request\States\QueryString\JsonApi;
 
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Extendables\Core\Http\Request\States\QueryString\FilterCondition;
 use App\Extendables\Core\Http\Request\States\QueryString\FilterQueryStringState;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
 class JsonApiFilterQueryStringState implements FilterQueryStringState
@@ -36,10 +34,6 @@ class JsonApiFilterQueryStringState implements FilterQueryStringState
         }
     }
 
-    /**
-     * @param  string  $value
-     * @return string|bool|array|null
-     */
     private function processRequestFilterValue(string $value): string|bool|array|null
     {
         if ($value === 'null') {
@@ -62,9 +56,9 @@ class JsonApiFilterQueryStringState implements FilterQueryStringState
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function getFilterConditions(): array
+    public function getFilterConditions(): array
     {
         return $this->filters;
     }

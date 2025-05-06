@@ -4,13 +4,7 @@ namespace App\Extendables\Core\Http\Request\States\QueryString;
 
 interface PaginateQueryStringState
 {
-    /**
-     * @return int
-     */
-    function getPageSize(): int;
+    public function getPageSize(): int;
 
-    /**
-     * @return int
-     */
-    function getPageNumber(): int;
+    public function getPageNumber(): int;
 }

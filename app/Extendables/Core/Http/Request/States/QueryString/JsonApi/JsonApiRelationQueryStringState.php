@@ -2,9 +2,7 @@
 
 namespace App\Extendables\Core\Http\Request\States\QueryString\JsonApi;
 
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Extendables\Core\Http\Request\States\QueryString\RelationQueryStringState;
-use Illuminate\Http\Request;
 
 class JsonApiRelationQueryStringState implements RelationQueryStringState
 {

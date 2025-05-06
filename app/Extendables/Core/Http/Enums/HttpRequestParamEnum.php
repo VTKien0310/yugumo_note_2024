@@ -19,4 +19,10 @@ enum HttpRequestParamEnum: string
     case SORT_PRIORITY = 'sort_priority';
 
     case PAGINATE = 'page';
+
+    case PAGE_SIZE = 'size';
+
+    case PAGE_NUMBER = 'number';
+
+    case TIMEZONE = 'timezone';
 }

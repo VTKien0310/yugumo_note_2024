@@ -10,16 +10,10 @@ class DummyMailPort implements MailPort
     /**
      * {@inheritDoc}
      */
-    public function send(User|string|Collection $receivers, string $mailable, ...$mailableArgs): void
-    {
-
-    }
+    public function send(User|string|Collection $receivers, string $mailable, ...$mailableArgs): void {}
 
     /**
      * {@inheritDoc}
      */
-    public function queueSend(User|string|Collection $receivers, string $mailable, ...$mailableArgs): void
-    {
-
-    }
+    public function queueSend(User|string|Collection $receivers, string $mailable, ...$mailableArgs): void {}
 }

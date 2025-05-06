@@ -8,11 +8,10 @@ use Illuminate\Database\Query\Builder;
 
 class BasicSort extends Sort
 {
-
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function handle(EloquentBuilder|Builder $builder, SortCondition $sortCondition): Builder|EloquentBuilder
+    public function handle(EloquentBuilder|Builder $builder, SortCondition $sortCondition): Builder|EloquentBuilder
     {
         $sortColumn = $this->targetColumn;
 

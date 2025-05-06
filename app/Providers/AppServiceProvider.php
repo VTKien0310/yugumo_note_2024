@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+use App\Features\Note\Models\ChecklistNoteContent;
+use App\Features\Note\Models\Note;
+use App\Features\Note\Models\TextNoteContent;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +25,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Relation::enforceMorphMap([
+            Note::morphType() => Note::class,
+            TextNoteContent::morphType() => TextNoteContent::class,
+            ChecklistNoteContent::morphType() => ChecklistNoteContent::class,
+        ]);
+
+        Carbon::macro('toLocalizedString', function (): string {
+            $timezone = request()->query(HttpRequestParamEnum::TIMEZONE->value, 'Asia/Ho_Chi_Minh');
+
+            return $this->setTimezone($timezone)->toDateTimeString();
+        });
     }
 }

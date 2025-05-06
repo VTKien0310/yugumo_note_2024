@@ -52,7 +52,7 @@ class ExtendableServiceProvider extends ServiceProvider
             FileStoragePort::class,
             function () {
                 if ($this->app->environment('testing')) {
-                    return new DummyFileStoragePort();
+                    return new DummyFileStoragePort;
                 }
 
                 $rootDir = config('filesystems.root_dir', '');
@@ -68,6 +68,7 @@ class ExtendableServiceProvider extends ServiceProvider
                         $cloudFrontKeyPairId,
                         base_path($cloudFrontPrivateKey)
                     );
+
                     return new S3WithCloudFrontFileStoragePort($urlSigner, $rootDir, $defaultTempUrlDuration);
                 }
 
@@ -76,24 +77,24 @@ class ExtendableServiceProvider extends ServiceProvider
         );
         $this->app->bind(MailPort::class, function () {
             if ($this->app->environment('testing')) {
-                return new DummyMailPort();
+                return new DummyMailPort;
             }
 
-            return new NativeMailPort();
+            return new NativeMailPort;
         });
         $this->app->bind(NotificationPort::class, function () {
             if ($this->app->environment('testing')) {
-                return new DummyNotificationPort();
+                return new DummyNotificationPort;
             }
 
-            return new NativeNotificationPort();
+            return new NativeNotificationPort;
         });
         $this->app->bind(RemoteLogPort::class, function () {
             if ($this->app->environment('testing')) {
-                return new DummyRemoteLogPort();
+                return new DummyRemoteLogPort;
             }
 
-            return new SlackLogPort();
+            return new SlackLogPort;
         });
 
         // state binding
@@ -143,12 +144,12 @@ class ExtendableServiceProvider extends ServiceProvider
     {
         Builder::macro('whereEmpty', function (string $field) {
             return $this->where(
-                fn(Builder $query) => $query->whereNull($field)->orWhere($field, '=', '')
+                fn (Builder $query) => $query->whereNull($field)->orWhere($field, '=', '')
             );
         });
         EloquentBuilder::macro('whereEmpty', function (string $field) {
             return $this->where(
-                fn(EloquentBuilder $query) => $query->whereNull($field)->orWhere($field, '=', '')
+                fn (EloquentBuilder $query) => $query->whereNull($field)->orWhere($field, '=', '')
             );
         });
 

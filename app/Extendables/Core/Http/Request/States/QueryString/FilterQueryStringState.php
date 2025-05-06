@@ -7,5 +7,5 @@ interface FilterQueryStringState
     /**
      * @return FilterCondition[]
      */
-    function getFilterConditions(): array;
+    public function getFilterConditions(): array;
 }

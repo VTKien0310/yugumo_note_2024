@@ -9,18 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 class FluggFormatResponseBuilder implements ResponseBuilder
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function responseSuccess(mixed $data): JsonResponse
+    public function responseSuccess(mixed $data): JsonResponse
     {
         return $this->makeSuccessResponse($data);
     }
 
-    /**
-     * @param  mixed  $data
-     * @param  int  $statusCode
-     * @return JsonResponse
-     */
     private function makeSuccessResponse(mixed $data, int $statusCode = Response::HTTP_OK): JsonResponse
     {
         $baseResponse = $this->baseSuccessResponse($statusCode);
@@ -32,10 +27,6 @@ class FluggFormatResponseBuilder implements ResponseBuilder
         return response()->json(array_merge($baseResponse, ['data' => $data]));
     }
 
-    /**
-     * @param  int  $statusCode
-     * @return array
-     */
     private function baseSuccessResponse(int $statusCode = Response::HTTP_OK): array
     {
         return [
@@ -45,25 +36,25 @@ class FluggFormatResponseBuilder implements ResponseBuilder
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function responseCreated(mixed $data): JsonResponse
+    public function responseCreated(mixed $data): JsonResponse
     {
         return $this->makeSuccessResponse($data, Response::HTTP_CREATED);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function responseNoContent(): JsonResponse
+    public function responseNoContent(): JsonResponse
     {
         return $this->makeSuccessResponse(null);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function responseNotFound(string $errorCode, ?string $message = null): JsonResponse
+    public function responseNotFound(string $errorCode, ?string $message = null): JsonResponse
     {
         return $this->makeErrorResponse($errorCode, $message, Response::HTTP_NOT_FOUND);
     }
@@ -80,12 +71,6 @@ class FluggFormatResponseBuilder implements ResponseBuilder
         ];
     }
 
-    /**
-     * @param  string  $errorCode
-     * @param  string|null  $message
-     * @param  int  $statusCode
-     * @return JsonResponse
-     */
     private function makeErrorResponse(
         string $errorCode,
         ?string $message,
@@ -98,33 +83,33 @@ class FluggFormatResponseBuilder implements ResponseBuilder
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function responseBadRequest(string $errorCode, ?string $message = null): JsonResponse
+    public function responseBadRequest(string $errorCode, ?string $message = null): JsonResponse
     {
         return $this->makeErrorResponse($errorCode, $message);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function responseForbidden(string $errorCode, ?string $message = null): JsonResponse
+    public function responseForbidden(string $errorCode, ?string $message = null): JsonResponse
     {
         return $this->makeErrorResponse($errorCode, $message, Response::HTTP_FORBIDDEN);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function responseUnauthorized(string $errorCode, ?string $message = null): JsonResponse
+    public function responseUnauthorized(string $errorCode, ?string $message = null): JsonResponse
     {
         return $this->makeErrorResponse($errorCode, $message, Response::HTTP_UNAUTHORIZED);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function responseUnknownError(string $errorCode, ?string $message = null): JsonResponse
+    public function responseUnknownError(string $errorCode, ?string $message = null): JsonResponse
     {
         return $this->makeErrorResponse($errorCode, $message, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
@@ -132,7 +117,7 @@ class FluggFormatResponseBuilder implements ResponseBuilder
     /**
      * {@inheritDoc}
      */
-    public function responseTooManyRequests(string $errorCode, string $message = null): JsonResponse
+    public function responseTooManyRequests(string $errorCode, ?string $message = null): JsonResponse
     {
         return $this->makeErrorResponse($errorCode, $message, Response::HTTP_TOO_MANY_REQUESTS);
     }

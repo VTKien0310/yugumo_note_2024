@@ -2,14 +2,32 @@
 
 namespace App\Features\User\Models;
 
+use App\Extendables\Core\Models\Traits\StaticColumnQualifier;
 use App\Extendables\Core\Models\Traits\UlidEloquent;
+use App\Features\Note\Models\Note;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use UlidEloquent,
-        Notifiable;
+    use Notifiable,
+        SoftDeletes,
+        StaticColumnQualifier,
+        UlidEloquent;
+
+    const string ID = 'id';
+
+    const string NAME = 'name';
+
+    const string EMAIL = 'email';
+
+    const string PASSWORD = 'password';
+
+    const string REMEMBER_TOKEN = 'remember_token';
+
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -42,5 +60,12 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    const string RELATION_NOTES = 'notes';
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class, 'user_id', 'id');
     }
 }

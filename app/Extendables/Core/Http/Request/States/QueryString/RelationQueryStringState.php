@@ -4,20 +4,9 @@ namespace App\Extendables\Core\Http\Request\States\QueryString;
 
 interface RelationQueryStringState
 {
-    /**
-     * @return array
-     */
-    function getRelations(): array;
+    public function getRelations(): array;
 
-    /**
-     * @param  string  $relation
-     * @return bool
-     */
-    function isRelationRequested(string $relation): bool;
+    public function isRelationRequested(string $relation): bool;
 
-    /**
-     * @param  array  $relations
-     * @return bool
-     */
-    function areAllRelationsRequested(array $relations): bool;
+    public function areAllRelationsRequested(array $relations): bool;
 }

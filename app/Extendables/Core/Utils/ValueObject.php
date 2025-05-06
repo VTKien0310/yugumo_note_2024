@@ -12,7 +12,7 @@ use JsonSerializable;
 use Symfony\Component\HttpFoundation\Response;
 use UnitEnum;
 
-abstract class ValueObject implements Arrayable, Responsable, JsonSerializable
+abstract class ValueObject implements Arrayable, JsonSerializable, Responsable
 {
     /**
      * Get all stored value as a collection
@@ -54,7 +54,7 @@ abstract class ValueObject implements Arrayable, Responsable, JsonSerializable
                     is_object($value) => $this->turnKeysIntoSnakeCase(get_object_vars($value), $recursively),
                     default => $value
                 }
-                : $value;
+            : $value;
         }
 
         return $snakeCaseKeyArray;

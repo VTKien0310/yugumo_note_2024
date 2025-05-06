@@ -11,21 +11,11 @@ class PaginateQuery
 {
     const MAX_PAGE_SIZE = 2000;
 
-    /**
-     * @param  PaginateQueryStringState  $paginateQueryStringState
-     */
-    function __construct(
+    public function __construct(
         private readonly PaginateQueryStringState $paginateQueryStringState
-    ) {
-    }
+    ) {}
 
-    /**
-     * @param  EloquentBuilder|Builder  $builder
-     * @param  int|null  $pageSize
-     * @param  int|null  $pageNumber
-     * @return LengthAwarePaginator
-     */
-    function handle(
+    public function handle(
         EloquentBuilder|Builder $builder,
         ?int $pageSize = null,
         ?int $pageNumber = null
@@ -41,7 +31,8 @@ class PaginateQuery
 
         return $builder->paginate(
             perPage: $pageSize,
-            page: $pageNumber
+            pageName: 'x-secret-page',      // needed to override Laravel default pagination behavior
+            page: $pageNumber,
         );
     }
 }

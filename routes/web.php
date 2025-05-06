@@ -1,7 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Extendables\Core\Http\Route\RouteInvoker;
 
-Route::get('/', function () {
-    return view('welcome');
+RouteInvoker::invokeWebRoute('authentication');
+
+Route::middleware('auth:web')->group(function () {
+    RouteInvoker::invokeWebRoute('note');
+    RouteInvoker::invokeWebRoute('profile');
 });
