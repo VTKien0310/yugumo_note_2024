@@ -111,6 +111,6 @@ class NoteController extends WebController
 
         return redirect()
             ->route('notes.home')
-            ->with('remove-bookmark-success', 'Remove note bookmark successfully.');
+            ->with('remove-bookmark-success', 'Note bookmark removed successfully.');
     }
 }
