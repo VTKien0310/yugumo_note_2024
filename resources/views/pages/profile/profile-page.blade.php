@@ -6,7 +6,11 @@
             <div class="w-full md:w-1/2 lg:w-1/4 xl:w-1/4 flex flex-col items-center justify-start">
                 <livewire:profile-form-livewire/>
                 <div class="divider"></div>
-                <button class="btn btn-block btn-error">Logout</button>
+                <form action="{{ route('auth.logout') }}" method="POST" class="w-full">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-block btn-error">Logout</button>
+                </form>
             </div>
         </div>
     </x-layouts.authenticated-layout>
