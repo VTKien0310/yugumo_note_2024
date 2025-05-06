@@ -7,6 +7,8 @@ new class extends Component {
 
     public string $password = '';
 
+    public bool $showFailedToast = false;
+
     public function loginAttempt(): void
     {
         $credentials = $this->validatedData();
@@ -32,40 +34,55 @@ new class extends Component {
 
     private function onAuthAttemptFail(): void
     {
-        session()->flash('login-failed', 'Invalid email or password.');
+        $this->showFailedToast = true;
     }
 }
 ?>
 
 <div class="card w-full lg:w-1/2 xl:w-1/4 h-1/2 min-h-fit flex flex-col justify-center items-center bg-base-100 rounded-lg shadow-xl">
-    <h1 class="mb-16 text-4xl brand-name-font">YUGUMO</h1>
-
-    <x-form wire:submit="loginAttempt" id="login-form" class="flex flex-col justify-around items-center mb-8">
-        <div class="w-full flex flex-col justify-center items-center mb-4">
-            <div class="w-full text-left flex flex-row justify-between items-center mb-1">
-                <x-label for="email" class="mr-6"/>
-                <x-input wire:model="email" name="email" class="w-4/6 input input-bordered"/>
-            </div>
-            @error('email')
-            <div class="alert alert-error">{{ $message }}</div>
-            @enderror
+    {{-- Login failed toast --}}
+    <div x-data="{ display: $wire.entangle('showFailedToast') }" class="toast toast-top toast-center">
+        <div x-show="display" class="alert alert-error">
+            <p>Invalid email or password.</p>
+            <button @click="display = false" type="button" class="btn btn-circle btn-ghost btn-xs">
+                <x-ionicon-close class="h-4 w-4"/>
+            </button>
         </div>
-
-        <div class="w-full flex flex-col justify-center items-center">
-            <div class="w-full text-left flex flex-row justify-between items-center mb-1">
-                <x-label for="password" class="mr-6"/>
-                <x-input wire:model="password" name="password" type="password" class="w-4/6 input input-bordered"/>
-            </div>
-            @error('password')
-            <div class="alert alert-error">{{ $message }}</div>
-            @enderror
-        </div>
-    </x-form>
-
-    <div class="w-2/3 flex flex-col justify-center items-center">
-        <button type="submit" form="login-form" class="w-full btn btn-primary mb-2">Log in</button>
-        @if(session()->has('login-failed'))
-            <div class="w-full alert alert-error">{{ session('login-failed') }}</div>
-        @endif
     </div>
+
+    <h1 class="mb-8 text-4xl brand-name-font">YUGUMO</h1>
+
+    {{-- Login form --}}
+    <x-form wire:submit="loginAttempt" class="w-2/3 flex flex-col justify-around items-center mb-8">
+
+        {{-- Email input --}}
+        <label class="w-full floating-label">
+            <span>Email</span>
+            <x-input
+                    wire:model="email"
+                    name="email" type="email"
+                    placeholder="Email"
+                    class="input w-full"
+                    required
+            />
+        </label>
+        @error('email')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
+
+        {{-- Password input --}}
+        <label class="w-full floating-label mt-2">
+            <span>Password</span>
+            <x-password
+                    wire:model="password"
+                    name="password"
+                    placeholder="Password"
+                    class="input w-full"
+                    required
+            />
+        </label>
+        @error('password')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
+
+        {{-- Submit button --}}
+        <button type="submit" class="w-full btn btn-primary mt-4">Log in</button>
+
+    </x-form>
 </div>
