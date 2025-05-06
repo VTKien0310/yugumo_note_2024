@@ -44,7 +44,7 @@ new class extends Component {
         <div class="w-full flex flex-col justify-center items-center mb-4">
             <div class="w-full text-left flex flex-row justify-between items-center mb-1">
                 <x-label for="email" class="mr-6"/>
-                <x-input wire:model="email" name="email" class="input input-bordered"/>
+                <x-input wire:model="email" name="email" class="w-4/6 input input-bordered"/>
             </div>
             @error('email')
             <div class="alert alert-error">{{ $message }}</div>
@@ -54,7 +54,7 @@ new class extends Component {
         <div class="w-full flex flex-col justify-center items-center">
             <div class="w-full text-left flex flex-row justify-between items-center mb-1">
                 <x-label for="password" class="mr-6"/>
-                <x-input wire:model="password" name="password" type="password" class="input input-bordered"/>
+                <x-input wire:model="password" name="password" type="password" class="w-4/6 input input-bordered"/>
             </div>
             @error('password')
             <div class="alert alert-error">{{ $message }}</div>
