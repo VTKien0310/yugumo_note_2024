@@ -9,8 +9,7 @@ readonly class UpdateUserAction
 {
     public function __construct(
         private UpdateUserCommand $updateUserCommand,
-    ) {
-    }
+    ) {}
 
     public function handle(User $user, array $data): User
     {

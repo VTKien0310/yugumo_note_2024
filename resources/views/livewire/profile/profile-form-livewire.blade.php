@@ -2,28 +2,108 @@
 
 use Livewire\Volt\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Arr;
+use App\Features\User\Models\User;
+use App\Features\User\Actions\UpdateUserAction;
+use Illuminate\Validation\Rule;
 
 new class extends Component {
     public string $email = '';
 
     public string $password = '';
 
+    public string $currentPassword = '';
+
     public function mount(): void
     {
         $this->email = Auth::user()->email;
     }
+
+    public function updateProfile(): void
+    {
+        $user = Auth::user();
+
+        $validatedData = $this->validatedData($user);
+
+        $user = resolve(UpdateUserAction::class)->handle($user, $validatedData);
+
+        $this->resetProps($user);
+    }
+
+    private function validatedData(User $user): array
+    {
+        $validated = $this->validate([
+            'email' => [
+                'nullable',
+                'string',
+                'email',
+                Rule::unique(User::table(), User::EMAIL)->ignore($user->id),
+            ],
+            'password' => [
+                'nullable',
+                'string',
+                Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+            ],
+            'currentPassword' => 'required_with:email,password|string|current_password:web',
+        ]);
+
+        $validated = Arr::only($validated, ['email', 'password']);
+
+        return array_filter($validated, fn(string $data) => !empty($data));
+    }
+
+    private function resetProps(User $user): void
+    {
+        $this->password = '';
+        $this->currentPassword = '';
+        $this->email = $user->email;
+    }
 }
 ?>
 
-<div class="w-full flex flex-col items-center justify-start">
-    <label class="input w-full">
-        <input wire:model="email" type="email" placeholder="mail@site.com" required/>
+<x-form wire:submit="updateProfile" class="w-full flex flex-col items-center justify-start">
+
+    {{-- Email input --}}
+    <label class="w-full floating-label">
+        <span>Your Email</span>
+        <x-input
+            wire:model="email"
+            value="{{ $email }}"
+            id="email" name="email" type="email"
+            placeholder="Your Email"
+            class="input w-full"
+        />
     </label>
-    <label class="input w-full mt-2">
-        <input wire:model="password" type="password" placeholder="Password" required/>
+    @error('email')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
+
+    {{-- New password input --}}
+    <label class="w-full floating-label mt-2">
+        <span>New password</span>
+        <x-password wire:model="password" id="password" name="password" placeholder="New password" class="input w-full"/>
     </label>
+    @error('password')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
+
+    {{-- Current password input --}}
+    <label class="w-full floating-label mt-2">
+        <span>Current password*</span>
+        <x-password
+            wire:model="currentPassword"
+            id="current_password" name="current_password"
+            placeholder="Current password*" required
+            class="input w-full"
+        />
+    </label>
+    @error('currentPassword')<p class="w-full text-start text-error">{{ $message }}</p>@enderror
+
+    {{-- Form actions --}}
     <div class="w-full mt-3 flex flex-row items-center justify-between">
-        <button class="w-1/3 btn">Reset</button>
-        <button class="w-1/3 btn btn-primary">Update</button>
+        <button type="reset" class="w-1/3 btn">Reset</button>
+        <button type="submit" class="w-1/3 btn btn-primary">Update</button>
     </div>
-</div>
+
+</x-form>
