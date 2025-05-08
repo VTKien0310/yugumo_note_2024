@@ -8,6 +8,7 @@ use App\Features\Note\Models\Note;
 use App\Features\Note\Models\TextNoteContent;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Relation::enforceMorphMap([
             Note::morphType() => Note::class,
             TextNoteContent::morphType() => TextNoteContent::class,
