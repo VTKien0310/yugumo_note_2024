@@ -20,6 +20,6 @@ class NoteKeywordFilter extends Filter
             [(string) $filterCondition->condition]
         );
 
-        return $builder->whereHas(Note::RELATION_SEARCH_INDEX, $matchContentUsingFullText);
+        return $builder->whereHas(Note::RELATION_FULL_TEXT_SEARCHABLE_CONTENTS, $matchContentUsingFullText);
     }
 }
