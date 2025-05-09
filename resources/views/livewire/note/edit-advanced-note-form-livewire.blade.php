@@ -42,7 +42,7 @@ new class extends Component {
             <x-trix
                 wire:model.live.debounce.500ms="content"
                 name="content"
-                class="block w-full"
+                class="w-full block"
             />
         </div>
     </div>
