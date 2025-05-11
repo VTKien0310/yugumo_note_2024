@@ -1,3 +1,8 @@
+## About
+A note taking web application. 
+The application's namesake is derived from the
+destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_(1941))).
+
 ## Project specification
 
 - TALL stack:
@@ -11,6 +16,8 @@
 ## System requirement
 
 - PHP 8.3
+- Node.js 18
+- NPM package manager
 - Postgres 15.1
 
 ## Dependencies
