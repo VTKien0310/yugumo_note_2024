@@ -1,7 +1,7 @@
 ## About
 A note taking web application. 
 The application's namesake is derived from the
-destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_(1941))).
+destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_(1941)).
 
 ## Project specification
 
