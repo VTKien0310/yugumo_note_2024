@@ -25,10 +25,8 @@
 - [Laravel beyond CRUD: Working with data](https://online.fliphtml5.com/pbudi/dfap/#p=6)
 - [Laravel beyond CRUD: Actions](https://online.fliphtml5.com/pbudi/dfap/#p=6)
 - [Laravel beyond CRUD: Models](https://online.fliphtml5.com/pbudi/dfap/#p=6)
-- [Laravel beyond CRUD: Testing domains](https://online.fliphtml5.com/pbudi/dfap/#p=7)
 - [Effective Eloquent queries](https://laravel-news.com/effective-eloquent)
 - [JSON API specification's query string format](https://jsonapi.org/format/#fetching)
-- [State machines in Laravel](https://www.youtube.com/watch?v=1A1xFtlDyzU)
 
 ### Detail
 
@@ -44,16 +42,9 @@ app/
     - Validators/: validation logic
     - Jobs/: queue jobs
     - Notifications/: notifications
-    - Exports/: exporters
-    - Imports/: importers
     - ValueObjects/: classes used to structure data instead of using unstructured and hard to predict arrays
     - Cache/: caching related
-    - StateMachines/: implementation of the state machine pattern
-    - ApiResources/: API resources to transform data for JSON responses
     - Middlewares/: features related middlewares
-    - Responses/
-        - ErrorCodeEnum.php: error codes of responses
-        - Responder.php: build responses
     - Enums/: feature related enums
     - Commands/: reusable write to database logic
     - Queries/: reusable read from database logic
@@ -63,7 +54,6 @@ app/
         - Relationships/: relationship interfaces for better typing and reuse of repetitive relationships
         - .php: represents a record in the data source. Models should ony contain mutators, accessors and no business
           logic
-    - Contexts/: manage request data and information
 - Http/: HTTP layer code
     - Controller.php: controller for api endpoints
     - routes.php: api routing definition
