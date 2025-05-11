@@ -95,6 +95,13 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
         return $this->morphOne(SearchIndex::class, SearchIndex::RELATION_SEARCHABLE);
     }
 
+    const string RELATION_FULL_TEXT_SEARCHABLE_CONTENTS = 'fullTextSearchableContents';
+
+    public function fullTextSearchableContents(): HasMany
+    {
+        return $this->hasMany(SearchIndex::class, SearchIndex::NOTE_ID, 'id');
+    }
+
     public static function maxBookmarkedNotesPerUser(): int
     {
         return 20;

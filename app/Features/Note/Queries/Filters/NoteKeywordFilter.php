@@ -13,13 +13,14 @@ class NoteKeywordFilter extends Filter
 {
     public function handle(EloquentBuilder|Builder $builder, FilterCondition $filterCondition): Builder|EloquentBuilder
     {
-        $content = SearchIndex::qualifiedColumn(SearchIndex::CONTENT);
+        $contentColumn = SearchIndex::qualifiedColumn(SearchIndex::CONTENT);
+        $keywordCondition = '%'.$filterCondition->condition.'%';
 
-        $matchContentUsingFullText = fn (EloquentBuilder $searchIndexQuery) => $searchIndexQuery->whereRaw(
-            "$content &@~ ?",
-            [(string) $filterCondition->condition]
+        $matchContentUsingFullText = fn (EloquentBuilder $searchIndexQuery) => $searchIndexQuery->whereLike(
+            $contentColumn,
+            $keywordCondition
         );
 
-        return $builder->whereHas(Note::RELATION_SEARCH_INDEX, $matchContentUsingFullText);
+        return $builder->whereHas(Note::RELATION_FULL_TEXT_SEARCHABLE_CONTENTS, $matchContentUsingFullText);
     }
 }

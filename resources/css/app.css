@@ -30,13 +30,30 @@
     font-style: normal;
 }
 
-.trix-content {
-    height: 550px;
-}
-
 .btn-with-centered-icon {
     display: flex;
     flex-flow: row;
     justify-content: center;
     align-items: center;
+}
+
+/* Trix editor styling */
+
+.trix-content {
+    height: 500px;
+}
+
+.trix-content ol li {
+    list-style: decimal;
+    margin-left: 1em;
+}
+
+.trix-content ul li {
+    list-style: disc;
+    margin-left: 1em;
+}
+
+.trix-content a {
+    color: var(--color-blue-500);
+    text-decoration: underline;
 }

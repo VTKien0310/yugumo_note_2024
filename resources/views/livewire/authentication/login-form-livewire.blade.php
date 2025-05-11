@@ -39,7 +39,7 @@ new class extends Component {
 }
 ?>
 
-<div class="card w-full lg:w-1/2 xl:w-1/4 h-1/2 min-h-fit flex flex-col justify-center items-center bg-base-100 rounded-lg shadow-xl">
+<div class="card w-full sm:w-2/3 lg:w-1/2 xl:w-1/4 h-1/2 min-h-fit flex flex-col justify-center items-center bg-base-100 rounded-lg shadow-xl">
     {{-- Login failed toast --}}
     <div x-data="{ display: $wire.entangle('showFailedToast') }" class="toast toast-top toast-center">
         <div x-show="display" class="alert alert-error">
@@ -50,7 +50,7 @@ new class extends Component {
         </div>
     </div>
 
-    <h1 class="mb-8 text-4xl brand-name-font">YUGUMO</h1>
+    <h1 class="pb-8 pt-5 lg:pt-0 xl:pt-0 text-center text-4xl brand-name-font">YUGUMO</h1>
 
     {{-- Login form --}}
     <x-form wire:submit="loginAttempt" class="w-2/3 flex flex-col justify-around items-center mb-8">

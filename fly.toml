@@ -1,0 +1,41 @@
+# fly.toml app configuration file generated for yugumo-note-2024 on 2025-05-07T10:37:45+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'yugumo-note-2024'
+primary_region = 'sin'
+console_command = 'php /var/www/html/artisan tinker'
+
+[build]
+  [build.args]
+    NODE_VERSION = '18'
+    PHP_VERSION = '8.3'
+
+[env]
+  APP_NAME = 'Yugumo'
+  APP_ENV = 'production'
+  APP_URL = 'https://yugumo-note-2024.fly.dev'
+  BCRYPT_ROUNDS = '12'
+  LOG_CHANNEL = 'stderr'
+  LOG_LEVEL = 'info'
+  LOG_STDERR_FORMATTER = 'Monolog\Formatter\JsonFormatter'
+  DB_CONNECTION = 'pgsql'
+  SESSION_DRIVER = 'database'
+  SESSION_SECURE_COOKIE = 'true'
+  VITE_APP_NAME = 'Yugumo'
+
+[deploy]
+  release_command = "php /var/www/html/artisan migrate --force"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'off'
+  auto_start_machines = false
+  min_machines_running = 1
+  processes = ['app']
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '512mb'
