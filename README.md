@@ -1,66 +1,141 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Project specification
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+- TALL stack:
+    - Tailwind 4
+    - Alpine.js 3
+    - Laravel 11
+    - Livewire 3
+- Composer 2
+- Timezone: UTC
 
-## About Laravel
+## System requirement
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3
+- Postgres 15.1
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Dependencies
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- [Laravel Telescope for debugging](https://laravel.com/docs/11.x/telescope)
 
-## Learning Laravel
+## Structure
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Inspiration
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- [Laravel beyond CRUD: Domain oriented Laravel](https://online.fliphtml5.com/pbudi/dfap/#p=6)
+- [Laravel beyond CRUD: Working with data](https://online.fliphtml5.com/pbudi/dfap/#p=6)
+- [Laravel beyond CRUD: Actions](https://online.fliphtml5.com/pbudi/dfap/#p=6)
+- [Laravel beyond CRUD: Models](https://online.fliphtml5.com/pbudi/dfap/#p=6)
+- [Laravel beyond CRUD: Testing domains](https://online.fliphtml5.com/pbudi/dfap/#p=7)
+- [Effective Eloquent queries](https://laravel-news.com/effective-eloquent)
+- [JSON API specification's query string format](https://jsonapi.org/format/#fetching)
+- [State machines in Laravel](https://www.youtube.com/watch?v=1A1xFtlDyzU)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Detail
 
-## Laravel Sponsors
+app/
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- Enums/: application's global enums
+- Extendables/: base classes, interfaces, and traits for reuse across the entire application. It has its own README.md
+  in the directory
+- Features/: features related code
+    - Actions/: reusable business and application logic
+    - Authorizers/: authorization logic
+    - ArtisanCommands/: custom artisan commands
+    - Validators/: validation logic
+    - Jobs/: queue jobs
+    - Notifications/: notifications
+    - Exports/: exporters
+    - Imports/: importers
+    - ValueObjects/: classes used to structure data instead of using unstructured and hard to predict arrays
+    - Cache/: caching related
+    - StateMachines/: implementation of the state machine pattern
+    - ApiResources/: API resources to transform data for JSON responses
+    - Middlewares/: features related middlewares
+    - Responses/
+        - ErrorCodeEnum.php: error codes of responses
+        - Responder.php: build responses
+    - Enums/: feature related enums
+    - Commands/: reusable write to database logic
+    - Queries/: reusable read from database logic
+        - Filters/: filters to be applied based on request query string for index queries
+        - Sorts/: sorts to be applied based on request query string for index queries
+    - Models/:
+        - Relationships/: relationship interfaces for better typing and reuse of repetitive relationships
+        - .php: represents a record in the data source. Models should ony contain mutators, accessors and no business
+          logic
+    - Contexts/: manage request data and information
+- Http/: HTTP layer code
+    - Controller.php: controller for api endpoints
+    - routes.php: api routing definition
+- Ports/: external or third party services interaction
 
-### Premium Partners
+## Setup
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### Install dependencies
 
-## Contributing
+#### For local development environment:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+composer install
+```
 
-## Code of Conduct
+#### For production environment:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+composer install --no-dev
+```
 
-## Security Vulnerabilities
+### Config .env
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+cp .env.example .env
+```
 
-## License
+Important fields:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- APP_*
+- DB_*
+- SESSION_*
+
+### Initialize
+
+```
+php artisan key:generate
+php artisan migrate:fresh
+php artisan db:seed
+php artisan optimize
+```
+
+## Code style fixer
+
+```shell
+./vendor/bin/pint
+```
+
+## Macros
+
+Macros are registered in `ExtendableServiceProvider.php`
+
+### Query builder macros
+
+- whereEmpty
+- whereNotEmpty
+
+### Str macros
+
+- replaceSlash
+- hashSha256
+- hashEachByteSha256
+
+## Conventions and standards
+
+### Model
+
+A Model class file should be organized into sections with the following order:
+
+- Using traits section.
+- ***Table structure*** section defining the Model's table and the Model's attributes as constants. This is intended for
+  more convenient typing in IDE and easier maintenance and updating of table's columns.
+- ***Configuration*** section defining the Model's casts, guarded, fillable, and hidden attributes.
+- ***Mutators & Accessors*** section.
+- ***Relationship*** section.
