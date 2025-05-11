@@ -106,6 +106,17 @@ php artisan db:seed
 php artisan optimize
 ```
 
+## Fly.io deployment
+
+- More details can be found on the Fly.io official [document](https://fly.io/docs/laravel/).
+- All setup has been done in the source code.
+- Install [flyctl](https://fly.io/docs/flyctl/) before proceeding with the deployment.
+- To deploy the application, run the following command:
+
+```shell
+fly deploy
+```
+
 ## Code style fixer
 
 ```shell
