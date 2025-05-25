@@ -65,7 +65,7 @@ new class extends Component {
                 editor.setValue(@entangle('content').defer, -1);
                 editor.session.on('change', () => @this.set('content', ed.getValue()));
             ">
-                <div x-ref="e" class="w-full" style="height: 400px; border:1px solid #ddd;"></div>
+                <div x-ref="e" class="w-full" style="height: 500px"></div>
             </div>
         </div>
     </div>
