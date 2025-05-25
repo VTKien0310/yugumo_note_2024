@@ -6,6 +6,7 @@ use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Features\Note\Models\ChecklistNoteContent;
 use App\Features\Note\Models\Note;
 use App\Features\Note\Models\TextNoteContent;
+use App\Features\Note\Models\XmlNoteContent;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
@@ -34,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
             Note::morphType() => Note::class,
             TextNoteContent::morphType() => TextNoteContent::class,
             ChecklistNoteContent::morphType() => ChecklistNoteContent::class,
+            XmlNoteContent::morphType() => XmlNoteContent::class,
         ]);
 
         Carbon::macro('toLocalizedString', function (): string {
