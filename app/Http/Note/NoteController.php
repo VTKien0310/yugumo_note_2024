@@ -88,10 +88,6 @@ class NoteController extends WebController
 
         match ($noteType->id) {
             NoteTypeEnum::CHECKLIST->value => $note->load(Note::RELATION_CHECKLIST_CONTENT),
-            NoteTypeEnum::XML->value => $note->load([
-                Note::RELATION_XML_CONTENT,
-                Note::RELATION_TEXT_CONTENT,
-            ]),
             default => $note->load(Note::RELATION_TEXT_CONTENT)
         };
 

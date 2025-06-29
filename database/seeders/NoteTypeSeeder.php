@@ -35,12 +35,6 @@ class NoteTypeSeeder extends Seeder
                 NoteType::DESCRIPTION => 'A list with checkboxes to keep track of things',
                 NoteType::ILLUSTRATION_PATH => 'resources/images/checklist.svg',
             ],
-            [
-                NoteType::ID => NoteTypeEnum::XML->value,
-                NoteType::NAME => 'XML',
-                NoteType::DESCRIPTION => 'A note with XML content',
-                NoteType::ILLUSTRATION_PATH => 'resources/images/xml.svg',
-            ],
         ];
 
         $now = now();

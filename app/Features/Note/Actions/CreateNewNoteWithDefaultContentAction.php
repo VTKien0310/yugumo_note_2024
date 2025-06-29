@@ -16,7 +16,6 @@ readonly class CreateNewNoteWithDefaultContentAction
         private CreateNoteCommand $createNoteCommand,
         private CreateEmptyTextNoteContentAction $createEmptyTextNoteContentAction,
         private CreateEmptyChecklistNoteContentAction $createEmptyChecklistNoteContentAction,
-        private CreateEmptyXmlNoteContentAction $createEmptyXmlNoteContentAction,
         private CreateSearchIndexForNoteTitleAction $createSearchIndexForNoteTitleAction
     ) {}
 
@@ -51,14 +50,7 @@ readonly class CreateNewNoteWithDefaultContentAction
                 note: $note,
                 useTransaction: false
             ),
-            NoteTypeEnum::XML->value => $this->createDefaultContentForNewlyCreatedXmlNote($note),
             default => $this->createEmptyTextNoteContentAction->handle($note)
         };
-    }
-
-    private function createDefaultContentForNewlyCreatedXmlNote(Note $note): void
-    {
-        $this->createEmptyXmlNoteContentAction->handle($note);
-        $this->createEmptyTextNoteContentAction->handle($note);
     }
 }

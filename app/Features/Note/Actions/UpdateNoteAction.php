@@ -15,7 +15,6 @@ readonly class UpdateNoteAction
         private UpdateNoteCommand $updateNoteCommand,
         private UpdateTextNoteContentAction $updateTextNoteContentAction,
         private UpdateSearchIndexForNoteTitleAction $updateSearchIndexForNoteTitleAction,
-        private UpdateXmlNoteContentAction $updateXmlNoteContentAction,
         private CheckUserHasReachedMaximumAllowedBookmarkedNotesAction $checkUserHasReachedMaximumAllowedBookmarkedNotesAction
     ) {}
 
@@ -38,7 +37,6 @@ readonly class UpdateNoteAction
     {
         match ($note->type_id) {
             NoteTypeEnum::SIMPLE->value, NoteTypeEnum::ADVANCED->value => $this->updateTextNoteContent($note, $data),
-            NoteTypeEnum::XML->value => $this->updateXmlNoteType($note, $data),
             default => null
         };
     }
@@ -51,19 +49,6 @@ readonly class UpdateNoteAction
         }
 
         $this->updateTextNoteContentAction->handle($note->textContent, $data['text_content']);
-    }
-
-    private function updateXmlNoteType(Note $note, array $data): void
-    {
-        // update note's "description"
-        $this->updateTextNoteContent($note, $data);
-
-        $validXmlContent = isset($data['xml_content']) && is_string($data['xml_content']);
-        if (! $validXmlContent) {
-            return;
-        }
-
-        $this->updateXmlNoteContentAction->handle($note->xmlContent, $data['xml_content']);
     }
 
     private function hasNoteBookmarkStatusChange(Note $note, array $data): bool

@@ -88,13 +88,6 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
         return $this->hasMany(ChecklistNoteContent::class, ChecklistNoteContent::NOTE_ID, 'id');
     }
 
-    const string RELATION_XML_CONTENT = 'xmlContent';
-
-    public function xmlContent(): HasOne
-    {
-        return $this->hasOne(XmlNoteContent::class, XmlNoteContent::NOTE_ID, 'id');
-    }
-
     const string RELATION_SEARCH_INDEX = 'searchIndex';
 
     public function searchIndex(): MorphOne

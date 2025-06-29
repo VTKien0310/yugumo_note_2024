@@ -19,9 +19,6 @@
                 @case(NoteTypeEnum::CHECKLIST->value)
                     <livewire:edit-checklist-note-form-livewire :note="$note"/>
                     @break
-                @case(NoteTypeEnum::XML->value)
-                    <livewire:edit-xml-note-form-livewire :note="$note"/>
-                    @break
                 @default
                     <p>Work in progress ...</p>
             @endswitch
