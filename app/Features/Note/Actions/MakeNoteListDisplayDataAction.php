@@ -6,12 +6,14 @@ use App\Extendables\Core\Utils\GetRawTextFromWYSIWYGContentAction;
 use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
 use App\Features\NoteType\Enums\NoteTypeEnum;
+use Illuminate\Support\Str;
 
 readonly class MakeNoteListDisplayDataAction
 {
     public function __construct(
         private GetRawTextFromWYSIWYGContentAction $getRawTextFromWYSIWYGContentAction,
-    ) {}
+    ) {
+    }
 
     public function handle(Note $note): NoteListDisplayDataValueObject
     {
@@ -80,20 +82,6 @@ readonly class MakeNoteListDisplayDataAction
 
     private function shortenTextData(string $textData, int $maxLength): string
     {
-        $textData = trim($textData);
-
-        if (empty($textData)) {
-            return '';
-        }
-
-        $shortenedData = substr($textData, 0, $maxLength);
-
-        // the text data is short
-        if ($shortenedData === $textData) {
-            return $shortenedData;
-        }
-
-        // the text data is long
-        return trim($shortenedData).'...';
+        return Str::limit($textData, $maxLength, '...', true);
     }
 }
