@@ -2,7 +2,9 @@
 
 namespace App\Features\Note\Actions;
 
+use App\Extendables\Core\Utils\BoolIntValueEnum;
 use App\Extendables\Core\Utils\GetRawTextFromWYSIWYGContentAction;
+use App\Features\Note\Models\ChecklistNoteContent;
 use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
 use App\Features\NoteType\Enums\NoteTypeEnum;
@@ -65,12 +67,16 @@ readonly class MakeNoteListDisplayDataAction
 
     private function makeRepresentingContentForTextNote(Note $note): string
     {
-        return $note->textContent()->first()?->content ?? '';
+        return $note->textContent()->latest()->first()?->content ?? '';
     }
 
     private function makeRepresentingContentForChecklistNote(Note $note): string
     {
-        return $note->checklistContent()->first()?->content ?? '';
+        return $note->checklistContent()
+            ->where(ChecklistNoteContent::IS_COMPLETED, BoolIntValueEnum::FALSE)
+            ->latest()
+            ->first()
+            ?->content ?? '';
     }
 
     private function makeRepresentingContentForAdvancedNote(Note $note): string
