@@ -14,8 +14,7 @@ readonly class MakeNoteListDisplayDataAction
 {
     public function __construct(
         private GetRawTextFromWYSIWYGContentAction $getRawTextFromWYSIWYGContentAction,
-    ) {
-    }
+    ) {}
 
     public function handle(Note $note): NoteListDisplayDataValueObject
     {

@@ -1,11 +1,7 @@
 <?php
 
-use App\Features\Note\Actions\CreateNewNoteWithDefaultContentAction;
-use App\Features\NoteType\Actions\FindNoteTypeByIdAction;
 use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
-use App\Features\NoteType\Models\NoteType;
 use App\Features\NoteType\ValueObjects\NoteTypeViewDataValueObject;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -25,29 +21,6 @@ new class extends Component {
             'noteTypes' => $this->noteTypes
         ];
     }
-
-    public function addNoteForType(int $noteTypeId): void
-    {
-        $noteType = app()->make(FindNoteTypeByIdAction::class)->handle($noteTypeId);
-
-        $noteType ? $this->noteTypeFound($noteType) : $this->noteTypeNotFound();
-    }
-
-    private function noteTypeFound(NoteType $noteType): void
-    {
-        $newlyCreatedNote = app()->make(CreateNewNoteWithDefaultContentAction::class)->handle(Auth::user(), $noteType);
-
-        $this->redirectRoute('notes.show', [
-            'note' => $newlyCreatedNote->id
-        ]);
-    }
-
-    private function noteTypeNotFound(): void
-    {
-        session()->flash('note-type-not-found', 'The selected note type is not available.');
-
-        $this->redirectRoute('notes.create');
-    }
 }; ?>
 
 <div class="w-full flex flex-wrap flex-row justify-center content-center items-center gap-5 px-5 pb-8">
@@ -60,9 +33,12 @@ new class extends Component {
                 <h2 class="card-title">{{ $noteType->name }}</h2>
                 <p class="mt-1">{{ $noteType->description }}</p>
                 <div class="card-actions justify-center">
-                    <button wire:click="addNoteForType({{ $noteType->id }})" class="btn btn-primary btn-block">
-                        Add
-                    </button>
+                    <form action="{{ route('note-types.notes.store', ['noteType' => $noteType->id]) }}" method="POST" class="w-full">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-block">
+                            Add
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
