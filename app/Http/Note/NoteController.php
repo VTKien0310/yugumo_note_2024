@@ -4,6 +4,7 @@ namespace App\Http\Note;
 
 use App\Extendables\Core\Http\Controllers\WebController;
 use App\Extendables\Core\Utils\BoolIntValueEnum;
+use App\Features\Note\Actions\CreateNewNoteWithDefaultContentAction;
 use App\Features\Note\Actions\GetUserBookmarkedNotesAction;
 use App\Features\Note\Actions\GetUserNotesCountStatisticsAction;
 use App\Features\Note\Actions\GetUserRecentlyViewedNotesAction;
@@ -14,9 +15,11 @@ use App\Features\Note\Actions\ViewNoteAction;
 use App\Features\Note\Authorizers\ManageNoteAuthorizer;
 use App\Features\Note\Models\Note;
 use App\Features\NoteType\Enums\NoteTypeEnum;
+use App\Features\NoteType\Models\NoteType;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NoteController extends WebController
 {
@@ -69,6 +72,18 @@ class NoteController extends WebController
     public function create(): View
     {
         return view('pages.note.create-note-page');
+    }
+
+    /**
+     * POST /note-types/:note-type/notes
+     */
+    public function store(NoteType $noteType, CreateNewNoteWithDefaultContentAction $createNewNoteWithDefaultContentAction): RedirectResponse
+    {
+        $newlyCreatedNote = $createNewNoteWithDefaultContentAction->handle(Auth::user(), $noteType);
+
+        return to_route('notes.show', [
+            'note' => $newlyCreatedNote->id,
+        ]);
     }
 
     /**
