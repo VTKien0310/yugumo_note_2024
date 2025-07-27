@@ -15,3 +15,5 @@ Route::as('notes.')
             Route::put('/{note}/remove-bookmark', 'removeBookmark')->name('remove-bookmark');
         });
     });
+
+Route::post('/note-types/{noteType}/notes', [NoteController::class, 'store'])->name('note-types.notes.store');

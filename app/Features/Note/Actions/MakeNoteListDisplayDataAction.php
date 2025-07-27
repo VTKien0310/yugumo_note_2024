@@ -2,10 +2,13 @@
 
 namespace App\Features\Note\Actions;
 
+use App\Extendables\Core\Utils\BoolIntValueEnum;
 use App\Extendables\Core\Utils\GetRawTextFromWYSIWYGContentAction;
+use App\Features\Note\Models\ChecklistNoteContent;
 use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
 use App\Features\NoteType\Enums\NoteTypeEnum;
+use Illuminate\Support\Str;
 
 readonly class MakeNoteListDisplayDataAction
 {
@@ -63,12 +66,16 @@ readonly class MakeNoteListDisplayDataAction
 
     private function makeRepresentingContentForTextNote(Note $note): string
     {
-        return $note->textContent()->first()?->content ?? '';
+        return $note->textContent()->latest()->first()?->content ?? '';
     }
 
     private function makeRepresentingContentForChecklistNote(Note $note): string
     {
-        return $note->checklistContent()->first()?->content ?? '';
+        return $note->checklistContent()
+            ->where(ChecklistNoteContent::IS_COMPLETED, BoolIntValueEnum::FALSE)
+            ->latest()
+            ->first()
+            ?->content ?? '';
     }
 
     private function makeRepresentingContentForAdvancedNote(Note $note): string
@@ -80,20 +87,6 @@ readonly class MakeNoteListDisplayDataAction
 
     private function shortenTextData(string $textData, int $maxLength): string
     {
-        $textData = trim($textData);
-
-        if (empty($textData)) {
-            return '';
-        }
-
-        $shortenedData = substr($textData, 0, $maxLength);
-
-        // the text data is short
-        if ($shortenedData === $textData) {
-            return $shortenedData;
-        }
-
-        // the text data is long
-        return trim($shortenedData).'...';
+        return Str::limit($textData, $maxLength, '...', true);
     }
 }
