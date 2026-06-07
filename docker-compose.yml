@@ -1,17 +1,17 @@
 services:
-    laravel.test:
+    yugumo-note-2024-localhost:
         build:
             context: './docker/8.3'
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
                 NODE_VERSION: '26'
-        image: 'sail-8.3/app'
+        image: 'yugumo-note-2024-8.3/app'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
             - '${APP_PORT:-80}:80'
-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+            - '${FORWARD_VITE_PORT:-5173}:${VITE_PORT:-5173}'
         environment:
             WWWUSER: '${WWWUSER}'
             LARAVEL_SAIL: 1
@@ -22,8 +22,15 @@ services:
             - '.:/var/www/html'
         networks:
             - sail
+            - fleet
         depends_on:
             - pgsql
+        labels:
+            - "traefik.enable=true"
+            - "traefik.docker.network=fleet"
+            - "traefik.http.routers.yugumo-note-2024-localhost.rule=Host(`yugumo-note-2024.localhost`)"
+            - "traefik.http.routers.yugumo-note-2024-localhost.tls=true"
+            - "traefik.http.services.yugumo-note-2024-localhost.loadbalancer.server.port=80"
     pgsql:
         image: 'groonga/pgroonga:4.0.1-alpine-15'
         ports:
@@ -52,6 +59,8 @@ services:
 networks:
     sail:
         driver: bridge
+    fleet:
+        external: true
 volumes:
     sail-pgsql:
         driver: local
