@@ -6,7 +6,7 @@ destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_
 ## Project specification
 
 - TALL stack:
-    - Tailwind 4
+    - Tailwind 4.3
     - Alpine.js 3
     - Laravel 11
     - Livewire 3
@@ -16,7 +16,7 @@ destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_
 ## System requirement
 
 - PHP 8.3
-- Node.js 18
+- Node.js 26
 - NPM package manager
 - Postgres 15.1
 
