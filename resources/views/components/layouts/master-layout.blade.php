@@ -1,4 +1,4 @@
-<x-html :title="empty($pageTitle) ? 'Yugumo' : 'Yugumo | '.$pageTitle">
+<x-layouts.html-layout :title="empty($pageTitle) ? 'Yugumo' : 'Yugumo | '.$pageTitle">
     <x-slot name="head">
         <link rel="icon" href="{{ Vite::asset('resources/images/favicon.ico') }}"/>
 
@@ -13,11 +13,9 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
-        @bukStyles
     </x-slot>
 
     {{ $slot }}
 
     @livewireScripts
-    @bukScripts
-</x-html>
+</x-layouts.html-layout>
