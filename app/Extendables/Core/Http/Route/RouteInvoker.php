@@ -21,7 +21,12 @@ class RouteInvoker
 
     public static function invokeWebRoute(string $resource, array $options = []): void
     {
-        self::invokeResourceRoute($resource, 'Http', $options);
+        self::invokeResourceRoute($resource, 'Http/Web', $options);
+    }
+
+    public static function invokeApiRoute(string $resource, array $options = []): void
+    {
+        self::invokeResourceRoute($resource, 'Http/Api', $options);
     }
 
     public static function invokeRoute(string $filePath, array $options = []): void

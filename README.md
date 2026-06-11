@@ -62,8 +62,8 @@ app/
         - .php: represents a record in the data source. Models should ony contain mutators, accessors and no business
           logic
 - Http/: HTTP layer code
-    - Controller.php: controller for api endpoints
-    - routes.php: api routing definition
+    - Controller.php: controller for handling HTTP requests
+    - routes.php: routing definition
 - Ports/: external or third party services interaction
 
 ## Setup

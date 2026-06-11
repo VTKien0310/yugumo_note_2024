@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Profile;
+namespace App\Http\Web\Profile;
 
 use App\Extendables\Core\Http\Controllers\WebController;
 use Illuminate\Contracts\View\View;

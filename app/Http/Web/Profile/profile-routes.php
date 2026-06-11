@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Profile\ProfileController;
+use App\Http\Web\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::as('profile.')

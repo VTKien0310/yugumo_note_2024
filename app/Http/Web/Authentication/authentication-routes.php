@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Authentication\AuthenticationController;
+use App\Http\Web\Authentication\AuthenticationController;
 
 Route::prefix('auth')
     ->as('auth.')
