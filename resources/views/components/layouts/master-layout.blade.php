@@ -13,11 +13,9 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
-        @bukStyles
     </x-slot>
 
     {{ $slot }}
 
     @livewireScripts
-    @bukScripts
 </x-layouts.html-layout>
