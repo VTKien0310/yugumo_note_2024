@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Note\NoteController;
+use App\Http\Web\Note\NoteController;
 use Illuminate\Support\Facades\Route;
 
 Route::as('notes.')
