@@ -8,7 +8,7 @@ destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_
 - TALL stack:
     - Tailwind 4.3
     - Alpine.js 3
-    - Laravel 11
+    - Laravel 12
     - Livewire 3
 - Composer 2
 - Timezone: UTC
