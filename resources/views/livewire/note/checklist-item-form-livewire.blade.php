@@ -47,7 +47,6 @@ new class extends Component {
 
 <div
     class="p-0 mb-3 label cursor-pointer"
-    x-data="{ alpIsCompleted: @js((bool) $isCompleted) }"
 >
     <input
         type="text"
@@ -55,9 +54,7 @@ new class extends Component {
         name="checklist-item-{{ $checklistItem->id }}-content"
         wire:model.live.debounce.500ms="content"
         value="{{ $content }}"
-        class="input input-ghost"
-        :class="alpIsCompleted ? 'line-through' : ''"
-        style="width: 100%;" {{-- workaround for style overriding from packages and libraries --}}
+        @class(['w-full', 'p-0', 'input', 'input-ghost', 'line-through' => $isCompleted])
         aria-label="Checklist item content"
     />
     <div class="flex flex-row justify-end items-center content-center">
@@ -66,8 +63,8 @@ new class extends Component {
             id="checklist-item-{{ $checklistItem->id }}-is-completed"
             name="checklist-item-{{ $checklistItem->id }}-is-completed"
             wire:model.live.debounce.500ms="isCompleted"
-            :checked="alpIsCompleted"
-            @change="alpIsCompleted = $event.target.checked;"
+            @checked($isCompleted)
+            @change="document.getElementById('checklist-item-{{ $checklistItem->id }}-content').classList.toggle('line-through')"
             class="checkbox checkbox-primary ml-1"
             aria-label="Mark as completed"
         />
