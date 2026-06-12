@@ -74,10 +74,10 @@ new class extends Component
 <x-forms.form wire:submit="updateProfile" class="w-full flex flex-col items-center justify-start">
 
     {{-- Success toast --}}
-    <div x-data="{ display: $wire.entangle('showSuccessToast') }" class="toast toast-top toast-center">
-        <div x-show="display" class="alert alert-success">
+    <div x-data="{ alpDisplay: $wire.entangle('showSuccessToast') }" class="toast toast-top toast-center">
+        <div x-show="alpDisplay" class="alert alert-success">
             <p>Profile updated successfully.</p>
-            <button @click="display = false" type="button" class="btn btn-circle btn-ghost btn-xs">
+            <button @click="alpDisplay = false" type="button" class="btn btn-circle btn-ghost btn-xs">
                 <x-ionicon-close class="h-4 w-4"/>
             </button>
         </div>

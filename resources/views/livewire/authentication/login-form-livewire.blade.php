@@ -42,10 +42,10 @@ new class extends Component
 
 <div class="card w-full sm:w-2/3 lg:w-1/2 xl:w-1/4 h-1/2 min-h-fit flex flex-col justify-center items-center bg-base-100 rounded-lg shadow-xl">
     {{-- Login failed toast --}}
-    <div x-data="{ display: $wire.entangle('showFailedToast') }" class="toast toast-top toast-center">
-        <div x-show="display" class="alert alert-error">
+    <div x-data="{ alpDisplay: $wire.entangle('showFailedToast') }" class="toast toast-top toast-center">
+        <div x-show="alpDisplay" class="alert alert-error">
             <p>Invalid email or password.</p>
-            <button @click="display = false" type="button" class="btn btn-circle btn-ghost btn-xs">
+            <button @click="alpDisplay = false" type="button" class="btn btn-circle btn-ghost btn-xs">
                 <x-ionicon-close class="h-4 w-4"/>
             </button>
         </div>

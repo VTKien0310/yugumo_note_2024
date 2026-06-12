@@ -147,3 +147,10 @@ A Model class file should be organized into sections with the following order:
 - ***Configuration*** section defining the Model's casts, guarded, fillable, and hidden attributes.
 - ***Mutators & Accessors*** section.
 - ***Relationship*** section.
+
+### Alpine.js state
+
+Prefix all Alpine.js state variables (declared in `x-data` or via `$wire.entangle(...)`) with `alp` (e.g.,
+`alpIsCompleted`, `alpDisplay`). This makes Alpine-owned state visually distinct from Livewire public properties at the
+call site. Do not apply the prefix to Livewire property names referenced via `wire:model` / `$wire.set(...)` /
+`$wire.entangle(...)`.

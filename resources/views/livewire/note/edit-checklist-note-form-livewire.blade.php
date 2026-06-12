@@ -64,7 +64,7 @@ new class extends Component
                     <x-ionicon-add class="w-6 h-6"/>
                 </button>
             </div>
-            <div class="w-full flex flex-col">
+            <div class="w-full flex flex-col pt-2">
                 @foreach($content as $checklistItem)
                     <livewire:checklist-item-form-livewire
                             :checklist-item="$checklistItem"
