@@ -39,6 +39,7 @@ Run inside the PHP container:
 - **Typing**: Use strong typing as much as possible
 - **Routes**: Use `-` as separator (e.g., `/user/get-user-info`)
 - **Frontend**: Prefer Livewire/Volt components for interactivity; Alpine.js for small client-side behaviors
+- **Alpine.js state naming**: Prefix all Alpine.js state variables (declared in `x-data` or via `$wire.entangle(...)`) with `alp` (e.g., `alpIsCompleted`, `alpDisplay`). This makes Alpine-owned state visually distinct from Livewire public properties at the call site. Do not apply the prefix to Livewire property names referenced via `wire:model` / `$wire.set(...)` / `$wire.entangle(...)`.
 - **Model section order**: Using traits → Table structure → Configuration (casts, guarded, fillable, hidden) → Mutators & Accessors → Relationships
 
 ### Architecture
