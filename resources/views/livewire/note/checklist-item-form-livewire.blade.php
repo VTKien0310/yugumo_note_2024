@@ -6,7 +6,8 @@ use App\Features\Note\Actions\UpdateChecklistNoteContentAction;
 use App\Features\Note\Models\ChecklistNoteContent;
 use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public ChecklistNoteContent $checklistItem;
 
     public string $content;
@@ -39,6 +40,7 @@ new class extends Component {
     {
         $deleteSuccessfully = app()->make(DeleteChecklistNoteContentAction::class)->handle($this->checklistItem);
 
+        // graceful-degradation in case of client-side error
         if ($deleteSuccessfully) {
             $this->dispatch('checklist-item-deleted', id: $this->checklistItem->id);
         }
@@ -47,6 +49,7 @@ new class extends Component {
 
 <div
     class="p-0 mb-3 label cursor-pointer"
+    x-data="{ alpId: '{{ $checklistItem->id }}' }"
 >
     <input
         type="text"
@@ -69,6 +72,7 @@ new class extends Component {
             aria-label="Mark as completed"
         />
         <button
+            x-on:click="$dispatch('checklist-item-deleted', { id: alpId })"
             wire:click="deleteChecklistItem"
             class="btn-with-centered-icon btn btn-error btn-xs btn-square btn-outline ml-1"
         >

@@ -49,7 +49,10 @@ new class extends Component
     }
 }; ?>
 
-<div class="w-3/4 xl:w-1/2">
+<div
+    class="w-3/4 xl:w-1/2"
+    x-data="{ alpHiddenIds: new Set() }"
+>
     <div class="w-full flex flex-col justify-start items-center">
 
         <div class="w-full flex flex-col justify-start items-start mb-5">
@@ -69,6 +72,8 @@ new class extends Component
                     <livewire:checklist-item-form-livewire
                             :checklist-item="$checklistItem"
                             :key="$checklistItem->id"
+                            x-show="!alpHiddenIds.has('{{ $checklistItem->id }}')"
+                            x-on:checklist-item-deleted="alpHiddenIds.add($event.detail.id)"
                             @checklist-item-deleted="removeChecklistItemFromContent($event.detail.id)"
                     />
                 @endforeach
