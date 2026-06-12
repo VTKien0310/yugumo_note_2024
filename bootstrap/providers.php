@@ -1,8 +1,13 @@
 <?php
 
+use App\Extendables\Providers\ExtendableServiceProvider;
+use App\Providers\AppServiceProvider;
+use App\Providers\TelescopeServiceProvider;
+use App\Providers\VoltServiceProvider;
+
 return [
-    App\Extendables\Providers\ExtendableServiceProvider::class,
-    App\Providers\AppServiceProvider::class,
-    App\Providers\TelescopeServiceProvider::class,
-    App\Providers\VoltServiceProvider::class,
+    ExtendableServiceProvider::class,
+    AppServiceProvider::class,
+    TelescopeServiceProvider::class,
+    VoltServiceProvider::class,
 ];

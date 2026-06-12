@@ -1,14 +1,15 @@
 <?php
 
-use Livewire\Volt\Component;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Arr;
-use App\Features\User\Models\User;
 use App\Features\User\Actions\UpdateUserAction;
+use App\Features\User\Models\User;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public string $email = '';
 
     public string $password = '';
@@ -51,14 +52,14 @@ new class extends Component {
                     ->letters()
                     ->mixedCase()
                     ->numbers()
-                    ->symbols()
+                    ->symbols(),
             ],
             'currentPassword' => 'required_with:email,password|string|current_password:web',
         ]);
 
         $validated = Arr::only($validated, ['email', 'password']);
 
-        return array_filter($validated, fn(string $data) => !empty($data));
+        return array_filter($validated, fn (string $data) => ! empty($data));
     }
 
     private function resetDataProps(User $user): void
@@ -70,13 +71,13 @@ new class extends Component {
 }
 ?>
 
-<x-form wire:submit="updateProfile" class="w-full flex flex-col items-center justify-start">
+<x-forms.form wire:submit="updateProfile" class="w-full flex flex-col items-center justify-start">
 
     {{-- Success toast --}}
-    <div x-data="{ display: $wire.entangle('showSuccessToast') }" class="toast toast-top toast-center">
-        <div x-show="display" class="alert alert-success">
+    <div x-data="{ alpDisplay: $wire.entangle('showSuccessToast') }" class="toast toast-top toast-center">
+        <div x-show="alpDisplay" class="alert alert-success">
             <p>Profile updated successfully.</p>
-            <button @click="display = false" type="button" class="btn btn-circle btn-ghost btn-xs">
+            <button @click="alpDisplay = false" type="button" class="btn btn-circle btn-ghost btn-xs">
                 <x-ionicon-close class="h-4 w-4"/>
             </button>
         </div>
@@ -86,7 +87,7 @@ new class extends Component {
     {{-- Email input --}}
     <label class="w-full floating-label">
         <span>Your Email</span>
-        <x-input
+        <x-forms.input
                 wire:model="email" value="{{ $email }}"
                 name="email" type="email"
                 placeholder="Your Email"
@@ -98,7 +99,7 @@ new class extends Component {
     {{-- New password input --}}
     <label class="w-full floating-label mt-2">
         <span>New password</span>
-        <x-password
+        <x-forms.password
                 wire:model="password"
                 name="password"
                 placeholder="New password"
@@ -110,7 +111,7 @@ new class extends Component {
     {{-- Current password input --}}
     <label class="w-full floating-label mt-2">
         <span>Current password*</span>
-        <x-password
+        <x-forms.password
                 wire:model="currentPassword"
                 name="current_password"
                 placeholder="Current password*" required
@@ -125,4 +126,4 @@ new class extends Component {
         <button type="submit" class="w-1/3 btn btn-primary">Update</button>
     </div>
 
-</x-form>
+</x-forms.form>

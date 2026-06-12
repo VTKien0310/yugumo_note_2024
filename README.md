@@ -6,9 +6,9 @@ destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_
 ## Project specification
 
 - TALL stack:
-    - Tailwind 4
+    - Tailwind 4.3
     - Alpine.js 3
-    - Laravel 11
+    - Laravel 12
     - Livewire 3
 - Composer 2
 - Timezone: UTC
@@ -16,7 +16,7 @@ destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_
 ## System requirement
 
 - PHP 8.3
-- Node.js 18
+- Node.js 26
 - NPM package manager
 - Postgres 15.1
 
@@ -62,8 +62,8 @@ app/
         - .php: represents a record in the data source. Models should ony contain mutators, accessors and no business
           logic
 - Http/: HTTP layer code
-    - Controller.php: controller for api endpoints
-    - routes.php: api routing definition
+    - Controller.php: controller for handling HTTP requests
+    - routes.php: routing definition
 - Ports/: external or third party services interaction
 
 ## Setup
@@ -147,3 +147,10 @@ A Model class file should be organized into sections with the following order:
 - ***Configuration*** section defining the Model's casts, guarded, fillable, and hidden attributes.
 - ***Mutators & Accessors*** section.
 - ***Relationship*** section.
+
+### Alpine.js state
+
+Prefix all Alpine.js state variables (declared in `x-data` or via `$wire.entangle(...)`) with `alp` (e.g.,
+`alpIsCompleted`, `alpDisplay`). This makes Alpine-owned state visually distinct from Livewire public properties at the
+call site. Do not apply the prefix to Livewire property names referenced via `wire:model` / `$wire.set(...)` /
+`$wire.entangle(...)`.

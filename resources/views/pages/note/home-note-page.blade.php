@@ -6,10 +6,10 @@
     <x-layouts.authenticated-layout>
 
         @if(session()->has('remove-bookmark-success'))
-            <div x-data="{ display: true }" class="toast toast-top toast-center">
-                <div x-show="display" class="alert alert-success">
+            <div x-data="{ alpDisplay: true }" class="toast toast-top toast-center">
+                <div x-show="alpDisplay" class="alert alert-success">
                     <p>{{ session('remove-bookmark-success') }}</p>
-                    <button @click="display = false" class="btn btn-circle btn-ghost btn-xs">
+                    <button @click="alpDisplay = false" class="btn btn-circle btn-ghost btn-xs">
                         <x-ionicon-close class="h-4 w-4"/>
                     </button>
                 </div>

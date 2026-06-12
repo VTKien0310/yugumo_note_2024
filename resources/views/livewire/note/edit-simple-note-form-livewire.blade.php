@@ -1,10 +1,11 @@
 <?php
 
-use Livewire\Volt\Component;
-use App\Features\Note\Models\Note;
 use App\Features\Note\Actions\UpdateNoteAction;
+use App\Features\Note\Models\Note;
+use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public Note $note;
 
     public string $title;
@@ -30,12 +31,12 @@ new class extends Component {
 <div class="w-3/4 xl:w-1/2">
     <div class="w-full flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-start items-start mb-5">
-            <x-label for="title" class="font-bold text-xs mb-1"/>
-            <x-input wire:model.live.debounce.500ms="title" name="title" class="input input-bordered w-full"/>
+            <x-forms.label for="title" class="font-bold text-xs mb-1"/>
+            <x-forms.input wire:model.live.debounce.500ms="title" name="title" class="input input-bordered w-full"/>
         </div>
         <div class="w-full flex flex-col justify-start items-start">
-            <x-label for="content" class="font-bold text-xs mb-1"/>
-            <x-textarea
+            <x-forms.label for="content" class="font-bold text-xs mb-1"/>
+            <x-forms.textarea
                 wire:model.live.debounce.500ms="content"
                 name="content"
                 :rows="20"

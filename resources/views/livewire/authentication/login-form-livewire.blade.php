@@ -2,7 +2,8 @@
 
 use Livewire\Volt\Component;
 
-new class extends Component {
+new class extends Component
+{
     public string $email = '';
 
     public string $password = '';
@@ -41,10 +42,10 @@ new class extends Component {
 
 <div class="card w-full sm:w-2/3 lg:w-1/2 xl:w-1/4 h-1/2 min-h-fit flex flex-col justify-center items-center bg-base-100 rounded-lg shadow-xl">
     {{-- Login failed toast --}}
-    <div x-data="{ display: $wire.entangle('showFailedToast') }" class="toast toast-top toast-center">
-        <div x-show="display" class="alert alert-error">
+    <div x-data="{ alpDisplay: $wire.entangle('showFailedToast') }" class="toast toast-top toast-center">
+        <div x-show="alpDisplay" class="alert alert-error">
             <p>Invalid email or password.</p>
-            <button @click="display = false" type="button" class="btn btn-circle btn-ghost btn-xs">
+            <button @click="alpDisplay = false" type="button" class="btn btn-circle btn-ghost btn-xs">
                 <x-ionicon-close class="h-4 w-4"/>
             </button>
         </div>
@@ -53,12 +54,12 @@ new class extends Component {
     <h1 class="pb-8 pt-5 lg:pt-0 xl:pt-0 text-center text-4xl brand-name-font">YUGUMO</h1>
 
     {{-- Login form --}}
-    <x-form wire:submit="loginAttempt" class="w-2/3 flex flex-col justify-around items-center mb-8">
+    <x-forms.form wire:submit="loginAttempt" class="w-2/3 flex flex-col justify-around items-center mb-8">
 
         {{-- Email input --}}
         <label class="w-full floating-label">
             <span>Email</span>
-            <x-input
+            <x-forms.input
                     wire:model="email"
                     name="email" type="email"
                     placeholder="Email"
@@ -71,7 +72,7 @@ new class extends Component {
         {{-- Password input --}}
         <label class="w-full floating-label mt-2">
             <span>Password</span>
-            <x-password
+            <x-forms.password
                     wire:model="password"
                     name="password"
                     placeholder="Password"
@@ -84,5 +85,5 @@ new class extends Component {
         {{-- Submit button --}}
         <button type="submit" class="w-full btn btn-primary mt-4">Log in</button>
 
-    </x-form>
+    </x-forms.form>
 </div>
