@@ -46,7 +46,7 @@ new class extends Component {
 }; ?>
 
 <div
-    class="label cursor-pointer"
+    class="p-0 mb-3 label cursor-pointer"
     x-data="{ alpIsCompleted: @js((bool) $isCompleted) }"
 >
     <input
@@ -55,7 +55,7 @@ new class extends Component {
         name="checklist-item-{{ $checklistItem->id }}-content"
         wire:model.live.debounce.500ms="content"
         value="{{ $content }}"
-        class="input input-ghost p-0 mb-3"
+        class="input input-ghost"
         :class="alpIsCompleted ? 'line-through' : ''"
         style="width: 100%;" {{-- workaround for style overriding from packages and libraries --}}
         aria-label="Checklist item content"
