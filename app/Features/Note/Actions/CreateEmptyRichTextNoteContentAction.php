@@ -18,7 +18,11 @@ readonly class CreateEmptyRichTextNoteContentAction
     {
         $richTextNoteContent = $this->createRichTextNoteContentCommand->handle([
             RichTextNoteContent::NOTE_ID => $note->id,
-            RichTextNoteContent::CONTENT => RichTextNoteContent::emptyContent(),
+            RichTextNoteContent::CONTENT => [
+                'ops' => [
+                    ['insert' => "\n"],
+                ],
+            ],
         ]);
 
         $this->createSearchIndexForRichTextNoteContentAction->handle($richTextNoteContent);

@@ -47,15 +47,6 @@ class RichTextNoteContent extends Model implements BelongsToNote, HasPolymorphic
         return 'rich_text_note_content';
     }
 
-    public static function emptyContent(): array
-    {
-        return [
-            'ops' => [
-                ['insert' => "\n"],
-            ],
-        ];
-    }
-
     public function note(): BelongsTo
     {
         return $this->belongsTo(Note::class, 'note_id', Note::ID);
