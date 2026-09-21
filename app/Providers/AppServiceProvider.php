@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Features\Note\Models\ChecklistNoteContent;
 use App\Features\Note\Models\Note;
+use App\Features\Note\Models\RichTextNoteContent;
 use App\Features\Note\Models\TextNoteContent;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Carbon;
@@ -33,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             Note::morphType() => Note::class,
             TextNoteContent::morphType() => TextNoteContent::class,
+            RichTextNoteContent::morphType() => RichTextNoteContent::class,
             ChecklistNoteContent::morphType() => ChecklistNoteContent::class,
         ]);
 

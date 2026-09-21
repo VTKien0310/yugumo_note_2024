@@ -15,6 +15,7 @@ readonly class CreateNewNoteWithDefaultContentAction
     public function __construct(
         private CreateNoteCommand $createNoteCommand,
         private CreateEmptyTextNoteContentAction $createEmptyTextNoteContentAction,
+        private CreateEmptyRichTextNoteContentAction $createEmptyRichTextNoteContentAction,
         private CreateEmptyChecklistNoteContentAction $createEmptyChecklistNoteContentAction,
         private CreateSearchIndexForNoteTitleAction $createSearchIndexForNoteTitleAction
     ) {}
@@ -50,6 +51,7 @@ readonly class CreateNewNoteWithDefaultContentAction
                 note: $note,
                 useTransaction: false
             ),
+            NoteTypeEnum::ADVANCED->value => $this->createEmptyRichTextNoteContentAction->handle($note),
             default => $this->createEmptyTextNoteContentAction->handle($note)
         };
     }

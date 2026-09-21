@@ -37,23 +37,11 @@
     align-items: center;
 }
 
-/* Trix editor styling */
-
-.trix-content {
-    height: 500px;
+.ql-editor-host .ql-editor {
+    min-height: 500px;
 }
 
-.trix-content ol li {
-    list-style: decimal;
-    margin-left: 1em;
-}
-
-.trix-content ul li {
-    list-style: disc;
-    margin-left: 1em;
-}
-
-.trix-content a {
+.ql-snow .ql-editor a {
     color: var(--color-blue-500);
     text-decoration: underline;
 }

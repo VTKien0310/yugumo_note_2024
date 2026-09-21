@@ -81,6 +81,13 @@ class Note extends Model implements HasPolymorphicRelationship, HasSearchIndex
         return $this->hasOne(TextNoteContent::class, TextNoteContent::NOTE_ID, 'id');
     }
 
+    const string RELATION_RICH_TEXT_CONTENT = 'richTextContent';
+
+    public function richTextContent(): HasOne
+    {
+        return $this->hasOne(RichTextNoteContent::class, RichTextNoteContent::NOTE_ID, 'id');
+    }
+
     const string RELATION_CHECKLIST_CONTENT = 'checklistContent';
 
     public function checklistContent(): HasMany
