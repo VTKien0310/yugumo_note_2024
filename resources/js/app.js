@@ -6,5 +6,4 @@ import.meta.glob([
     '../images/**',
 ]);
 
-window.ace = ace;
 window.Quill = Quill;
