@@ -16,14 +16,14 @@ new class extends Component
     {
         $this->note = $note;
         $this->title = $note->title;
-        $this->content = $note->textContent->content;
+        $this->content = json_encode($note->richTextContent->content);
     }
 
     public function updated(): void
     {
         app()->make(UpdateNoteAction::class)->handle($this->note, [
             'title' => $this->title,
-            'text_content' => $this->content,
+            'rich_text_content' => $this->content,
         ]);
     }
 }; ?>
@@ -40,7 +40,7 @@ new class extends Component
         </div>
         <div class="w-full flex flex-col justify-start items-start">
             <x-forms.label for="content" class="font-bold text-xs mb-1"/>
-            <x-forms.trix
+            <x-forms.quill
                 wire:model.live.debounce.500ms="content"
                 name="content"
                 class="w-full block"

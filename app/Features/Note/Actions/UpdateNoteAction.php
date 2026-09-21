@@ -14,6 +14,7 @@ readonly class UpdateNoteAction
     public function __construct(
         private UpdateNoteCommand $updateNoteCommand,
         private UpdateTextNoteContentAction $updateTextNoteContentAction,
+        private UpdateRichTextNoteContentAction $updateRichTextNoteContentAction,
         private UpdateSearchIndexForNoteTitleAction $updateSearchIndexForNoteTitleAction,
         private CheckUserHasReachedMaximumAllowedBookmarkedNotesAction $checkUserHasReachedMaximumAllowedBookmarkedNotesAction
     ) {}
@@ -36,7 +37,8 @@ readonly class UpdateNoteAction
     private function updateNoteContentBasedOnNoteType(Note $note, array $data): void
     {
         match ($note->type_id) {
-            NoteTypeEnum::SIMPLE->value, NoteTypeEnum::ADVANCED->value => $this->updateTextNoteContent($note, $data),
+            NoteTypeEnum::SIMPLE->value => $this->updateTextNoteContent($note, $data),
+            NoteTypeEnum::ADVANCED->value => $this->updateRichTextNoteContent($note, $data),
             default => null
         };
     }
@@ -49,6 +51,25 @@ readonly class UpdateNoteAction
         }
 
         $this->updateTextNoteContentAction->handle($note->textContent, $data['text_content']);
+    }
+
+    private function updateRichTextNoteContent(Note $note, array $data): void
+    {
+        if (! isset($data['rich_text_content'])) {
+            return;
+        }
+
+        $content = $data['rich_text_content'];
+
+        if (is_string($content)) {
+            $content = json_decode($content, true);
+        }
+
+        if (! is_array($content)) {
+            return;
+        }
+
+        $this->updateRichTextNoteContentAction->handle($note->richTextContent, $content);
     }
 
     private function hasNoteBookmarkStatusChange(Note $note, array $data): bool
