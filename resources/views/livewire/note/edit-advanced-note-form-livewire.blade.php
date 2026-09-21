@@ -19,12 +19,14 @@ new class extends Component
         $this->content = json_encode($note->richTextContent->content);
     }
 
-    public function updated(): void
+    public function save(): void
     {
         app()->make(UpdateNoteAction::class)->handle($this->note, [
             'title' => $this->title,
             'rich_text_content' => $this->content,
         ]);
+
+        $this->dispatch('note-saved');
     }
 }; ?>
 
@@ -33,7 +35,7 @@ new class extends Component
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-forms.label for="title" class="font-bold text-xs mb-1"/>
             <x-forms.input
-                wire:model.live.debounce.500ms="title"
+                wire:model="title"
                 name="title"
                 class="input input-bordered w-full"
             />
@@ -41,10 +43,40 @@ new class extends Component
         <div class="w-full flex flex-col justify-start items-start">
             <x-forms.label for="content" class="font-bold text-xs mb-1"/>
             <x-forms.quill
-                wire:model.live.debounce.500ms="content"
+                wire:model="content"
                 name="content"
                 class="w-full block"
             />
+        </div>
+        <div
+            class="w-full flex flex-row justify-end items-center gap-3 pt-4"
+            x-data="{
+                alpDirty: false,
+                alpInit() {
+                    this.$wire.$watch('title', () => { this.alpDirty = true; });
+                    this.$wire.$watch('content', () => { this.alpDirty = true; });
+
+                    window.addEventListener('beforeunload', (e) => {
+                        if (! this.alpDirty) return;
+                        e.preventDefault();
+                        e.returnValue = '';
+                    });
+                },
+            }"
+            x-init="alpInit()"
+            @note-saved.window="alpDirty = false"
+        >
+            <span x-show="alpDirty" style="display: none;" class="text-xs text-warning">Unsaved changes</span>
+            <button
+                type="button"
+                wire:click="save"
+                wire:loading.attr="disabled"
+                wire:target="save"
+                class="btn btn-primary"
+            >
+                <span wire:loading.remove wire:target="save">Save</span>
+                <span wire:loading wire:target="save">Saving...</span>
+            </button>
         </div>
     </div>
 </div>
