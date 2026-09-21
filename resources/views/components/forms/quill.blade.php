@@ -29,16 +29,18 @@
                 },
             });
 
-            const alpInitial = this.$refs.alpInput.value;
-            if (alpInitial) {
-                try {
-                    this.alpQuill.setContents(JSON.parse(alpInitial));
-                } catch (e) {}
-            }
+            this.$nextTick(() => {
+                const alpInitial = this.$refs.alpInput.value;
+                if (alpInitial) {
+                    try {
+                        this.alpQuill.setContents(JSON.parse(alpInitial));
+                    } catch (e) {}
+                }
 
-            this.alpQuill.on('text-change', () => {
-                this.$refs.alpInput.value = JSON.stringify(this.alpQuill.getContents());
-                this.$refs.alpInput.dispatchEvent(new Event('input', { bubbles: true }));
+                this.alpQuill.on('text-change', () => {
+                    this.$refs.alpInput.value = JSON.stringify(this.alpQuill.getContents());
+                    this.$refs.alpInput.dispatchEvent(new Event('input', { bubbles: true }));
+                });
             });
         },
     }"

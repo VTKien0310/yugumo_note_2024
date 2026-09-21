@@ -45,3 +45,45 @@
     color: var(--color-blue-500);
     text-decoration: underline;
 }
+
+/*
+  Reduce Quill list indentation (default: 1.5em base, +3em per nested level).
+
+  This intentionally deviates from Quill's defaults (quill.snow.css). The three
+  base values below — `ol` padding-left, `li` padding-left, and the
+  `.ql-ui:before` margin-left/width — are coupled: they must be tuned together
+  so list markers stay aligned with their text.
+
+  The stored Quill Delta is unaffected: indent lives in `attributes.indent` and
+  list type in `attributes.list`, which are semantic, not presentational. Quill's
+  HTML export (getSemanticHTML) and third-party Delta converters emit nested
+  <ol>/<ul> markup without hardcoded sizes — indentation comes entirely from the
+  stylesheet applied by the renderer. Any future platform rendering the stored
+  Delta should apply an equivalent stylesheet to match in-app appearance.
+*/
+.ql-editor-host .ql-editor ol,
+.ql-editor-host .ql-editor ul {
+    padding-left: 0.8em;
+}
+
+.ql-editor-host .ql-editor li {
+    padding-left: 0.8em;
+}
+
+.ql-editor-host .ql-editor li > .ql-ui:before {
+    margin-left: -0.8em;
+    margin-right: 0.2em;
+    width: 0.6em;
+}
+
+.ql-editor-host .ql-editor li.ql-indent-1:not(.ql-direction-rtl) {
+    padding-left: 2.4em;
+}
+
+.ql-editor-host .ql-editor li.ql-indent-2:not(.ql-direction-rtl) {
+    padding-left: 4.0em;
+}
+
+.ql-editor-host .ql-editor li.ql-indent-3:not(.ql-direction-rtl) {
+    padding-left: 5.6em;
+}
