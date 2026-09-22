@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Bff\Routes\Authentication\AuthenticationController;
+use App\Http\Bff\Routes\Authentication\BffAuthenticationController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')
     ->as('auth.')
-    ->controller(AuthenticationController::class)
+    ->controller(BffAuthenticationController::class)
     ->group(function () {
         Route::post('login', 'login')->middleware('throttle:5,1')->name('login');
 

@@ -5,7 +5,7 @@ namespace App\Http\Web\Routes\Profile;
 use App\Extendables\Core\Http\Controllers\WebController;
 use Illuminate\Contracts\View\View;
 
-class ProfileController extends WebController
+class WebProfileController extends WebController
 {
     public function show(): View
     {

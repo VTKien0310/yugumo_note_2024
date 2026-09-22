@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AuthenticationController extends ApiController
+class BffAuthenticationController extends ApiController
 {
     public function __construct(
         private readonly Responder $responder

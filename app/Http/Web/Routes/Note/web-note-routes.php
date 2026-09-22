@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Web\Routes\Note\NoteController;
+use App\Http\Web\Routes\Note\WebNoteController;
 use Illuminate\Support\Facades\Route;
 
 Route::as('notes.')
-    ->controller(NoteController::class)
+    ->controller(WebNoteController::class)
     ->group(function () {
         Route::get('/', 'home')->name('home');
 
@@ -16,4 +16,4 @@ Route::as('notes.')
         });
     });
 
-Route::post('/note-types/{noteType}/notes', [NoteController::class, 'store'])->name('note-types.notes.store');
+Route::post('/note-types/{noteType}/notes', [WebNoteController::class, 'store'])->name('note-types.notes.store');

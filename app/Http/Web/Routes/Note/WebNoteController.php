@@ -21,7 +21,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class NoteController extends WebController
+class WebNoteController extends WebController
 {
     /**
      * GET /

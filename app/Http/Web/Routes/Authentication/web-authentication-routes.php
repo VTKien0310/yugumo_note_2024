@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Web\Routes\Authentication\AuthenticationController;
+use App\Http\Web\Routes\Authentication\WebAuthenticationController;
 
 Route::prefix('auth')
     ->as('auth.')
-    ->controller(AuthenticationController::class)
+    ->controller(WebAuthenticationController::class)
     ->group(function () {
         Route::get('login', 'loginPage')->name('login');
 

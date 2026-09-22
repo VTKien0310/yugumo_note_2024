@@ -14,7 +14,9 @@ class RouteInvoker
     ): void {
         $dirName = Str::studly($resource);
 
-        $routeFileName = Str::snake($resource).'-routes.php';
+        $module = Str::lower(basename($filePath));
+
+        $routeFileName = $module.'-'.Str::snake($resource).'-routes.php';
 
         self::invokeRoute("$filePath/Routes/$dirName/$routeFileName", $options);
     }
