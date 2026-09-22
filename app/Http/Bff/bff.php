@@ -13,4 +13,5 @@ Route::middleware([
     ->as('bff.')
     ->group(function () {
         RouteInvoker::invokeBffRoute('authentication');
+        RouteInvoker::invokeBffRoute('note');
     });

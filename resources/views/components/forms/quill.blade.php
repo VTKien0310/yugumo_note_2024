@@ -38,8 +38,14 @@
                 }
 
                 this.alpQuill.on('text-change', () => {
-                    this.$refs.alpInput.value = JSON.stringify(this.alpQuill.getContents());
+                    const alpContents = this.alpQuill.getContents();
+
+                    this.$refs.alpInput.value = JSON.stringify(alpContents);
                     this.$refs.alpInput.dispatchEvent(new Event('input', { bubbles: true }));
+
+                    window.dispatchEvent(new CustomEvent('quill-text-change', {
+                        detail: { content: alpContents },
+                    }));
                 });
             });
         },
