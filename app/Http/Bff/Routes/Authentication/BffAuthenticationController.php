@@ -65,9 +65,9 @@ class BffAuthenticationController extends ApiController
     private function userData(User $user): array
     {
         return [
-            User::ID => $user->{User::ID},
-            User::NAME => $user->{User::NAME},
-            User::EMAIL => $user->{User::EMAIL},
+            User::ID => $user->id,
+            User::NAME => $user->name,
+            User::EMAIL => $user->email,
         ];
     }
 }
