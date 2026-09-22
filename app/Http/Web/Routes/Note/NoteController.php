@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Web\Note;
+namespace App\Http\Web\Routes\Note;
 
 use App\Extendables\Core\Http\Controllers\WebController;
 use App\Extendables\Core\Utils\BoolIntValueEnum;

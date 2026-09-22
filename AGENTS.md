@@ -65,7 +65,9 @@ Run inside the PHP container:
         - `Relationships/` — reusable relationship interfaces
         - `*.php` — Eloquent models; contain only mutators, accessors, and no business logic
 - **Extendables**: `app/Extendables/{Core,Providers}/` — base classes, interfaces, traits, and service providers
-- **HTTP layer**: `app/Http/{Authentication,Note,Profile}/` — Livewire/Volt components and HTTP entry points
+- **HTTP layer**: `app/Http/{Web,Bff}/` — HTTP entry points. Each module keeps its route entry (`web.php` / `bff.php`) at its root, and per-feature folders (route definition + controller) under `Routes/`, e.g. `app/Http/Web/Routes/Note/{NoteController.php, note-routes.php}`
+    - `Web/` — Livewire/Volt backed web UI (route entry: `app/Http/Web/web.php`)
+    - `Bff/` — session-authenticated JSON backend-for-frontend under the `/bff` URL prefix (route entry: `app/Http/Bff/bff.php`); exceptions on `/bff/*` are rendered as JSON by `App\Extendables\Core\Http\Exception\JsonApiExceptionHandler`
 - **Global enums**: `app/Enums/`
 - **Query strings**: Follow [JSON API specification](https://jsonapi.org/format/#fetching) (`filter`, `sort`, `include`, `page`, `only`)
 

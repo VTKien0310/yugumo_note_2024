@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\UnauthorizedException;
@@ -30,8 +31,8 @@ class JsonApiExceptionHandler
 
     public function __invoke(Exceptions $exceptions): void
     {
-        // Always render JSON responses
-        // $exceptions->shouldRenderJsonWhen(fn() => true);
+        // Render JSON responses for requests handled by the BFF HTTP module.
+        $exceptions->shouldRenderJsonWhen(fn (Request $request) => $this->isBffRequest($request));
 
         $customRenderer = function (Throwable $exception) {
             $exception = $this->revealExceptionHiddenByLaravel($exception);
@@ -40,16 +41,25 @@ class JsonApiExceptionHandler
                 $exception instanceof AuthenticationException => $this->renderResponseForHttpException(Response::HTTP_UNAUTHORIZED),
                 $exception instanceof UnauthorizedException, $exception instanceof AuthorizationException => $this->renderResponseForHttpException(Response::HTTP_FORBIDDEN),
                 $exception instanceof ValidationException => $this->renderResponseForValidationException($exception),
+                $exception instanceof HttpResponseException => $this->renderResponseForHttpResponseException($exception),
                 $exception instanceof HttpException => $this->renderResponseForHttpException($exception->getStatusCode()),
                 $exception instanceof ModelNotFoundException => $this->renderResponseForModelNotFound($exception),
-                $exception instanceof HttpResponseException => $this->renderResponseForHttpResponseException($exception),
                 $exception instanceof HasSideEffectsException => $this->renderResponseForHasSideEffectsExtendableException($exception),
                 $exception instanceof ExtendableException => $this->renderResponseForExtendableException($exception),
                 default => $this->renderResponseForUnknownException($exception)
             };
         };
 
-        $exceptions->render($customRenderer);
+        $exceptions->render(
+            fn (Throwable $exception, Request $request) => $this->isBffRequest($request)
+                ? $customRenderer($exception)
+                : null
+        );
+    }
+
+    private function isBffRequest(Request $request): bool
+    {
+        return $request->is('bff') || $request->is('bff/*');
     }
 
     private function revealExceptionHiddenByLaravel(Throwable $exception): Throwable

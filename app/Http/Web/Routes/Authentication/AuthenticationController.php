@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Web\Authentication;
+namespace App\Http\Web\Routes\Authentication;
 
 use App\Extendables\Core\Http\Controllers\WebController;
 use Illuminate\Contracts\View\View;

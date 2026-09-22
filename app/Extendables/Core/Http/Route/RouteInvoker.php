@@ -16,7 +16,7 @@ class RouteInvoker
 
         $routeFileName = Str::snake($resource).'-routes.php';
 
-        self::invokeRoute("$filePath/$dirName/$routeFileName", $options);
+        self::invokeRoute("$filePath/Routes/$dirName/$routeFileName", $options);
     }
 
     public static function invokeWebRoute(string $resource, array $options = []): void
@@ -27,6 +27,11 @@ class RouteInvoker
     public static function invokeApiRoute(string $resource, array $options = []): void
     {
         self::invokeResourceRoute($resource, 'Http/Api', $options);
+    }
+
+    public static function invokeBffRoute(string $resource, array $options = []): void
+    {
+        self::invokeResourceRoute($resource, 'Http/Bff', $options);
     }
 
     public static function invokeRoute(string $filePath, array $options = []): void
