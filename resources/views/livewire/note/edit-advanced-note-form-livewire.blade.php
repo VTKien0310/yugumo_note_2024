@@ -11,97 +11,44 @@ new class extends Component
     {
         $this->note = $note->load(Note::RELATION_RICH_TEXT_CONTENT);
     }
+
+    public function emptyRichTextContent(): array
+    {
+        return ['ops' => [['insert' => "\n"]]];
+    }
 }; ?>
 
 <div
     class="w-3/4 xl:w-1/2"
-    x-data="{
-        alpSyncUrl: @js(route('bff.notes.update', ['note' => $this->note->id])),
-        alpContent: @js($this->note->richTextContent->content ?? ['ops' => [['insert' => "\n"]]]),
-        alpDirty: false,
-        alpSyncing: false,
-        alpSaveState: 'saved',
-        alpDebounceTimer: null,
-        alpInit() {
-            window.addEventListener('quill-text-change', (event) => {
-                this.alpContent = event.detail.content;
-                this.alpScheduleSync();
-            });
-
-            window.addEventListener('beforeunload', (event) => {
-                if (! this.alpDirty) return;
-
-                this.alpSync({ keepalive: true });
-
-                event.preventDefault();
-                event.returnValue = '';
-            });
-        },
-        alpScheduleSync() {
-            this.alpDirty = true;
-            this.alpSaveState = 'unsaved';
-
-            clearTimeout(this.alpDebounceTimer);
-            this.alpDebounceTimer = setTimeout(() => this.alpSync(), 3000);
-        },
-        async alpSync({ keepalive = false } = {}) {
-            if (! this.alpDirty || this.alpSyncing) return;
-
-            this.alpSyncing = true;
-            this.alpSaveState = 'saving';
-
-            try {
-                const response = await fetch(this.alpSyncUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                    },
-                    body: JSON.stringify({
-                        title: this.$refs.alpTitleInput.value,
-                        content: this.alpContent,
-                    }),
-                    keepalive: keepalive,
-                });
-
-                if (! response.ok) throw new Error('Sync failed with status ' + response.status);
-
-                this.alpDirty = false;
-                this.alpSaveState = 'saved';
-            } catch (error) {
-                this.alpSaveState = 'failed';
-            } finally {
-                this.alpSyncing = false;
-            }
-        },
-    }"
-    x-init="alpInit()"
+    x-data="advancedNoteEditor({
+        syncUrl: @js(route('bff.notes.update', ['note' => $this->note->id])),
+        initialTitle: @js($this->note->title),
+        initialContent: @js($this->note->richTextContent->content ?? $this->emptyRichTextContent()),
+    })"
 >
     <div class="w-full flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-forms.label for="title" class="font-bold text-xs mb-1"/>
             <x-forms.input
                 name="title"
+                maxlength="255"
                 :value="$this->note->title"
                 class="input input-bordered w-full"
                 x-ref="alpTitleInput"
-                x-on:input="alpScheduleSync()"
+                x-on:input="alpUnsaved = alpHasUnsavedChanges()"
             />
         </div>
         <div class="w-full flex flex-col justify-start items-start">
             <x-forms.label for="content" class="font-bold text-xs mb-1"/>
-            <x-forms.quill
-                name="content"
-                class="w-full block"
-                :value="json_encode($this->note->richTextContent->content)"
-            />
+            <div class="w-full block" wire:ignore>
+                <div id="content" x-ref="alpEditor" class="ql-editor-host"></div>
+            </div>
         </div>
         <div class="w-full flex flex-row justify-end items-center gap-3 pt-4">
-            <span x-show="alpSaveState === 'unsaved'" style="display: none;" class="text-xs text-warning">Unsaved changes</span>
+            <span x-show="alpUnsaved && ! alpSyncing && alpSaveState !== 'failed'" style="display: none;" class="text-xs text-warning">Unsaved changes</span>
             <span x-show="alpSaveState === 'saving'" style="display: none;" class="text-xs text-info">Saving...</span>
-            <span x-show="alpSaveState === 'saved'" style="display: none;" class="text-xs text-success">Saved</span>
-            <span x-show="alpSaveState === 'failed'" style="display: none;" class="text-xs text-error">Sync failed - will retry on next change</span>
+            <span x-show="alpSaveState === 'saved' && ! alpUnsaved" style="display: none;" class="text-xs text-success">Saved</span>
+            <span x-show="alpSaveState === 'failed' && alpUnsaved" style="display: none;" class="text-xs text-error">Sync failed - will retry automatically</span>
         </div>
     </div>
 </div>

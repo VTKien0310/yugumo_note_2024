@@ -13,7 +13,7 @@
 ### Docker Access
 
 ```bash
-docker compose exec yugumo-note-2024-localhost bash
+docker compose exec -u sail yugumo-note-2024-localhost bash
 ```
 
 ### Local URL Endpoints

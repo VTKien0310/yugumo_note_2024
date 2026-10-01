@@ -35,6 +35,10 @@ class BffNoteController extends ApiController
             'title' => 'required|string|max:255',
             'content' => 'required|array',
             'content.ops' => 'required|array',
+            // `required` considers whitespace-only strings (e.g. "\n" line-break ops) empty,
+            // so presence is enforced with `present` instead.
+            'content.ops.*.insert' => 'present|string',
+            'content.ops.*.attributes' => 'sometimes|array',
         ]);
 
         $note = $updateNoteAction->handle($note, [

@@ -16,6 +16,16 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn () => route('auth.login'));
+
+        // Quill line-break ops are `{"insert": "\n"}` — whitespace-only strings that
+        // TrimStrings would reduce to "" and ConvertEmptyStringsToNull would turn into
+        // null, corrupting synced note content. Exempt that request body path segment.
+        $middleware->trimStrings(except: [
+            'content.ops.*.insert',
+        ]);
+        $middleware->convertEmptyStringsToNull(except: [
+            fn ($request) => $request->is('bff/notes/*'),
+        ]);
         $middleware->trustProxies(
             at: '*',
             headers: Request::HEADER_X_FORWARDED_FOR |
