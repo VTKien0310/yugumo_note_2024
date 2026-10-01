@@ -3,12 +3,14 @@
 namespace App\Extendables\Core\Http\Exception;
 
 use App\Extendables\Core\Http\Enums\CommonHttpErrorCodeEnum;
-use App\Extendables\Core\Http\Response\FluggFormatResponseBuilder;
+use App\Extendables\Core\Http\Response\JsonApiResponseBuilder;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\UnauthorizedException;
@@ -18,29 +20,54 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
-class FluggFormatExceptionHandler
+class JsonApiExceptionHandler
 {
-    private readonly FluggFormatResponseBuilder $responseBuilder;
+    private readonly JsonApiResponseBuilder $responseBuilder;
 
     public function __construct()
     {
-        $this->responseBuilder = new FluggFormatResponseBuilder;
+        $this->responseBuilder = new JsonApiResponseBuilder;
     }
 
     public function __invoke(Exceptions $exceptions): void
     {
+        // Render JSON responses for requests handled by the BFF HTTP module.
+        $exceptions->shouldRenderJsonWhen(fn (Request $request) => $this->isBffRequest($request));
+
         $customRenderer = function (Throwable $exception) {
+            $exception = $this->revealExceptionHiddenByLaravel($exception);
+
             return match (true) {
                 $exception instanceof AuthenticationException => $this->renderResponseForHttpException(Response::HTTP_UNAUTHORIZED),
                 $exception instanceof UnauthorizedException, $exception instanceof AuthorizationException => $this->renderResponseForHttpException(Response::HTTP_FORBIDDEN),
                 $exception instanceof ValidationException => $this->renderResponseForValidationException($exception),
+                $exception instanceof HttpResponseException => $this->renderResponseForHttpResponseException($exception),
                 $exception instanceof HttpException => $this->renderResponseForHttpException($exception->getStatusCode()),
                 $exception instanceof ModelNotFoundException => $this->renderResponseForModelNotFound($exception),
+                $exception instanceof HasSideEffectsException => $this->renderResponseForHasSideEffectsExtendableException($exception),
+                $exception instanceof ExtendableException => $this->renderResponseForExtendableException($exception),
                 default => $this->renderResponseForUnknownException($exception)
             };
         };
 
-        $exceptions->render($customRenderer);
+        $exceptions->render(
+            fn (Throwable $exception, Request $request) => $this->isBffRequest($request)
+                ? $customRenderer($exception)
+                : null
+        );
+    }
+
+    private function isBffRequest(Request $request): bool
+    {
+        return $request->is('bff') || $request->is('bff/*');
+    }
+
+    private function revealExceptionHiddenByLaravel(Throwable $exception): Throwable
+    {
+        return match (true) {
+            $exception->getPrevious() instanceof ModelNotFoundException => $exception->getPrevious(),
+            default => $exception
+        };
     }
 
     private function makeErrorResponseData(int $statusCode, string $errorCode = '', string $errorMessage = ''): array
@@ -78,6 +105,11 @@ class FluggFormatExceptionHandler
             ),
             $statusCode
         );
+    }
+
+    private function renderResponseForHttpResponseException(HttpResponseException $httpResponseException): Response
+    {
+        return $httpResponseException->getResponse();
     }
 
     private function getHttpExceptionMessage(int $statusCode): string
@@ -172,5 +204,29 @@ class FluggFormatExceptionHandler
             : $this->convertForNonDebugEnv($e);
 
         return response()->json($unknownErrorResponseData, $this->getUnknownErrorStatusCode($e));
+    }
+
+    private function renderResponseForExtendableException(ExtendableException $exception): JsonResponse
+    {
+        return response()->json(
+            $this->makeErrorResponseData(
+                $exception->httpStatusCode(),
+                $exception->httpErrorCode(),
+                $exception->httpErrorMessage()
+            ),
+            $exception->httpStatusCode()
+        );
+    }
+
+    private function renderResponseForHasSideEffectsExtendableException(HasSideEffectsException $exception): JsonResponse
+    {
+        $response = $this->renderResponseForExtendableException($exception);
+
+        $request = request();
+        foreach ($exception->getSideEffects() as $sideEffect) {
+            $response = $sideEffect($response, $request);
+        }
+
+        return $response;
     }
 }

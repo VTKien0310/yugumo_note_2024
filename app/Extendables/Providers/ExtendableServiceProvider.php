@@ -15,7 +15,7 @@ use App\Extendables\Core\Http\Request\States\QueryString\OnlyQueryStringState;
 use App\Extendables\Core\Http\Request\States\QueryString\PaginateQueryStringState;
 use App\Extendables\Core\Http\Request\States\QueryString\RelationQueryStringState;
 use App\Extendables\Core\Http\Request\States\QueryString\SortQueryStringState;
-use App\Extendables\Core\Http\Response\FluggFormatResponseBuilder;
+use App\Extendables\Core\Http\Response\JsonApiResponseBuilder;
 use App\Extendables\Core\Http\Response\ResponseBuilder;
 use App\Extendables\Core\Ports\File\DummyFileStoragePort;
 use App\Extendables\Core\Ports\File\FileStoragePort;
@@ -123,7 +123,7 @@ class ExtendableServiceProvider extends ServiceProvider
         // others binding
         $this->app->bind(
             ResponseBuilder::class,
-            FluggFormatResponseBuilder::class
+            JsonApiResponseBuilder::class
         );
         $this->app->bind(
             LengthAwarePaginator::class,

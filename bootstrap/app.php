@@ -1,17 +1,31 @@
 <?php
 
+use App\Extendables\Core\Http\Exception\JsonApiExceptionHandler;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../app/Http/web.php',
         health: '/up',
+        then: function () {
+            Route::group([], app_path('Http/Web/web.php'));
+            Route::group([], app_path('Http/Bff/bff.php'));
+        },
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->redirectGuestsTo(fn () => route('auth.login'));
+
+        // Quill line-break ops are `{"insert": "\n"}` — whitespace-only strings that
+        // TrimStrings would reduce to "" and ConvertEmptyStringsToNull would turn into
+        // null, corrupting synced note content. Exempt that request body path segment.
+        $middleware->trimStrings(except: [
+            'content.ops.*.insert',
+        ]);
+        $middleware->convertEmptyStringsToNull(except: [
+            fn ($request) => $request->is('bff/notes/*'),
+        ]);
         $middleware->trustProxies(
             at: '*',
             headers: Request::HEADER_X_FORWARDED_FOR |
@@ -21,6 +35,4 @@ return Application::configure(basePath: dirname(__DIR__))
             Request::HEADER_X_FORWARDED_AWS_ELB
         );
     })
-    ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })->create();
+    ->withExceptions(new JsonApiExceptionHandler)->create();

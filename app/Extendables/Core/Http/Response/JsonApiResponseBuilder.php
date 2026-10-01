@@ -6,7 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Symfony\Component\HttpFoundation\Response;
 
-class FluggFormatResponseBuilder implements ResponseBuilder
+class JsonApiResponseBuilder implements ResponseBuilder
 {
     /**
      * {@inheritDoc}

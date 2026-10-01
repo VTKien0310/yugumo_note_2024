@@ -1,6 +1,5 @@
 <?php
 
-use App\Features\Note\Actions\UpdateNoteAction;
 use App\Features\Note\Models\Note;
 use Livewire\Volt\Component;
 
@@ -8,75 +7,48 @@ new class extends Component
 {
     public Note $note;
 
-    public string $title;
-
-    public string $content;
-
     public function mount(Note $note): void
     {
-        $this->note = $note;
-        $this->title = $note->title;
-        $this->content = json_encode($note->richTextContent->content);
+        $this->note = $note->load(Note::RELATION_RICH_TEXT_CONTENT);
     }
 
-    public function save(): void
+    public function emptyRichTextContent(): array
     {
-        app()->make(UpdateNoteAction::class)->handle($this->note, [
-            'title' => $this->title,
-            'rich_text_content' => $this->content,
-        ]);
-
-        $this->dispatch('note-saved');
+        return ['ops' => [['insert' => "\n"]]];
     }
 }; ?>
 
-<div class="w-3/4 xl:w-1/2">
+<div
+    class="w-3/4 xl:w-1/2"
+    x-data="advancedNoteEditor({
+        syncUrl: @js(route('bff.notes.update', ['note' => $this->note->id])),
+        initialTitle: @js($this->note->title),
+        initialContent: @js($this->note->richTextContent->content ?? $this->emptyRichTextContent()),
+    })"
+>
     <div class="w-full flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-forms.label for="title" class="font-bold text-xs mb-1"/>
             <x-forms.input
-                wire:model="title"
                 name="title"
+                maxlength="255"
+                :value="$this->note->title"
                 class="input input-bordered w-full"
+                x-ref="alpTitleInput"
+                x-on:input="alpUnsaved = alpHasUnsavedChanges()"
             />
         </div>
         <div class="w-full flex flex-col justify-start items-start">
             <x-forms.label for="content" class="font-bold text-xs mb-1"/>
-            <x-forms.quill
-                wire:model="content"
-                name="content"
-                class="w-full block"
-            />
+            <div class="w-full block" wire:ignore>
+                <div id="content" x-ref="alpEditor" class="ql-editor-host"></div>
+            </div>
         </div>
-        <div
-            class="w-full flex flex-row justify-end items-center gap-3 pt-4"
-            x-data="{
-                alpDirty: false,
-                alpInit() {
-                    this.$wire.$watch('title', () => { this.alpDirty = true; });
-                    this.$wire.$watch('content', () => { this.alpDirty = true; });
-
-                    window.addEventListener('beforeunload', (e) => {
-                        if (! this.alpDirty) return;
-                        e.preventDefault();
-                        e.returnValue = '';
-                    });
-                },
-            }"
-            x-init="alpInit()"
-            @note-saved.window="alpDirty = false"
-        >
-            <span x-show="alpDirty" style="display: none;" class="text-xs text-warning">Unsaved changes</span>
-            <button
-                type="button"
-                wire:click="save"
-                wire:loading.attr="disabled"
-                wire:target="save"
-                class="btn btn-primary"
-            >
-                <span wire:loading.remove wire:target="save">Save</span>
-                <span wire:loading wire:target="save">Saving...</span>
-            </button>
+        <div class="w-full flex flex-row justify-end items-center gap-3 pt-4">
+            <span x-show="alpUnsaved && ! alpSyncing && alpSaveState !== 'failed'" style="display: none;" class="text-xs text-warning">Unsaved changes</span>
+            <span x-show="alpSaveState === 'saving'" style="display: none;" class="text-xs text-info">Saving...</span>
+            <span x-show="alpSaveState === 'saved' && ! alpUnsaved" style="display: none;" class="text-xs text-success">Saved</span>
+            <span x-show="alpSaveState === 'failed' && alpUnsaved" style="display: none;" class="text-xs text-error">Sync failed - will retry automatically</span>
         </div>
     </div>
 </div>
