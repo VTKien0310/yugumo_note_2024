@@ -1,82 +1,102 @@
 <?php
 
-use App\Features\Note\Actions\CreateEmptyChecklistNoteContentAction;
 use App\Features\Note\Actions\FindChecklistContentOfNoteForDisplayAction;
-use App\Features\Note\Actions\UpdateNoteAction;
-use App\Features\Note\Models\ChecklistNoteContent;
 use App\Features\Note\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Volt\Component;
 
+// Render-only shell: all editing (title, item content/completion, item
+// create/delete) goes through the BFF endpoints via the checklistNoteEditor
+// Alpine component - no Livewire round-trips after the initial render.
 new class extends Component
 {
     public Note $note;
-
-    public string $title;
 
     public Collection $content;
 
     public function mount(Note $note): void
     {
         $this->note = $note;
-        $this->title = $note->title;
-        $this->refreshChecklistContent();
-    }
-
-    private function refreshChecklistContent(): void
-    {
-        $this->content = app()->make(FindChecklistContentOfNoteForDisplayAction::class)->handle($this->note);
-    }
-
-    public function updated(): void
-    {
-        app()->make(UpdateNoteAction::class)->handle($this->note, [
-            'title' => $this->title,
-        ]);
-    }
-
-    public function addNewChecklistItem(): void
-    {
-        app()->make(CreateEmptyChecklistNoteContentAction::class)->handle($this->note);
-        $this->refreshChecklistContent();
-    }
-
-    public function removeChecklistItemFromContent(string $checklistItemId): void
-    {
-        $this->content = $this->content->reject(
-            fn (ChecklistNoteContent $checklistItem): bool => $checklistItem->id === $checklistItemId
-        );
+        $this->content = app()->make(FindChecklistContentOfNoteForDisplayAction::class)->handle($note);
     }
 }; ?>
 
 <div
     class="w-3/4 xl:w-1/2"
-    x-data="{ alpHiddenIds: new Set() }"
+    x-data="checklistNoteEditor({
+        titleSyncUrl: @js(route('bff.notes.update', ['note' => $note->id])),
+        storeUrl: @js(route('bff.notes.checklist-items.store', ['note' => $note->id])),
+        initialTitle: @js($note->title),
+    })"
 >
     <div class="w-full flex flex-col justify-start items-center">
 
         <div class="w-full flex flex-col justify-start items-start mb-5">
             <x-forms.label for="title" class="font-bold text-xs mb-1"/>
-            <x-forms.input wire:model.live.debounce.500ms="title" name="title" class="input input-bordered w-full"/>
+            <x-forms.input
+                name="title"
+                maxlength="255"
+                :value="$note->title"
+                class="input input-bordered w-full"
+                x-model="alpTitle"
+                x-on:input="alpHandleTitleInput()"
+            />
+            <div class="w-full flex flex-row justify-end items-center gap-3 pt-1">
+                <span x-show="alpTitleSaveState === 'saving'" class="text-xs text-base-content/60">Saving...</span>
+                <span x-show="alpTitleSaveState === 'saved' && ! alpTitleUnsaved" class="text-xs text-base-content/60">Saved</span>
+                <span x-show="alpTitleSaveState === 'failed'" class="text-xs text-error">Sync failed - will retry on next change</span>
+            </div>
         </div>
 
         <div class="w-full flex flex-col justify-start items-start">
             <div class="w-full flex justify-between items-center content-center mb-1">
                 <x-forms.label for="content" class="font-bold text-xs"/>
-                <button wire:click="addNewChecklistItem" class="btn-with-centered-icon btn btn-xs btn-primary">
+                <button
+                    x-on:click="alpAddItem()"
+                    x-bind:disabled="alpAdding"
+                    class="btn-with-centered-icon btn btn-xs btn-primary"
+                >
                     <x-ionicon-add class="w-6 h-6"/>
                 </button>
             </div>
+            <div class="w-full flex flex-row justify-end items-center pt-1">
+                <span x-show="alpAddFailed" class="text-xs text-error">Could not add item - click + to retry</span>
+            </div>
             <div class="w-full flex flex-col pt-2">
+
+                {{-- Items created during this session (newest first, on top of
+                     the incomplete section, matching server-side ordering). --}}
+                <template x-for="alpItem in alpAddedItems" :key="alpItem.id">
+                    <div
+                        x-data="checklistNoteEditorItem(alpItem)"
+                        x-show="! alpDeleted"
+                        x-transition
+                        class="p-0 mb-3 label cursor-pointer"
+                    >
+                        @include('livewire.note.partials.checklist-item-row')
+                    </div>
+                </template>
+
+                {{-- Server-rendered items. --}}
                 @foreach($content as $checklistItem)
-                    <livewire:checklist-item-form-livewire
-                            :checklist-item="$checklistItem"
-                            :key="$checklistItem->id"
-                            x-show="!alpHiddenIds.has('{{ $checklistItem->id }}')"
-                            x-on:checklist-item-deleted="alpHiddenIds.add($event.detail.id)"
-                            @checklist-item-deleted="removeChecklistItemFromContent($event.detail.id)"
-                    />
+                    <div
+                        x-data="checklistNoteEditorItem({
+                            id: @js($checklistItem->id),
+                            content: @js($checklistItem->content),
+                            isCompleted: @js((bool) $checklistItem->is_completed->value),
+                            updateUrl: @js(route('bff.notes.checklist-items.update', ['note' => $note->id, 'checklistItem' => $checklistItem->id])),
+                            deleteUrl: @js(route('bff.notes.checklist-items.destroy', ['note' => $note->id, 'checklistItem' => $checklistItem->id])),
+                            position: {{ $loop->index }},
+                        })"
+                        x-show="! alpDeleted"
+                        x-transition
+                        class="p-0 mb-3 label cursor-pointer"
+                        wire:key="checklist-item-{{ $checklistItem->id }}"
+                    >
+                        @include('livewire.note.partials.checklist-item-row')
+                    </div>
                 @endforeach
+
             </div>
         </div>
 

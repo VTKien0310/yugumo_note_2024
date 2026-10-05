@@ -1,6 +1,7 @@
 import './bootstrap';
 import 'quill/dist/quill.snow.css';
 import advancedNoteEditor from './libs/advanced-note-editor';
+import checklistNoteEditor, { checklistNoteEditorItem } from './libs/checklist-note-editor';
 
 import.meta.glob([
     '../images/**',
@@ -12,4 +13,6 @@ import.meta.glob([
 // a second instance and trigger Livewire's duplicate-instance warning.
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('advancedNoteEditor', advancedNoteEditor);
+    window.Alpine.data('checklistNoteEditor', checklistNoteEditor);
+    window.Alpine.data('checklistNoteEditorItem', checklistNoteEditorItem);
 });
