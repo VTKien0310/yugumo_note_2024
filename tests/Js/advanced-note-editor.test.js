@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Alpine from 'alpinejs';
-import advancedNoteEditor from '../../resources/js/advanced-note-editor.js';
+import advancedNoteEditor from '../../resources/js/libs/advanced-note-editor.js';
 
 const SYNC_URL = 'http://localhost/bff/notes/01TEST';
 const INITIAL_TITLE = 'Initial title';

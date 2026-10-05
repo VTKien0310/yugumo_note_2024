@@ -1,6 +1,6 @@
 import './bootstrap';
 import 'quill/dist/quill.snow.css';
-import advancedNoteEditor from './advanced-note-editor';
+import advancedNoteEditor from './libs/advanced-note-editor';
 
 import.meta.glob([
     '../images/**',

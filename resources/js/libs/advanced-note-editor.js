@@ -1,5 +1,5 @@
 import Quill from 'quill';
-import { bffPut } from './services/bff-api';
+import { bffPut } from '../services/bff-api';
 
 const SYNC_INTERVAL_MS = 3000;
 
