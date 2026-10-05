@@ -154,13 +154,46 @@ describe('advancedNoteEditor', () => {
     it('marks the save state as failed when the request fails', async () => {
         const { quill, state } = mountEditor();
 
-        vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 500 })));
+        vi.stubGlobal('fetch', vi.fn(async () => ({
+            ok: false,
+            status: 500,
+            json: async () => ({ status: 500, success: false, error: { code: 'server_error', message: 'Internal server error.' } }),
+        })));
 
         quill.setText('updated text\n');
         flushQuill(quill);
 
         await state.alpSync();
 
+        expect(state.alpSaveState).toBe('failed');
+        expect(state.alpUnsaved).toBe(true);
+    });
+
+    it('redirects to the login page on 401 and marks the save as failed', async () => {
+        const { quill, state } = mountEditor();
+
+        const assign = vi.fn();
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: { ...window.location, assign: assign },
+        });
+
+        vi.stubGlobal('fetch', vi.fn(async () => ({
+            ok: false,
+            status: 401,
+            json: async () => ({
+                status: 401,
+                success: false,
+                error: { code: 'unauthenticated', message: 'You are not authenticated for this request.' },
+            }),
+        })));
+
+        quill.setText('updated text\n');
+        flushQuill(quill);
+
+        await state.alpSync();
+
+        expect(assign).toHaveBeenCalledWith('/auth/login');
         expect(state.alpSaveState).toBe('failed');
         expect(state.alpUnsaved).toBe(true);
     });

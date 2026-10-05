@@ -1,4 +1,5 @@
 import Quill from 'quill';
+import { bffPut } from './services/bff-api';
 
 const SYNC_INTERVAL_MS = 3000;
 
@@ -110,33 +111,25 @@ export default function advancedNoteEditor({ syncUrl, initialTitle, initialConte
             this.alpSyncing = true;
             this.alpSaveState = 'saving';
 
-            try {
-                const response = await fetch(syncUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
-                    },
-                    body: JSON.stringify({
-                        title: title,
-                        content: JSON.parse(content),
-                    }),
-                    keepalive: keepalive,
-                });
+            const result = await bffPut(syncUrl, {
+                title: title,
+                content: JSON.parse(content),
+            }, { keepalive: keepalive });
 
-                if (! response.ok) throw new Error('Sync failed with status ' + response.status);
+            result.match({
+                ok: () => {
+                    lastSyncedTitle = title;
+                    lastSyncedContent = content;
+                    this.alpUnsaved = this.alpHasUnsavedChanges();
+                    this.alpSaveState = 'saved';
+                },
+                err: () => {
+                    this.alpUnsaved = this.alpHasUnsavedChanges();
+                    this.alpSaveState = 'failed';
+                },
+            });
 
-                lastSyncedTitle = title;
-                lastSyncedContent = content;
-                this.alpUnsaved = this.alpHasUnsavedChanges();
-                this.alpSaveState = 'saved';
-            } catch (error) {
-                this.alpUnsaved = this.alpHasUnsavedChanges();
-                this.alpSaveState = 'failed';
-            } finally {
-                this.alpSyncing = false;
-            }
+            this.alpSyncing = false;
         },
     };
 }
