@@ -3,7 +3,6 @@
 namespace App\Features\Note\Actions;
 
 use App\Extendables\Core\Utils\BoolIntValueEnum;
-use App\Extendables\Core\Utils\GetRawTextFromWYSIWYGContentAction;
 use App\Features\Note\Models\ChecklistNoteContent;
 use App\Features\Note\Models\Note;
 use App\Features\Note\ValueObjects\NoteListDisplayDataValueObject;
@@ -13,7 +12,7 @@ use Illuminate\Support\Str;
 readonly class MakeNoteListDisplayDataAction
 {
     public function __construct(
-        private GetRawTextFromWYSIWYGContentAction $getRawTextFromWYSIWYGContentAction,
+        private GetRawTextFromQuillDeltaAction $getRawTextFromQuillDeltaAction,
     ) {}
 
     public function handle(Note $note): NoteListDisplayDataValueObject
@@ -80,9 +79,9 @@ readonly class MakeNoteListDisplayDataAction
 
     private function makeRepresentingContentForAdvancedNote(Note $note): string
     {
-        return $this->getRawTextFromWYSIWYGContentAction->handle(
-            $this->makeRepresentingContentForTextNote($note)
-        );
+        $delta = $note->richTextContent()->latest()->first()?->content ?? [];
+
+        return $this->getRawTextFromQuillDeltaAction->handle(is_array($delta) ? $delta : []);
     }
 
     private function shortenTextData(string $textData, int $maxLength): string

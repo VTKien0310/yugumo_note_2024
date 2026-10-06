@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Web\Authentication;
+namespace App\Http\Web\Routes\Authentication;
 
 use App\Extendables\Core\Http\Controllers\WebController;
 use Illuminate\Contracts\View\View;
@@ -8,7 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AuthenticationController extends WebController
+class WebAuthenticationController extends WebController
 {
     /**
      * GET /auth/login

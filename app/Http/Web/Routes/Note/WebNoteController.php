@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Web\Note;
+namespace App\Http\Web\Routes\Note;
 
 use App\Extendables\Core\Http\Controllers\WebController;
 use App\Extendables\Core\Utils\BoolIntValueEnum;
@@ -21,7 +21,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class NoteController extends WebController
+class WebNoteController extends WebController
 {
     /**
      * GET /
@@ -103,6 +103,7 @@ class NoteController extends WebController
 
         match ($noteType->id) {
             NoteTypeEnum::CHECKLIST->value => $note->load(Note::RELATION_CHECKLIST_CONTENT),
+            NoteTypeEnum::ADVANCED->value => $note->load(Note::RELATION_RICH_TEXT_CONTENT),
             default => $note->load(Note::RELATION_TEXT_CONTENT)
         };
 
