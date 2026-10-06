@@ -35,6 +35,12 @@ class NoteTypeSeeder extends Seeder
                 NoteType::DESCRIPTION => 'A list with checkboxes to keep track of things',
                 NoteType::ILLUSTRATION_PATH => 'resources/images/checklist.svg',
             ],
+            [
+                NoteType::ID => NoteTypeEnum::MARKDOWN->value,
+                NoteType::NAME => 'Markdown',
+                NoteType::DESCRIPTION => 'A note written in Markdown with live preview',
+                NoteType::ILLUSTRATION_PATH => 'resources/images/markdown-note.svg',
+            ],
         ];
 
         $now = now();

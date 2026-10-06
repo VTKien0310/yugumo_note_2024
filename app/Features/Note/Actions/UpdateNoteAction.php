@@ -37,7 +37,7 @@ readonly class UpdateNoteAction
     private function updateNoteContentBasedOnNoteType(Note $note, array $data): void
     {
         match ($note->type_id) {
-            NoteTypeEnum::SIMPLE->value => $this->updateTextNoteContent($note, $data),
+            NoteTypeEnum::SIMPLE->value, NoteTypeEnum::MARKDOWN->value => $this->updateTextNoteContent($note, $data),
             NoteTypeEnum::ADVANCED->value => $this->updateRichTextNoteContent($note, $data),
             default => null
         };

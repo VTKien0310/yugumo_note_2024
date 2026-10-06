@@ -30,7 +30,11 @@ class BffNoteController extends ApiController
         $manageNoteAuthorizer->handle($note, $request->user());
 
         abort_if(
-            ! in_array($note->type_id, [NoteTypeEnum::ADVANCED->value, NoteTypeEnum::CHECKLIST->value]),
+            ! in_array($note->type_id, [
+                NoteTypeEnum::ADVANCED->value,
+                NoteTypeEnum::CHECKLIST->value,
+                NoteTypeEnum::MARKDOWN->value,
+            ]),
             Response::HTTP_UNPROCESSABLE_ENTITY
         );
 
@@ -38,8 +42,9 @@ class BffNoteController extends ApiController
             'title' => 'required|string|max:255',
         ];
 
-        // Only advanced notes carry rich text content; checklist notes sync
-        // just the title here and edit their items via the checklist endpoints.
+        // Advanced notes carry rich text content; markdown notes carry plain
+        // markdown text; checklist notes sync just the title here and edit
+        // their items via the checklist endpoints.
         if ($note->type_id === NoteTypeEnum::ADVANCED->value) {
             $rules = array_merge($rules, [
                 'content' => 'required|array',
@@ -51,14 +56,22 @@ class BffNoteController extends ApiController
             ]);
         }
 
+        if ($note->type_id === NoteTypeEnum::MARKDOWN->value) {
+            $rules['content'] = 'present|string';
+        }
+
         $data = $request->validate($rules);
 
         $updateData = [
             Note::TITLE => $data['title'],
         ];
 
-        if (isset($data['content'])) {
+        if ($note->type_id === NoteTypeEnum::ADVANCED->value && isset($data['content'])) {
             $updateData['rich_text_content'] = $data['content'];
+        }
+
+        if ($note->type_id === NoteTypeEnum::MARKDOWN->value && isset($data['content'])) {
+            $updateData['text_content'] = $data['content'];
         }
 
         $note = $updateNoteAction->handle($note, $updateData);
