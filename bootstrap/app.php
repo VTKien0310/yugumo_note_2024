@@ -24,6 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'content.ops.*.insert',
         ]);
         $middleware->convertEmptyStringsToNull(except: [
+            // bff/notes/* covers the note sync endpoints; emptied checklist items
+            // ("" content) must reach the DB as empty strings, not null.
             fn ($request) => $request->is('bff/notes/*'),
         ]);
         $middleware->trustProxies(

@@ -29,22 +29,39 @@ class BffNoteController extends ApiController
     ): JsonResponse {
         $manageNoteAuthorizer->handle($note, $request->user());
 
-        abort_if($note->type_id !== NoteTypeEnum::ADVANCED->value, Response::HTTP_UNPROCESSABLE_ENTITY);
+        abort_if(
+            ! in_array($note->type_id, [NoteTypeEnum::ADVANCED->value, NoteTypeEnum::CHECKLIST->value]),
+            Response::HTTP_UNPROCESSABLE_ENTITY
+        );
 
-        $data = $request->validate([
+        $rules = [
             'title' => 'required|string|max:255',
-            'content' => 'required|array',
-            'content.ops' => 'required|array',
-            // `required` considers whitespace-only strings (e.g. "\n" line-break ops) empty,
-            // so presence is enforced with `present` instead.
-            'content.ops.*.insert' => 'present|string',
-            'content.ops.*.attributes' => 'sometimes|array',
-        ]);
+        ];
 
-        $note = $updateNoteAction->handle($note, [
+        // Only advanced notes carry rich text content; checklist notes sync
+        // just the title here and edit their items via the checklist endpoints.
+        if ($note->type_id === NoteTypeEnum::ADVANCED->value) {
+            $rules = array_merge($rules, [
+                'content' => 'required|array',
+                'content.ops' => 'required|array',
+                // `required` considers whitespace-only strings (e.g. "\n" line-break ops) empty,
+                // so presence is enforced with `present` instead.
+                'content.ops.*.insert' => 'present|string',
+                'content.ops.*.attributes' => 'sometimes|array',
+            ]);
+        }
+
+        $data = $request->validate($rules);
+
+        $updateData = [
             Note::TITLE => $data['title'],
-            'rich_text_content' => $data['content'],
-        ]);
+        ];
+
+        if (isset($data['content'])) {
+            $updateData['rich_text_content'] = $data['content'];
+        }
+
+        $note = $updateNoteAction->handle($note, $updateData);
 
         return $this->responder->responseRawContent([
             'saved_at' => $note->refresh()->updated_at->toIso8601String(),
