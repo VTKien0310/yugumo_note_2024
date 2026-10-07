@@ -87,3 +87,36 @@
 .ql-editor-host .ql-editor li.ql-indent-3:not(.ql-direction-rtl) {
     padding-left: 5.6em;
 }
+
+/*
+  EasyMDE (markdown note editor) theming.
+
+  The stock easymde.min.css ships hardcoded light grays and a bare white
+  preview pane; the overrides below keep the editor legible inside the daisyUI
+  winter theme and give the editing surface the same min-height as the Quill
+  editor.
+*/
+.EasyMDEContainer {
+    display: block;
+    width: 100%;
+}
+
+.EasyMDEContainer .CodeMirror {
+    min-height: 500px;
+    color: inherit;
+    background-color: var(--color-base-100, #fff);
+    border-color: var(--color-gray-200, #e5e7eb);
+}
+
+.EasyMDEContainer .editor-toolbar {
+    border-color: var(--color-gray-200, #e5e7eb);
+}
+
+.EasyMDEContainer .editor-preview,
+.EasyMDEContainer .editor-preview-side {
+    background-color: var(--color-base-100, #fff);
+}
+
+.EasyMDEContainer .CodeMirror-cursor {
+    border-left-color: currentColor;
+}
