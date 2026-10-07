@@ -6,6 +6,7 @@ use App\Features\Note\Actions\CreateNewNoteWithDefaultContentAction;
 use App\Features\NoteType\Enums\NoteTypeEnum;
 use App\Features\NoteType\Models\NoteType;
 use App\Features\User\Models\User;
+use Database\Seeders\NoteTypeSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -20,14 +21,12 @@ class AdvancedNoteSyncTest extends TestCase
             'email' => 'advanced-note-test@example.com',
             'password' => 'password',
         ]);
-        $noteType = NoteType::query()->firstOrCreate(
-            ['id' => NoteTypeEnum::ADVANCED->value],
-            [
-                'name' => 'Advanced note',
-                'description' => 'Rich text note',
-                'illustration_path' => 'resources/images/advanced-note.svg',
-            ]
-        );
+        // The page dispatch and the BFF type guards compare note->type_id
+        // against the enum values, so the note_types rows must carry those
+        // exact ids - which is what the production seeder inserts.
+        $this->seed(NoteTypeSeeder::class);
+
+        $noteType = NoteType::findOrFail(NoteTypeEnum::ADVANCED->value);
         $note = app(CreateNewNoteWithDefaultContentAction::class)->handle($user, $noteType);
 
         $this->actingAs($user)
