@@ -45,31 +45,41 @@ Run inside the PHP container:
 ### Architecture
 
 - **Domain structure**: `app/Features/{FeatureName}/` (one folder per feature)
-- **Current features**: `Note`, `NoteType`, `Search`, `User`
+- **Extendables**: `app/Extendables/{Core,Providers}/` — base classes, interfaces, traits, and service providers
 - **Feature sub-directories** (create only what is needed):
     - `Actions/` — reusable business/application logic
-    - `Authorizers/` — authorization logic
     - `ArtisanCommands/` — custom artisan commands
-    - `Validators/` — validation logic
-    - `Jobs/` — queue jobs
-    - `Notifications/` — notifications
-    - `ValueObjects/` — structured data containers
+    - `Authorizers/` — authorization logic
     - `Cache/` — caching related
-    - `Middlewares/` — feature middlewares
-    - `Enums/` — feature scoped enums
     - `Commands/` — reusable write-to-database logic
+    - `Enums/` — feature scoped enums
+    - `Jobs/` — queue jobs
+    - `Middlewares/` — feature middlewares
+    - `Models/`
+        - `*.php` — Eloquent models; contain only mutators, accessors, and no business logic
+        - `Relationships/` — reusable relationship interfaces
+    - `Notifications/` — notifications
     - `Queries/` — reusable read-from-database logic
         - `Filters/` — applied via `filter` query string
         - `Sorts/` — applied via `sort` query string
-    - `Models/`
-        - `Relationships/` — reusable relationship interfaces
-        - `*.php` — Eloquent models; contain only mutators, accessors, and no business logic
-- **Extendables**: `app/Extendables/{Core,Providers}/` — base classes, interfaces, traits, and service providers
-- **HTTP layer**: `app/Http/{Web,Bff}/` — HTTP entry points. Each module keeps its route entry (`web.php` / `bff.php`) at its root, and per-feature folders (route definition + controller) under `Routes/`, e.g. `app/Http/Web/Routes/Note/{WebNoteController.php, web-note-routes.php}`. Each module declares its own middleware/prefix/name in its route entry file (bootstrap only registers the files, it applies no routing middleware itself). To prevent filename duplication across modules, route definition files are prefixed with the module name (`web-note-routes.php`, `bff-authentication-routes.php`) and controllers with the module prefix in PascalCase (`WebNoteController`, `BffAuthenticationController`)
-    - `Web/` — Livewire/Volt backed web UI (route entry: `app/Http/Web/web.php`).
-    - `Bff/` — session-authenticated JSON backend-for-frontend under the `/bff` URL prefix (route entry: `app/Http/Bff/bff.php`); exceptions on `/bff/*` are rendered as JSON by `App\Extendables\Core\Http\Exception\JsonApiExceptionHandler`.
+    - `Validators/` — validation logic
+    - `ValueObjects/` — structured data containers
 - **Global enums**: `app/Enums/`
+- **HTTP layer**: `app/Http/{Web,Bff}/` — HTTP entry points. Each module keeps its route entry (`web.php` / `bff.php`) at its root, and per-feature folders (route definition + controller) under `Routes/`, e.g. `app/Http/Web/Routes/Note/{WebNoteController.php, web-note-routes.php}`. Each module declares its own middleware/prefix/name in its route entry file (bootstrap only registers the files, it applies no routing middleware itself). To prevent filename duplication across modules, route definition files are prefixed with the module name (`web-note-routes.php`, `bff-authentication-routes.php`) and controllers with the module prefix in PascalCase (`WebNoteController`, `BffAuthenticationController`)
+    - `Bff/` — session-authenticated JSON backend-for-frontend under the `/bff` URL prefix (route entry: `app/Http/Bff/bff.php`); exceptions on `/bff/*` are rendered as JSON by `App\Extendables\Core\Http\Exception\JsonApiExceptionHandler`.
+    - `Web/` — Livewire/Volt backed web UI (route entry: `app/Http/Web/web.php`).
 - **Query strings**: Follow [JSON API specification](https://jsonapi.org/format/#fetching) (`filter`, `sort`, `include`, `page`, `only`)
+- **Resources**: `resources/` — frontend assets and Blade/Livewire views
+    - `css/` — stylesheets (`app.css`, Tailwind entry point)
+    - `images/` — static images (SVG illustrations, favicon)
+    - `js/` — JavaScript entry point (`app.js`, `bootstrap.js`)
+        - `libs/` — editor libraries (e.g. `advanced-note-editor.js`, `checklist-note-editor.js`)
+        - `services/` — client-side API services (e.g. `bff-api.js` for the BFF)
+    - `views/` — Blade views, grouped by feature (e.g. `note/`, `authentication/`, `profile/`)
+        - `components/` — anonymous Blade components (`forms/`, `layouts/`, feature components)
+        - `errors/` — HTTP error pages
+        - `livewire/` — Livewire component views
+        - `pages/` — full-page views
 
 ### Macros
 
