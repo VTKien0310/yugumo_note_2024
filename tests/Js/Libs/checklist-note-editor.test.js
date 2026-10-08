@@ -1,19 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Alpine from 'alpinejs';
-import checklistNoteEditor, { checklistNoteEditorItem } from '../../resources/js/libs/checklist-note-editor.js';
+import checklistNoteEditor, { checklistNoteEditorItem } from '../../../resources/js/libs/checklist-note-editor.js';
+import { makeChecklistItem } from '../Factories/NoteFixture.js';
 
 const TITLE_SYNC_URL = 'http://localhost/bff/notes/01TESTNOTE';
 const STORE_URL = 'http://localhost/bff/notes/01TESTNOTE/checklist-items';
 const ITEM_URL = `${STORE_URL}/01TESTITEM`;
 const INITIAL_TITLE = 'My checklist';
-const INITIAL_ITEM = {
+const INITIAL_ITEM = makeChecklistItem({
     id: '01TESTITEM',
-    content: 'Buy milk',
-    isCompleted: false,
-    updateUrl: ITEM_URL,
-    deleteUrl: ITEM_URL,
-    position: 0,
-};
+    storeUrl: STORE_URL,
+});
 
 let alpineStarted = false;
 
@@ -22,7 +19,6 @@ let alpineStarted = false;
  * on it, mirroring edit-checklist-note-form-livewire.blade.php.
  */
 function mountEditor({ withItem = true } = {}) {
-    document.head.innerHTML = '<meta name="csrf-token" content="test-token">';
     document.body.innerHTML = `
         <div id="root">
             <input id="title" x-ref="alpTitleInput" x-model="alpTitle" x-on:input="alpHandleTitleInput()" value="${INITIAL_TITLE}">
@@ -88,12 +84,10 @@ describe('checklistNoteEditor', () => {
     beforeEach(() => {
         vi.useFakeTimers();
         vi.stubGlobal('fetch', vi.fn(async () => okResponse()));
-    });
 
-    afterEach(() => {
-        vi.useRealTimers();
-        vi.unstubAllGlobals();
-        document.body.innerHTML = '';
+        return () => {
+            vi.useRealTimers();
+        };
     });
 
     it('debounces title edits and syncs them to the note endpoint', async () => {
@@ -103,7 +97,6 @@ describe('checklistNoteEditor', () => {
         titleInput.value = 'Renamed checklist';
         titleInput.dispatchEvent(new Event('input'));
 
-        // still debouncing
         expect(fetch).not.toHaveBeenCalled();
 
         await vi.advanceTimersByTimeAsync(600);
@@ -177,7 +170,6 @@ describe('checklistNoteEditor', () => {
         checkbox.checked = true;
         checkbox.dispatchEvent(new Event('change'));
 
-        // completion toggles flush synchronously - no timer advance needed
         await vi.advanceTimersByTimeAsync(0);
 
         expect(fetch).toHaveBeenCalledOnce();
@@ -202,15 +194,12 @@ describe('checklistNoteEditor', () => {
         contentInput.dispatchEvent(new Event('input'));
         await vi.advanceTimersByTimeAsync(600);
 
-        // second edit while the first request is still in flight
         contentInput.value = 'Second edit';
         contentInput.dispatchEvent(new Event('input'));
         await vi.advanceTimersByTimeAsync(600);
 
         expect(fetch).toHaveBeenCalledTimes(2);
 
-        // resolve the stale first request last - its response must not move
-        // the state back
         const secondSettled = vi.waitFor(() => {
             if (fetch.mock.calls.length < 2) throw new Error('waiting');
         });
@@ -227,7 +216,6 @@ describe('checklistNoteEditor', () => {
 
         root.querySelector('#delete').dispatchEvent(new Event('click'));
 
-        // hidden before the request resolves
         expect(itemState.alpDeleted).toBe(true);
 
         await vi.advanceTimersByTimeAsync(0);
@@ -277,7 +265,6 @@ describe('checklistNoteEditor', () => {
         expect(state.alpAdding).toBe(false);
         expect(state.alpAddFailed).toBe(false);
 
-        // Alpine renders the row from the template
         await vi.advanceTimersByTimeAsync(0);
         expect(root.querySelector('.added-row')).not.toBeNull();
         expect(document.getElementById('checklist-item-01NEWITEM-content')).not.toBeNull();

@@ -1,10 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Alpine from 'alpinejs';
-import advancedNoteEditor from '../../resources/js/libs/advanced-note-editor.js';
+import advancedNoteEditor from '../../../resources/js/libs/advanced-note-editor.js';
+import { makeQuillDelta } from '../Factories/NoteFixture.js';
 
 const SYNC_URL = 'http://localhost/bff/notes/01TEST';
 const INITIAL_TITLE = 'Initial title';
-const INITIAL_CONTENT = { ops: [{ insert: 'initial\n' }] };
+const INITIAL_CONTENT = makeQuillDelta('initial\n');
 
 let alpineStarted = false;
 
@@ -13,7 +14,6 @@ let alpineStarted = false;
  * it, mirroring `edit-advanced-note-form-livewire.blade.php`.
  */
 function mountEditor() {
-    document.head.innerHTML = '<meta name="csrf-token" content="test-token">';
     document.body.innerHTML = `
         <div id="root">
             <input x-ref="alpTitleInput" value="${INITIAL_TITLE}">
@@ -23,8 +23,6 @@ function mountEditor() {
         </div>
     `;
 
-    // Set via setAttribute: the serialised content contains double quotes,
-    // which would terminate the attribute if inlined into the markup above.
     document.getElementById('root').setAttribute('x-data', `advancedNoteEditor(${JSON.stringify({
         syncUrl: SYNC_URL,
         initialTitle: INITIAL_TITLE,
@@ -44,15 +42,10 @@ function mountEditor() {
     return {
         root,
         quill: root._alpQuill,
-        // The reactive x-data object, as Alpine exposes it to the markup.
         state: Alpine.$data(root),
     };
 }
 
-/**
- * Quill reacts to DOM edits through a MutationObserver, which is async.
- * `quill.update()` drains pending records synchronously instead.
- */
 function flushQuill(quill) {
     quill.update();
 }
@@ -62,17 +55,9 @@ describe('advancedNoteEditor', () => {
         vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({}) })));
     });
 
-    afterEach(() => {
-        vi.unstubAllGlobals();
-        document.body.innerHTML = '';
-    });
-
     it('keeps the Quill instance outside of Alpine reactive proxy', () => {
         const { quill } = mountEditor();
 
-        // Regression guard. When Quill lived on `x-data`, Alpine's deep
-        // reactive Proxy re-wrapped `quill.scroll` on every read, so the raw
-        // identity below no longer held.
         expect(quill.scroll).toBe(Alpine.raw(quill.scroll));
         expect(quill.root).toBe(Alpine.raw(quill.root));
     });
@@ -80,10 +65,6 @@ describe('advancedNoteEditor', () => {
     it('resolves blots from DOM nodes', () => {
         const { quill } = mountEditor();
 
-        // `ScrollBlot.find()` checks `blot.scroll === this`. Through a Proxy
-        // that identity check fails and every lookup returns null, which is
-        // what crashed `Selection.normalizedToRange()` with
-        // "Cannot read properties of null (reading 'offset')".
         const blot = quill.scroll.find(quill.root.firstChild, true);
 
         expect(blot).not.toBeNull();
@@ -102,9 +83,6 @@ describe('advancedNoteEditor', () => {
         quill.setText('updated text\n');
         flushQuill(quill);
 
-        // With the editor proxied, the SCROLL_UPDATE handler threw before it
-        // could refresh `editor.delta`, so getContents() kept returning the
-        // initial document and nothing was ever reported as unsaved.
         expect(quill.getText()).toBe('updated text\n');
         expect(state.alpHasUnsavedChanges()).toBe(true);
     });
