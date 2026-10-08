@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Alpine from 'alpinejs';
-import markdownNoteEditor from '../../resources/js/libs/markdown-note-editor.js';
+import markdownNoteEditor from '../../../resources/js/libs/markdown-note-editor.js';
 
 const SYNC_URL = 'http://localhost/bff/notes/01TEST';
 const INITIAL_TITLE = 'Initial title';
@@ -13,7 +13,6 @@ let alpineStarted = false;
  * it, mirroring `edit-markdown-note-form-livewire.blade.php`.
  */
 function mountEditor() {
-    document.head.innerHTML = '<meta name="csrf-token" content="test-token">';
     document.body.innerHTML = `
         <div id="root">
             <input x-ref="alpTitleInput" value="${INITIAL_TITLE}">
@@ -42,7 +41,6 @@ function mountEditor() {
     return {
         root,
         easyMde: root._alpEasyMde,
-        // The reactive x-data object, as Alpine exposes it to the markup.
         state: Alpine.$data(root),
     };
 }
@@ -52,17 +50,9 @@ describe('markdownNoteEditor', () => {
         vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({}) })));
     });
 
-    afterEach(() => {
-        vi.unstubAllGlobals();
-        document.body.innerHTML = '';
-    });
-
     it('keeps the EasyMDE instance outside of Alpine reactive proxy', () => {
         const { easyMde } = mountEditor();
 
-        // Regression guard, same Proxy pitfall as the Quill editor: reading
-        // the CodeMirror instance through Alpine's deep reactive Proxy breaks
-        // the raw object identity CodeMirror relies on internally.
         expect(easyMde.codemirror).toBe(Alpine.raw(easyMde.codemirror));
     });
 

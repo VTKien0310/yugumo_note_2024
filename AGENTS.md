@@ -118,6 +118,42 @@ The DB image is `groonga/pgroonga:4.0.1-alpine-15` (see `docker-compose.yml`). I
 - **Do not** replace the image with a plain `postgres` image without confirming the search feature can be re-implemented.
 - **Do not** write MySQL/MariaDB-specific DDL or queries.
 
+## Testing
+
+Run inside the PHP container:
+
+```bash
+composer pest-test        # Run Pest tests
+composer test             # Clear config and run Pest tests
+```
+
+Run client-side tests (host or container):
+
+```bash
+npm run test              # Run Vitest test suite
+```
+
+### Pest Test Structure
+
+- Wrap test cases in `describe(ClassName::class, function () { ... })` so the output is grouped by the class under test.
+- Pest test files should not declare a `namespace`; import the classes they need with `use`.
+- Test directory structure strictly mirrors `app/`:
+    - `tests/Architecture/` — architectural constraints and security rules via Pest `arch()`.
+    - `tests/Extendables/` — base utilities, providers, and macros (`ExtendableServiceProviderTest.php`).
+    - `tests/Features/{FeatureName}/` — domain actions, commands, and models, plus `tests/Features/EloquentModelContractTest.php`.
+    - `tests/Http/{Web,Bff}/` — HTTP routes and controllers (`tests/Http/Web/...`, `tests/Http/Bff/...`).
+    - `tests/Integration/` — seeders, cross-service workflows, and search indexing integration.
+    - `tests/Factories/` — model test factories inheriting `Tests\TestFactory`.
+    - `tests/Fakes/` — in-memory test fakes for external ports.
+
+### Client-side Test Structure (Vitest)
+
+- Test directory structure strictly mirrors `resources/js/`:
+    - `tests/Js/setup.js` — centralized test setup (CSRF meta tag injection, mock and DOM cleanup).
+    - `tests/Js/Factories/` — fixture helpers for note content, Quill deltas, and checklist items.
+    - `tests/Js/Libs/` — tests for editor libraries under `resources/js/libs/`.
+    - `tests/Js/Services/` — tests for API client services under `resources/js/services/`.
+
 ## Key Artisan Commands
 
 ```bash

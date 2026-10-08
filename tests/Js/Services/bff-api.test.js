@@ -1,15 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { BffApiError, BffResult, bffGet, bffPut, request } from '../../resources/js/services/bff-api.js';
+import { describe, expect, it, vi } from 'vitest';
+import { BffApiError, BffResult, bffGet, bffPut, request } from '../../../resources/js/services/bff-api.js';
+import { makeJsonResponse } from '../Factories/NoteFixture.js';
 
 const URL = 'http://localhost/bff/notes/01TEST';
-
-function jsonResponse(status, payload) {
-    return {
-        ok: status >= 200 && status < 300,
-        status: status,
-        json: async () => payload,
-    };
-}
 
 function stubLocationAssign() {
     const assign = vi.fn();
@@ -23,18 +16,8 @@ function stubLocationAssign() {
 }
 
 describe('bff-api', () => {
-    beforeEach(() => {
-        document.head.innerHTML = '<meta name="csrf-token" content="test-token">';
-    });
-
-    afterEach(() => {
-        vi.unstubAllGlobals();
-        vi.restoreAllMocks();
-        document.head.innerHTML = '';
-    });
-
     it('injects JSON and CSRF headers, read lazily per call', async () => {
-        const fetchMock = vi.fn(async () => jsonResponse(200, { data: null }));
+        const fetchMock = vi.fn(async () => makeJsonResponse(200, { data: null }));
         vi.stubGlobal('fetch', fetchMock);
 
         await bffGet(URL);
@@ -52,7 +35,7 @@ describe('bff-api', () => {
     });
 
     it('sends no body for GET and serializes the body as JSON for PUT', async () => {
-        const fetchMock = vi.fn(async () => jsonResponse(200, { data: null }));
+        const fetchMock = vi.fn(async () => makeJsonResponse(200, { data: null }));
         vi.stubGlobal('fetch', fetchMock);
 
         await bffGet(URL);
@@ -63,7 +46,7 @@ describe('bff-api', () => {
     });
 
     it('forwards the keepalive option to fetch', async () => {
-        const fetchMock = vi.fn(async () => jsonResponse(200, { data: null }));
+        const fetchMock = vi.fn(async () => makeJsonResponse(200, { data: null }));
         vi.stubGlobal('fetch', fetchMock);
 
         await bffPut(URL, {}, { keepalive: true });
@@ -72,7 +55,7 @@ describe('bff-api', () => {
     });
 
     it('unwraps the data payload on success', async () => {
-        vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(200, {
+        vi.stubGlobal('fetch', vi.fn(async () => makeJsonResponse(200, {
             status: 200,
             success: true,
             data: { saved_at: '2026-10-05T00:00:00+00:00' },
@@ -126,7 +109,7 @@ describe('bff-api', () => {
     });
 
     it('maps validation errors with per-field details', async () => {
-        vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(422, {
+        vi.stubGlobal('fetch', vi.fn(async () => makeJsonResponse(422, {
             status: 422,
             success: false,
             error: {
@@ -148,7 +131,7 @@ describe('bff-api', () => {
 
     it('redirects to the login page on 401 and still returns an err result', async () => {
         const assign = stubLocationAssign();
-        vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(401, {
+        vi.stubGlobal('fetch', vi.fn(async () => makeJsonResponse(401, {
             status: 401,
             success: false,
             error: { code: 'unauthenticated', message: 'You are not authenticated for this request.' },
@@ -164,7 +147,7 @@ describe('bff-api', () => {
 
     it('skips the 401 redirect when opted out', async () => {
         const assign = stubLocationAssign();
-        vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(401, {
+        vi.stubGlobal('fetch', vi.fn(async () => makeJsonResponse(401, {
             status: 401,
             success: false,
             error: { code: 'unauthenticated', message: 'You are not authenticated for this request.' },
@@ -180,7 +163,7 @@ describe('bff-api', () => {
         [403, 'isUnauthorized'],
         [429, 'isTooManyRequests'],
     ])('exposes predicate %s via %s()', async (status, predicate) => {
-        vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(status, {
+        vi.stubGlobal('fetch', vi.fn(async () => makeJsonResponse(status, {
             status: status,
             success: false,
             error: { code: 'some_error', message: 'msg' },
