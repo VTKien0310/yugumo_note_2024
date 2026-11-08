@@ -8,21 +8,23 @@ destroyer [Yugumo](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_
 - TALL stack:
     - Tailwind 4.3
     - Alpine.js 3
-    - Laravel 12
-    - Livewire 3
+    - Laravel 13
+    - Livewire 4 with native single-file components
+- PHP 8.5 on FrankenPHP
 - Composer 2
 - Timezone: UTC
 
 ## System requirement
 
-- PHP 8.3
+- Docker Engine and Docker Compose
+- PHP 8.5 on FrankenPHP (provided by the development container)
 - Node.js 26
 - NPM package manager
-- Postgres 15.1
+- PostgreSQL 15.1 with PGroonga (provided by Docker Compose)
 
 ## Dependencies
 
-- [Laravel Telescope for debugging](https://laravel.com/docs/11.x/telescope)
+- [Laravel Telescope for debugging](https://laravel.com/docs/13.x/telescope)
 
 ## Structure
 
@@ -68,40 +70,36 @@ app/
 
 ## Setup
 
-### Install dependencies
+### Local development
 
-#### For local development environment:
+Create the local environment file and build/start the development container:
 
-```
-composer install
-```
-
-#### For production environment:
-
-```
-composer install --no-dev
-```
-
-### Config .env
-
-```
+```bash
 cp .env.example .env
+docker compose up -d --build
+docker compose exec -u www-data yugumo-note-2024-localhost bash
 ```
 
-Important fields:
+Inside the container, install dependencies and initialize a fresh development database:
+
+```bash
+composer install
+npm ci
+php artisan key:generate
+php artisan migrate:fresh --seed
+```
+
+Run `npm run dev` in a second container shell while developing frontend assets. The application is available at
+http://yugumo-note-2024.localhost.
+
+Important `.env` fields:
 
 - APP_*
 - DB_*
 - SESSION_*
 
-### Initialize
-
-```
-php artisan key:generate
-php artisan migrate:fresh
-php artisan db:seed
-php artisan optimize
-```
+The production Docker target installs Composer dependencies and builds frontend assets during image creation. Fly.io runs
+`php artisan migrate --force` as its release command.
 
 ## Fly.io deployment
 

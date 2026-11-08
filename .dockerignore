@@ -1,26 +1,23 @@
-# excludes from the docker image/build
-
-# 1. Ignore Laravel-specific files we don't need
 bootstrap/cache/*
 storage/framework/cache/*
 storage/framework/sessions/*
 storage/framework/views/*
 storage/logs/*
-*.env*
+.env*
+!.env.example
 .rr.yml
 rr
 frankenphp
 vendor
-
-# 2. Ignore common files/directories we don't need
+node_modules
+tests
 fly.toml
 .vscode
 .idea
-**/*node_modules
-**.git
-**.gitignore
-**.gitattributes
-**.sass-cache
+.git
+**/.gitignore
+**/.gitattributes
+**/.sass-cache
 **/*~
 **/*.log
 **/.DS_Store

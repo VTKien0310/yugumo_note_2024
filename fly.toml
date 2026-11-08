@@ -8,9 +8,11 @@ primary_region = 'sin'
 console_command = 'php /var/www/html/artisan tinker'
 
 [build]
+  dockerfile = 'Dockerfile'
+  build-target = 'prod'
   [build.args]
     NODE_VERSION = '26'
-    PHP_VERSION = '8.3'
+    PHP_VERSION = '8.5'
 
 [env]
   APP_NAME = 'Yugumo'
@@ -35,6 +37,13 @@ console_command = 'php /var/www/html/artisan tinker'
   auto_start_machines = false
   min_machines_running = 1
   processes = ['app']
+
+  [[http_service.checks]]
+    grace_period = '60s'
+    interval = '300s'
+    method = 'GET'
+    path = '/up'
+    timeout = '5s'
 
 [[vm]]
   size = 'shared-cpu-1x'

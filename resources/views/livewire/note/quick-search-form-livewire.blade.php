@@ -2,7 +2,7 @@
 
 use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
 use App\Features\Note\Queries\NoteFilterParamEnum;
-use Livewire\Volt\Component;
+use Livewire\Component;
 use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 
 new class extends Component {

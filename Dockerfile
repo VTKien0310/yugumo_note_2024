@@ -1,124 +1,50 @@
-# syntax = docker/dockerfile:experimental
-
-ARG PHP_VERSION=8.3
+ARG PHP_VERSION=8.5
 ARG NODE_VERSION=26
-FROM ubuntu:22.04 as base
-LABEL fly_launch_runtime="laravel"
 
-# PHP_VERSION needs to be repeated here
-# See https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
-ARG PHP_VERSION
-ENV DEBIAN_FRONTEND=noninteractive \
-    COMPOSER_ALLOW_SUPERUSER=1 \
-    COMPOSER_HOME=/composer \
-    COMPOSER_MAX_PARALLEL_HTTP=24 \
-    PHP_PM_MAX_CHILDREN=10 \
-    PHP_PM_START_SERVERS=3 \
-    PHP_MIN_SPARE_SERVERS=2 \
-    PHP_MAX_SPARE_SERVERS=4 \
-    PHP_DATE_TIMEZONE=UTC \
-    PHP_DISPLAY_ERRORS=Off \
-    PHP_ERROR_REPORTING=22527 \
+FROM node:${NODE_VERSION} AS node-base
+
+FROM serversideup/php:${PHP_VERSION}-frankenphp AS base
+USER root
+RUN install-php-extensions intl gd bcmath
+ENV PHP_DATE_TIMEZONE=UTC \
     PHP_MEMORY_LIMIT=256M \
     PHP_MAX_EXECUTION_TIME=90 \
-    PHP_POST_MAX_SIZE=100M \
     PHP_UPLOAD_MAX_FILE_SIZE=100M \
-    PHP_ALLOW_URL_FOPEN=Off
-
-# Prepare base container:
-# 1. Install PHP, Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-COPY .fly/php/ondrej_ubuntu_php.gpg /etc/apt/trusted.gpg.d/ondrej_ubuntu_php.gpg
-ADD .fly/php/packages/${PHP_VERSION}.txt /tmp/php-packages.txt
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends gnupg2 ca-certificates git-core curl zip unzip \
-                                                  rsync vim-tiny htop sqlite3 nginx supervisor cron \
-    && ln -sf /usr/bin/vim.tiny /etc/alternatives/vim \
-    && ln -sf /etc/alternatives/vim /usr/bin/vim \
-    && echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu jammy main" > /etc/apt/sources.list.d/ondrej-ubuntu-php-focal.list \
-    && apt-get update \
-    && apt-get -y --no-install-recommends install $(cat /tmp/php-packages.txt) \
-    && ln -sf /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm \
-    && mkdir -p /var/www/html/public && echo "index" > /var/www/html/public/index.php \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
-# 2. Copy config files to proper locations
-COPY .fly/nginx/ /etc/nginx/
-COPY .fly/fpm/ /etc/php/${PHP_VERSION}/fpm/
-COPY .fly/supervisor/ /etc/supervisor/
-COPY .fly/entrypoint.sh /entrypoint
-COPY .fly/start-nginx.sh /usr/local/bin/start-nginx
-RUN chmod 754 /usr/local/bin/start-nginx
-
-# 3. Copy application code, skipping files based on .dockerignore
-COPY . /var/www/html
+    PHP_POST_MAX_SIZE=100M
 WORKDIR /var/www/html
 
-# 4. Setup application dependencies
-RUN composer install --optimize-autoloader --no-dev \
-    && mkdir -p storage/logs \
-    && php artisan optimize:clear \
-    && chown -R www-data:www-data /var/www/html \
-    && echo "MAILTO=\"\"\n* * * * * www-data /usr/bin/php /var/www/html/artisan schedule:run" > /etc/cron.d/laravel \
-    && sed -i='' '/->withMiddleware(function (Middleware \$middleware) {/a\
-        \$middleware->trustProxies(at: "*");\
-    ' bootstrap/app.php; \
-    if [ -d .fly ]; then cp .fly/entrypoint.sh /entrypoint; chmod +x /entrypoint; fi;
+FROM base AS dev
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+COPY --from=node-base /usr/local/bin/ /usr/local/bin/
+COPY --from=node-base /usr/local/lib/node_modules/ /usr/local/lib/node_modules/
+RUN install-php-extensions xdebug pcov \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends git postgresql-client \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker-php-serversideup-set-id www-data ${USER_ID}:${GROUP_ID} \
+    && docker-php-serversideup-set-file-permissions --owner ${USER_ID}:${GROUP_ID}
+USER www-data
 
+FROM base AS vendor
+COPY --chown=www-data:www-data . /var/www/html
+USER www-data
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-
-
-# Multi-stage build: Build static assets
-# This allows us to not include Node within the final container
-FROM node:${NODE_VERSION} as node_modules_go_brrr
-
-RUN mkdir /app
-
-RUN mkdir -p  /app
+FROM node-base AS node-build
 WORKDIR /app
-COPY . .
-COPY --from=base /var/www/html/vendor /app/vendor
+COPY . /app
+COPY --from=vendor /var/www/html/vendor /app/vendor
+RUN npm ci --no-audit && npm run build
 
-# Use yarn or npm depending on what type of
-# lock file we might find. Defaults to
-# NPM if no lock file is found.
-# Note: We run "production" for Mix and "build" for Vite
-RUN if [ -f "vite.config.js" ]; then \
-        ASSET_CMD="build"; \
-    else \
-        ASSET_CMD="production"; \
-    fi; \
-    if [ -f "yarn.lock" ]; then \
-        yarn install --frozen-lockfile; \
-        yarn $ASSET_CMD; \
-    elif [ -f "pnpm-lock.yaml" ]; then \
-        corepack enable && corepack prepare pnpm@latest-8 --activate; \
-        pnpm install --frozen-lockfile; \
-        pnpm run $ASSET_CMD; \
-    elif [ -f "package-lock.json" ]; then \
-        npm ci --no-audit; \
-        npm run $ASSET_CMD; \
-    else \
-        npm install; \
-        npm run $ASSET_CMD; \
-    fi;
-
-# From our base container created above, we
-# create our final image, adding in static
-# assets that we generated above
-FROM base
-
-# Packages like Laravel Nova may have added assets to the public directory
-# or maybe some custom assets were added manually! Either way, we merge
-# in the assets we generated above rather than overwrite them
-COPY --from=node_modules_go_brrr /app/public /var/www/html/public-npm
-RUN rsync -ar /var/www/html/public-npm/ /var/www/html/public/ \
-    && rm -rf /var/www/html/public-npm \
-    && chown -R www-data:www-data /var/www/html/public
-
-# 5. Setup Entrypoint
-EXPOSE 8080
-
-ENTRYPOINT ["/entrypoint"]
+FROM base AS prod
+ENV AUTORUN_ENABLED=true \
+    AUTORUN_LARAVEL_OPTIMIZE=true \
+    AUTORUN_LARAVEL_MIGRATION=false \
+    PHP_OPCACHE_ENABLE=1 \
+    SSL_MODE=off
+COPY --chown=www-data:www-data . /var/www/html
+COPY --from=vendor --chown=www-data:www-data /var/www/html/vendor /var/www/html/vendor
+COPY --from=vendor --chown=www-data:www-data /var/www/html/bootstrap/cache /var/www/html/bootstrap/cache
+COPY --from=node-build --chown=www-data:www-data /app/public/build /var/www/html/public/build
+USER www-data
