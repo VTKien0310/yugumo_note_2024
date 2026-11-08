@@ -1,7 +1,7 @@
 <?php
 
 use App\Features\Note\Models\Note;
-use Livewire\Volt\Component;
+use Livewire\Component;
 use App\Features\Note\Actions\CheckUserHasReachedMaximumAllowedBookmarkedNotesAction;
 use App\Features\User\Models\User;
 use App\Features\Note\Actions\UpdateNoteAction;

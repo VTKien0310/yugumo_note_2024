@@ -2,7 +2,7 @@
 
 use App\Features\Note\Actions\UpdateNoteAction;
 use App\Features\Note\Models\Note;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component
 {

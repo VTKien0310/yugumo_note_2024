@@ -1,20 +1,19 @@
 services:
     yugumo-note-2024-localhost:
         build:
-            context: './docker/8.3'
-            dockerfile: Dockerfile
+            context: '.'
+            target: dev
             args:
-                WWWGROUP: '${WWWGROUP}'
+                USER_ID: '${WWWUSER:-1000}'
+                GROUP_ID: '${WWWGROUP:-1000}'
                 NODE_VERSION: '26'
-        image: 'yugumo-note-2024-8.3/app'
+        image: 'yugumo-note-2024-8.5/app'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
         environment:
-            WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            PHP_XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
@@ -29,7 +28,10 @@ services:
             - "traefik.docker.network=fleet"
             - "traefik.http.routers.yugumo-note-2024-localhost.rule=Host(`yugumo-note-2024.localhost`)"
             - "traefik.http.routers.yugumo-note-2024-localhost.tls=true"
-            - "traefik.http.services.yugumo-note-2024-localhost.loadbalancer.server.port=80"
+            - "traefik.http.routers.yugumo-note-2024-localhost-http.rule=Host(`yugumo-note-2024.localhost`)"
+            - "traefik.http.routers.yugumo-note-2024-localhost-http.entrypoints=web"
+            - "traefik.http.routers.yugumo-note-2024-localhost-http.service=yugumo-note-2024-localhost"
+            - "traefik.http.services.yugumo-note-2024-localhost.loadbalancer.server.port=8080"
     pgsql:
         image: 'groonga/pgroonga:4.0.1-alpine-15'
         ports:

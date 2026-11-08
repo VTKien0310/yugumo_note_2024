@@ -3,17 +3,17 @@
 ## Project Overview
 
 - **Name**: Yugumo - Note taking web application (namesake: [Japanese destroyer Yugumo (1941)](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_(1941)))
-- **Stack**: TALL — Tailwind 4.3, Alpine.js 3, Laravel 11, Livewire 3
-- **Runtime**: PHP 8.3, Composer 2, Node.js 26, PostgreSQL 15.1
+- **Stack**: TALL — Tailwind 4.3, Alpine.js 3, Laravel 13, Livewire 4
+- **Runtime**: PHP 8.5 on FrankenPHP, Composer 2, Node.js 26, PostgreSQL 15.1
 - **Timezone**: UTC
-- **Debugging**: [Laravel Telescope](https://laravel.com/docs/11.x/telescope) installed
+- **Debugging**: [Laravel Telescope](https://laravel.com/docs/13.x/telescope) installed
 
 ## Development Environment
 
 ### Docker Access
 
 ```bash
-docker compose exec -u sail yugumo-note-2024-localhost bash
+docker compose exec -u www-data yugumo-note-2024-localhost bash
 ```
 
 ### Local URL Endpoints
@@ -38,7 +38,7 @@ Run inside the PHP container:
 - **String quotes**: Prefer single quotes `' '` over double quotes `" "`
 - **Typing**: Use strong typing as much as possible
 - **Routes**: Use `-` as separator (e.g., `/user/get-user-info`)
-- **Frontend**: Prefer Livewire/Volt components for interactivity; Alpine.js for small client-side behaviors
+- **Frontend**: Prefer Livewire single-file components for interactivity; Alpine.js for small client-side behaviors
 - **Alpine.js state naming**: Prefix all Alpine.js state variables (declared in `x-data` or via `$wire.entangle(...)`) with `alp` (e.g., `alpIsCompleted`, `alpDisplay`). This makes Alpine-owned state visually distinct from Livewire public properties at the call site. Do not apply the prefix to Livewire property names referenced via `wire:model` / `$wire.set(...)` / `$wire.entangle(...)`.
 - **Model section order**: Using traits → Table structure → Configuration (casts, guarded, fillable, hidden) → Mutators & Accessors → Relationships
 
@@ -67,7 +67,7 @@ Run inside the PHP container:
 - **Global enums**: `app/Enums/`
 - **HTTP layer**: `app/Http/{Web,Bff}/` — HTTP entry points. Each module keeps its route entry (`web.php` / `bff.php`) at its root, and per-feature folders (route definition + controller) under `Routes/`, e.g. `app/Http/Web/Routes/Note/{WebNoteController.php, web-note-routes.php}`. Each module declares its own middleware/prefix/name in its route entry file (bootstrap only registers the files, it applies no routing middleware itself). To prevent filename duplication across modules, route definition files are prefixed with the module name (`web-note-routes.php`, `bff-authentication-routes.php`) and controllers with the module prefix in PascalCase (`WebNoteController`, `BffAuthenticationController`)
     - `Bff/` — session-authenticated JSON backend-for-frontend under the `/bff` URL prefix (route entry: `app/Http/Bff/bff.php`); exceptions on `/bff/*` are rendered as JSON by `App\Extendables\Core\Http\Exception\JsonApiExceptionHandler`.
-    - `Web/` — Livewire/Volt backed web UI (route entry: `app/Http/Web/web.php`).
+    - `Web/` — Livewire single-file component-backed web UI (route entry: `app/Http/Web/web.php`).
 - **Query strings**: Follow [JSON API specification](https://jsonapi.org/format/#fetching) (`filter`, `sort`, `include`, `page`, `only`)
 - **Resources**: `resources/` — frontend assets and Blade/Livewire views
     - `css/` — stylesheets (`app.css`, Tailwind entry point)

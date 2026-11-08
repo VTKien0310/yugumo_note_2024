@@ -3,7 +3,7 @@
 use App\Features\Note\Actions\FindChecklistContentOfNoteForDisplayAction;
 use App\Features\Note\Models\Note;
 use Illuminate\Database\Eloquent\Collection;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 // Render-only shell: all editing (title, item content/completion, item
 // create/delete) goes through the BFF endpoints via the checklistNoteEditor

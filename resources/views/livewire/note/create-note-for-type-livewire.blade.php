@@ -2,7 +2,7 @@
 
 use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
 use App\Features\NoteType\ValueObjects\NoteTypeViewDataValueObject;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component {
     /**

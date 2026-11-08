@@ -1,7 +1,7 @@
 <?php
 
 use App\Features\Note\Models\Note;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component
 {
