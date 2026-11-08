@@ -1,7 +1,7 @@
 <?php
 
 use App\Features\NoteType\ValueObjects\NoteTypeViewDataValueObject;
-use Livewire\Volt\Component;
+use Livewire\Component;
 use App\Features\Note\Actions\ListNoteOfUserAction;
 use App\Features\Note\Actions\MakeNoteListDisplayDataAction;
 use App\Features\Note\Models\Note;

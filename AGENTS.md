@@ -3,17 +3,17 @@
 ## Project Overview
 
 - **Name**: Yugumo - Note taking web application (namesake: [Japanese destroyer Yugumo (1941)](https://en.wikipedia.org/wiki/Japanese_destroyer_Y%C5%ABgumo_(1941)))
-- **Stack**: TALL — Tailwind 4.3, Alpine.js 3, Laravel 11, Livewire 3
-- **Runtime**: PHP 8.3, Composer 2, Node.js 26, PostgreSQL 15.1
+- **Stack**: TALL — Tailwind 4.3, Alpine.js 3, Laravel 13, Livewire 4
+- **Runtime**: PHP 8.5 on FrankenPHP, Composer 2, Node.js 26, PostgreSQL 15.1
 - **Timezone**: UTC
-- **Debugging**: [Laravel Telescope](https://laravel.com/docs/11.x/telescope) installed
+- **Debugging**: [Laravel Telescope](https://laravel.com/docs/13.x/telescope) installed
 
 ## Development Environment
 
 ### Docker Access
 
 ```bash
-docker compose exec -u sail yugumo-note-2024-localhost bash
+docker compose exec -u www-data yugumo-note-2024-localhost bash
 ```
 
 ### Local URL Endpoints
@@ -38,7 +38,7 @@ Run inside the PHP container:
 - **String quotes**: Prefer single quotes `' '` over double quotes `" "`
 - **Typing**: Use strong typing as much as possible
 - **Routes**: Use `-` as separator (e.g., `/user/get-user-info`)
-- **Frontend**: Prefer Livewire/Volt components for interactivity; Alpine.js for small client-side behaviors
+- **Frontend**: Prefer Livewire single-file components for interactivity; Alpine.js for small client-side behaviors
 - **Alpine.js state naming**: Prefix all Alpine.js state variables (declared in `x-data` or via `$wire.entangle(...)`) with `alp` (e.g., `alpIsCompleted`, `alpDisplay`). This makes Alpine-owned state visually distinct from Livewire public properties at the call site. Do not apply the prefix to Livewire property names referenced via `wire:model` / `$wire.set(...)` / `$wire.entangle(...)`.
 - **Model section order**: Using traits → Table structure → Configuration (casts, guarded, fillable, hidden) → Mutators & Accessors → Relationships
 
@@ -67,7 +67,7 @@ Run inside the PHP container:
 - **Global enums**: `app/Enums/`
 - **HTTP layer**: `app/Http/{Web,Bff}/` — HTTP entry points. Each module keeps its route entry (`web.php` / `bff.php`) at its root, and per-feature folders (route definition + controller) under `Routes/`, e.g. `app/Http/Web/Routes/Note/{WebNoteController.php, web-note-routes.php}`. Each module declares its own middleware/prefix/name in its route entry file (bootstrap only registers the files, it applies no routing middleware itself). To prevent filename duplication across modules, route definition files are prefixed with the module name (`web-note-routes.php`, `bff-authentication-routes.php`) and controllers with the module prefix in PascalCase (`WebNoteController`, `BffAuthenticationController`)
     - `Bff/` — session-authenticated JSON backend-for-frontend under the `/bff` URL prefix (route entry: `app/Http/Bff/bff.php`); exceptions on `/bff/*` are rendered as JSON by `App\Extendables\Core\Http\Exception\JsonApiExceptionHandler`.
-    - `Web/` — Livewire/Volt backed web UI (route entry: `app/Http/Web/web.php`).
+    - `Web/` — Livewire single-file component-backed web UI (route entry: `app/Http/Web/web.php`).
 - **Query strings**: Follow [JSON API specification](https://jsonapi.org/format/#fetching) (`filter`, `sort`, `include`, `page`, `only`)
 - **Resources**: `resources/` — frontend assets and Blade/Livewire views
     - `css/` — stylesheets (`app.css`, Tailwind entry point)
@@ -117,6 +117,42 @@ The DB image is `groonga/pgroonga:4.0.1-alpine-15` (see `docker-compose.yml`). I
 
 - **Do not** replace the image with a plain `postgres` image without confirming the search feature can be re-implemented.
 - **Do not** write MySQL/MariaDB-specific DDL or queries.
+
+## Testing
+
+Run inside the PHP container:
+
+```bash
+composer pest-test        # Run Pest tests
+composer test             # Clear config and run Pest tests
+```
+
+Run client-side tests (host or container):
+
+```bash
+npm run test              # Run Vitest test suite
+```
+
+### Pest Test Structure
+
+- Wrap test cases in `describe(ClassName::class, function () { ... })` so the output is grouped by the class under test.
+- Pest test files should not declare a `namespace`; import the classes they need with `use`.
+- Test directory structure strictly mirrors `app/`:
+    - `tests/Architecture/` — architectural constraints and security rules via Pest `arch()`.
+    - `tests/Extendables/` — base utilities, providers, and macros (`ExtendableServiceProviderTest.php`).
+    - `tests/Features/{FeatureName}/` — domain actions, commands, and models, plus `tests/Features/EloquentModelContractTest.php`.
+    - `tests/Http/{Web,Bff}/` — HTTP routes and controllers (`tests/Http/Web/...`, `tests/Http/Bff/...`).
+    - `tests/Integration/` — seeders, cross-service workflows, and search indexing integration.
+    - `tests/Factories/` — model test factories inheriting `Tests\TestFactory`.
+    - `tests/Fakes/` — in-memory test fakes for external ports.
+
+### Client-side Test Structure (Vitest)
+
+- Test directory structure strictly mirrors `resources/js/`:
+    - `tests/Js/setup.js` — centralized test setup (CSRF meta tag injection, mock and DOM cleanup).
+    - `tests/Js/Factories/` — fixture helpers for note content, Quill deltas, and checklist items.
+    - `tests/Js/Libs/` — tests for editor libraries under `resources/js/libs/`.
+    - `tests/Js/Services/` — tests for API client services under `resources/js/services/`.
 
 ## Key Artisan Commands
 

@@ -6,6 +6,7 @@ export default defineConfig({
         // `MutationObserver`. happy-dom implements all three; jsdom throws
         // "not implemented" for getSelection.
         environment: 'happy-dom',
+        setupFiles: ['./tests/Js/setup.js'],
         include: ['tests/Js/**/*.test.js'],
     },
 });

@@ -4,7 +4,7 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "test:js": "vitest run"
+        "test": "vitest run"
     },
     "devDependencies": {
         "@tailwindcss/postcss": "^4.3.0",
