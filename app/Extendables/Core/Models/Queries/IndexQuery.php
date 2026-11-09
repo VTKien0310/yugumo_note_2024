@@ -2,7 +2,7 @@
 
 namespace App\Extendables\Core\Models\Queries;
 
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+use App\Extendables\Core\Http\Constants\HttpRequestParamConstants;
 use App\Extendables\Core\Http\Request\States\QueryString\FilterQueryStringState;
 use App\Extendables\Core\Http\Request\States\QueryString\OnlyQueryStringState;
 use App\Extendables\Core\Http\Request\States\QueryString\RelationQueryStringState;
@@ -12,6 +12,7 @@ use App\Extendables\Core\Models\Queries\Sorts\Sort;
 use App\Extendables\Core\Models\Queries\ValueObjects\SelectByOnlyQueryStringValueObject;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -44,6 +45,8 @@ class IndexQuery
             $builder = $this->applyScopedSelect($builder, $selectByOnlyQueryStringValueObject);
         }
 
+        // since eager loadings are treated as "add select" by Laravel,
+        // we'll handle them after scoping select to follow the framework's convention
         if ($builder instanceof EloquentBuilder) {
             $builder = $this->eagerLoadCounts($builder, $eagerLoadableCounts);
             $builder = $this->eagerLoadRelations($builder, $eagerLoadableRelations);
@@ -80,7 +83,7 @@ class IndexQuery
 
     private function applySortPriority(Builder|EloquentBuilder $builder): EloquentBuilder|Builder
     {
-        $sortPriority = request()->query(HttpRequestParamEnum::SORT_PRIORITY->value);
+        $sortPriority = request()->query(HttpRequestParamConstants::SORT_PRIORITY);
         if (
             ! empty($sortPriority)
             && (is_numeric($sortPriority) || Str::isUuid($sortPriority) || Str::isUlid($sortPriority))
@@ -95,6 +98,8 @@ class IndexQuery
         Builder|EloquentBuilder $builder,
         SelectByOnlyQueryStringValueObject $selectByOnlyQueryStringValueObject
     ): EloquentBuilder|Builder {
+        $eagerLoadingSelects = $this->getEagerLoadingSelectsOfBuilder($builder);
+
         $onlySelect = $this->onlyQueryStringState->getOnlyOfResource($selectByOnlyQueryStringValueObject->resourceName);
 
         $selectColumns = empty($onlySelect)
@@ -112,7 +117,16 @@ class IndexQuery
             ->map(fn ($column): string => "$selectByOnlyQueryStringValueObject->table.$column")
             ->toArray();
 
-        return $builder->select($selectColumns);
+        // preserve eager loadings of the input builder
+        return $builder->select(array_merge($selectColumns, $eagerLoadingSelects));
+    }
+
+    private function getEagerLoadingSelectsOfBuilder(Builder|EloquentBuilder $builder): array
+    {
+        $builderSelects = $builder instanceof Builder ? $builder->columns : $builder->getQuery()->columns;
+        $builderSelects = empty($builderSelects) ? [] : $builderSelects;
+
+        return array_filter($builderSelects, fn ($statement) => $statement instanceof Expression);
     }
 
     private function filterInvalidSelects(
@@ -168,7 +182,7 @@ class IndexQuery
             }
         }
 
-        return $builder->withCount($eagerLoadedCount);
+        return empty($eagerLoadedCount) ? $builder : $builder->withCount($eagerLoadedCount);
     }
 
     private function eagerLoadRelations(EloquentBuilder $builder, array $eagerLoadableRelations): EloquentBuilder
@@ -188,6 +202,6 @@ class IndexQuery
             }
         }
 
-        return $builder->with($eagerLoadedRelations);
+        return empty($eagerLoadedRelations) ? $builder : $builder->with($eagerLoadedRelations);
     }
 }

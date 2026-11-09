@@ -2,7 +2,7 @@
 
 namespace App\Extendables\Core\Utils;
 
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+use App\Extendables\Core\Http\Constants\HttpRequestParamConstants;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 
@@ -10,8 +10,6 @@ class ExtendedLengthAwarePaginator extends LengthAwarePaginator
 {
     public function toArray(): array
     {
-        $requestQueryString = (array) request()->query();
-
         return [
             'per_page' => $this->perPage(),
             'current_page' => $this->currentPage(),
@@ -20,48 +18,38 @@ class ExtendedLengthAwarePaginator extends LengthAwarePaginator
             'total' => $this->total(),
             'last_page' => $this->lastPage(),
             'path' => $this->path(),
-            'next_page_url' => $this->buildNextPageUrl($requestQueryString),
-            'previous_page_url' => $this->buildPreviousPageUrl($requestQueryString),
-            'first_page_url' => $this->buildFirstPageUrl($requestQueryString),
-            'last_page_url' => $this->buildLastPageUrl($requestQueryString),
+            'next_page_url' => $this->nextPageUrl(),
+            'prev_page_url' => $this->previousPageUrl(),
+            'first_page_url' => $this->url(1),
+            'last_page_url' => $this->url($this->lastPage()),
         ];
     }
 
-    private function buildNextPageUrl(array $requestQueryString): string
+    /**
+     * Build the URL for a given page following the JSON API convention (`page[number]` / `page[size]`).
+     *
+     * Laravel's implementation emits a scalar `?page=N` and drops the request's query string (and any `page[...]`
+     * value passed to `appends()`, since it collides with the page name), so the generated links would lose the
+     * page size, filters, sorts, etc. Here the current request's query string is preserved and only the `page`
+     * entry is replaced.
+     *
+     * @param  int  $page
+     */
+    public function url($page): string
     {
-        $nextPageNumber = $this->currentPage() + 1;
-        $noNextPageAvailable = null;
+        // Read the resolver directly: resolveQueryString() is documented as returning a string, while the framework's
+        // resolver (registered by the framework's pagination state) actually returns the request's query array.
+        $requestQuery = (static::$queryStringResolver)();
+        $parameters = array_merge(is_array($requestQuery) ? $requestQuery : [], $this->query);
+        $parameters[HttpRequestParamConstants::PAGINATE] = [
+            HttpRequestParamConstants::PAGINATE_NUMBER => max((int) $page, 1),
+            HttpRequestParamConstants::PAGINATE_SIZE => $this->perPage(),
+        ];
+        $path = $this->path() ?? '';
 
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $nextPageNumber <= $this->lastPage() ? $nextPageNumber : $noNextPageAvailable;
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_SIZE->value] = $this->perPage();
-
-        return $this->path().'?'.Arr::query($requestQueryString);
-    }
-
-    private function buildPreviousPageUrl(array $requestQueryString): string
-    {
-        $previousPageNumber = $this->currentPage() - 1;
-        $noPreviousPageAvailable = null;
-
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $previousPageNumber >= 1 ? $previousPageNumber : $noPreviousPageAvailable;
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_SIZE->value] = $this->perPage();
-
-        return $this->path().'?'.Arr::query($requestQueryString);
-    }
-
-    private function buildFirstPageUrl(array $requestQueryString): string
-    {
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = 1;
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_SIZE->value] = $this->perPage();
-
-        return $this->path().'?'.Arr::query($requestQueryString);
-    }
-
-    private function buildLastPageUrl(array $requestQueryString): string
-    {
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $this->lastPage();
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_SIZE->value] = $this->perPage();
-
-        return $this->path().'?'.Arr::query($requestQueryString);
+        return $path
+            .(str_contains($path, '?') ? '&' : '?')
+            .Arr::query($parameters)
+            .$this->buildFragment();
     }
 }

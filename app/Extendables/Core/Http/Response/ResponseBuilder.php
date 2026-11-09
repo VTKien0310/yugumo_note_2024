@@ -10,6 +10,8 @@ interface ResponseBuilder
 
     public function responseCreated(mixed $data): JsonResponse;
 
+    public function responseAccepted(mixed $data = null): JsonResponse;
+
     public function responseNoContent(): JsonResponse;
 
     public function responseNotFound(string $errorCode, ?string $message = null): JsonResponse;
@@ -23,4 +25,8 @@ interface ResponseBuilder
     public function responseUnknownError(string $errorCode, ?string $message = null): JsonResponse;
 
     public function responseTooManyRequests(string $errorCode, ?string $message = null): JsonResponse;
+
+    public function responseGone(string $errorCode, ?string $message = null): JsonResponse;
+
+    public function responseConflict(string $errorCode, ?string $message = null): JsonResponse;
 }

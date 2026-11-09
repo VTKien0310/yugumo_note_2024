@@ -5,7 +5,7 @@ namespace App\Extendables\Core\Cache;
 use App\Extendables\Core\Cache\Concerns\CacheForgetByKey;
 use App\Extendables\Core\Cache\Concerns\CacheKeyGeneration;
 use App\Extendables\Core\Cache\Concerns\CachePrefixManipulation;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 
 class RedisCacheHelper implements CacheHelper
 {
@@ -20,31 +20,23 @@ class RedisCacheHelper implements CacheHelper
     {
         $result = [];
 
-        $redis = Cache::getRedis()->connection('cache');
+        $redis = Redis::connection('cache');
 
-        $terminationCursorValue = '0';
-        $currentCursor = $terminationCursorValue;
+        $cursor = null;
         do {
-            $responseFromRedis = $redis->scan($currentCursor, [
+            $responseFromRedis = $redis->scan($cursor, [
                 'match' => $pattern,
                 'count' => 100,
             ]);
 
-            if (! $responseFromRedis) {
+            if ($responseFromRedis === false) {
                 break;
             }
 
-            if (! is_array($responseFromRedis)) {
-                break;
-            }
+            [$cursor, $retrievedKeys] = $responseFromRedis;
 
-            $retrievedKeys = $responseFromRedis[1] ?? [];
-            if (count($retrievedKeys) > 0) {
-                array_push($result, ...$retrievedKeys);
-            }
-
-            $currentCursor = $responseFromRedis[0] ?? $terminationCursorValue;
-        } while ($currentCursor !== $terminationCursorValue);
+            $result = array_merge($result, $retrievedKeys);
+        } while ($cursor !== 0);
 
         return $result;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Extendables\Core\Http\Request\States\QueryString\JsonApi;
 
+use App\Extendables\Core\Http\Exception\InvalidFilterQueryStringException;
 use App\Extendables\Core\Http\Request\States\QueryString\FilterCondition;
 use App\Extendables\Core\Http\Request\States\QueryString\FilterQueryStringState;
 use Illuminate\Support\Arr;
@@ -24,9 +25,16 @@ class JsonApiFilterQueryStringState implements FilterQueryStringState
         ) {
             $filterConditions = [];
             foreach ($filterRequestData as $field => $value) {
-                if (! is_null($value)) {
-                    $filterConditions[] = new FilterCondition($field, $this->processRequestFilterValue($value));
+                if (is_null($value)) {
+                    continue;
                 }
+
+                // e.g. `filter[foo][]=bar` is parsed by PHP into an array, which no filter can interpret
+                if (! is_string($value)) {
+                    throw new InvalidFilterQueryStringException((string) $field);
+                }
+
+                $filterConditions[] = new FilterCondition((string) $field, $this->processRequestFilterValue($value));
             }
             $this->filters = $filterConditions;
         } else {

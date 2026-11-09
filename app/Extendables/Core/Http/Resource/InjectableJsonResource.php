@@ -110,4 +110,9 @@ abstract class InjectableJsonResource extends JsonResource
             return new MissingValue;
         }
     }
+
+    protected function whenNotSoftDeleted(callable $valueResolver): callable
+    {
+        return empty($this->resource->deleted_at) ? $valueResolver : fn () => null;
+    }
 }

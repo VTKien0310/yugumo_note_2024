@@ -10,7 +10,7 @@ use App\Features\Note\Actions\DeleteNoteByIdAction;
 use App\Extendables\Core\Http\Enums\HttpRequestHeaderEnum;
 use App\Features\NoteType\Actions\MakeAllNoteTypeViewDataAction;
 use Livewire\Attributes\Url;
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+use App\Extendables\Core\Http\Constants\HttpRequestParamConstants;
 use App\Features\Note\Queries\NoteFilterParamEnum;
 use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
 use App\Extendables\Core\Utils\SortDirectionEnum;
@@ -19,10 +19,10 @@ use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 use App\Extendables\Core\Utils\BoolIntValueEnum;
 
 new class extends Component {
-    #[Url(as: HttpRequestParamEnum::FILTER->value)]
+    #[Url(as: HttpRequestParamConstants::FILTER)]
     public array $filterQueryString = [];
 
-    #[Url(as: HttpRequestParamEnum::SORT->value)]
+    #[Url(as: HttpRequestParamConstants::SORT)]
     public string $sortQueryString = '';
 
     public array $typesFilter = [];
@@ -134,7 +134,7 @@ new class extends Component {
 
     private function buildPageUrl(array $requestQueryString, int $pageNumber): string
     {
-        $requestQueryString[HttpRequestParamEnum::PAGINATE->value][HttpRequestParamEnum::PAGE_NUMBER->value] = $pageNumber;
+        $requestQueryString[HttpRequestParamConstants::PAGINATE][HttpRequestParamConstants::PAGINATE_NUMBER] = $pageNumber;
 
         return route('notes.index', $requestQueryString);
     }

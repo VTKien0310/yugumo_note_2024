@@ -1,7 +1,6 @@
 @php
     use Illuminate\Support\Facades\Route;
     use App\Features\Note\Queries\NoteSortFieldEnum;
-    use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
     use App\Features\Search\Actions\BuildNoteSearchRequestParamAction;
 
     $currentRouteName = Route::currentRouteName() ?? '';

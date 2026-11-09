@@ -2,7 +2,7 @@
 
 namespace App\Extendables\Core\Ports\Notification;
 
-use App\Models\User\User;
+use App\Features\User\Models\User;
 use Illuminate\Support\Collection;
 
 interface NotificationPort
@@ -16,4 +16,9 @@ interface NotificationPort
      * Send notification to slack webhook URL
      */
     public function sendToSlackWebhook(string $webhookUrl, string $notification, ...$notificationArgs): void;
+
+    /**
+     * Send notification to one or multiple emails
+     */
+    public function sendToEmail(string|array $email, string $notification, ...$notificationArgs): void;
 }
