@@ -126,5 +126,33 @@ enum ValidationErrorCodeEnum: string
     case LOWERCASE = 'must_be_lowercase';
 
     case UPPERCASE = 'must_be_uppercase';
+
+    case ARRAY_KEYS = 'must_only_contain_specific_keys';
+
+    case ASCII = 'must_be_ascii';
+
+    case BASE64 = 'must_be_base64';
+
+    case CAN = 'unauthorized_value';
+
+    case CONTAINS = 'must_contain_specific_value';
+
+    case DECIMAL = 'must_have_specific_decimal_places';
+
+    case DOES_NOT_CONTAIN = 'must_not_contain_specific_value';
+
+    case ENCODING = 'must_be_specific_encoding';
+
+    case EXTENSIONS = 'invalid_file_extension';
+
+    case HEX_COLOR = 'must_be_hex_color';
+
+    case IN_ARRAY_KEYS = 'must_contain_at_least_one_key';
+
+    case LIST = 'must_be_list';
+
+    case MISSING = 'must_be_missing';
+
+    case ULID = 'invalid_ulid';
     /* Custom validation's error codes */
 }

@@ -7,4 +7,6 @@ interface PaginateQueryStringState
     public function getPageSize(): int;
 
     public function getPageNumber(): int;
+
+    public function getCursor(): string;
 }

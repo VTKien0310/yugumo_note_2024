@@ -2,7 +2,7 @@
 
 namespace App\Extendables\Core\Ports\Mail;
 
-use App\Models\User\User;
+use App\Features\User\Models\User;
 use Illuminate\Support\Collection;
 
 class DummyMailPort implements MailPort

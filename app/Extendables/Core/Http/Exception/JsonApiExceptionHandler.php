@@ -203,7 +203,13 @@ class JsonApiExceptionHandler
             ? $this->convertForDebugEnv($e)
             : $this->convertForNonDebugEnv($e);
 
-        return response()->json($unknownErrorResponseData, $this->getUnknownErrorStatusCode($e));
+        // Exception messages may embed binary data (e.g. blind-index bindings interpolated into a QueryException's SQL);
+        // substitute invalid UTF-8 instead of letting json_encode fail and mask the original exception.
+        return response()->json(
+            $unknownErrorResponseData,
+            $this->getUnknownErrorStatusCode($e),
+            options: JSON_INVALID_UTF8_SUBSTITUTE
+        );
     }
 
     private function renderResponseForExtendableException(ExtendableException $exception): JsonResponse

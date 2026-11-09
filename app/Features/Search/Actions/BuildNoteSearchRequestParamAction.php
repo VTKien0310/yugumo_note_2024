@@ -2,7 +2,7 @@
 
 namespace App\Features\Search\Actions;
 
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+use App\Extendables\Core\Http\Constants\HttpRequestParamConstants;
 use App\Extendables\Core\Http\Request\Builders\QueryString\JsonApi\SortQueryStringBuilder;
 use App\Extendables\Core\Http\Request\States\QueryString\SortCondition;
 use App\Extendables\Core\Utils\SortDirectionEnum;
@@ -26,15 +26,15 @@ readonly class BuildNoteSearchRequestParamAction
         int $pageSize = 20
     ): array {
         $params = [
-            HttpRequestParamEnum::PAGINATE->value => [
-                HttpRequestParamEnum::PAGE_SIZE->value => $pageSize,
-                HttpRequestParamEnum::PAGE_NUMBER->value => $pageNumber,
+            HttpRequestParamConstants::PAGINATE => [
+                HttpRequestParamConstants::PAGINATE_SIZE => $pageSize,
+                HttpRequestParamConstants::PAGINATE_NUMBER => $pageNumber,
             ],
-            HttpRequestParamEnum::SORT->value => $this->buildSortParam($sortConditions),
+            HttpRequestParamConstants::SORT => $this->buildSortParam($sortConditions),
         ];
 
         if (! empty($filterConditions)) {
-            $params[HttpRequestParamEnum::FILTER->value] = $filterConditions;
+            $params[HttpRequestParamConstants::FILTER] = $filterConditions;
         }
 
         return $params;

@@ -21,10 +21,10 @@ class JsonApiResponseBuilder implements ResponseBuilder
         $baseResponse = $this->baseSuccessResponse($statusCode);
 
         if ($data instanceof JsonResource) {
-            return $data->additional($baseResponse)->response();
+            return $data->additional($baseResponse)->response()->setStatusCode($statusCode);
         }
 
-        return response()->json(array_merge($baseResponse, ['data' => $data]));
+        return response()->json(array_merge($baseResponse, ['data' => $data]), $statusCode);
     }
 
     private function baseSuccessResponse(int $statusCode = Response::HTTP_OK): array
@@ -41,6 +41,14 @@ class JsonApiResponseBuilder implements ResponseBuilder
     public function responseCreated(mixed $data): JsonResponse
     {
         return $this->makeSuccessResponse($data, Response::HTTP_CREATED);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function responseAccepted(mixed $data = null): JsonResponse
+    {
+        return $this->makeSuccessResponse($data, Response::HTTP_ACCEPTED);
     }
 
     /**
@@ -120,5 +128,21 @@ class JsonApiResponseBuilder implements ResponseBuilder
     public function responseTooManyRequests(string $errorCode, ?string $message = null): JsonResponse
     {
         return $this->makeErrorResponse($errorCode, $message, Response::HTTP_TOO_MANY_REQUESTS);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function responseGone(string $errorCode, ?string $message = null): JsonResponse
+    {
+        return $this->makeErrorResponse($errorCode, $message, Response::HTTP_GONE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function responseConflict(string $errorCode, ?string $message = null): JsonResponse
+    {
+        return $this->makeErrorResponse($errorCode, $message, Response::HTTP_CONFLICT);
     }
 }

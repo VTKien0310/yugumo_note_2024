@@ -2,6 +2,7 @@
 
 namespace App\Extendables\Core\Ports\File;
 
+use DateTimeInterface;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\File;
@@ -20,9 +21,6 @@ class S3FileStoragePort implements FileStoragePort
         $this->diskName = 's3';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setWorkDir(string $workDir): void
     {
         $this->workDir = $workDir;
@@ -36,17 +34,11 @@ class S3FileStoragePort implements FileStoragePort
         return Storage::disk($this->diskName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getDiskName(): string
     {
         return $this->diskName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getWorkDir(): string
     {
         return $this->workDir;
@@ -70,9 +62,6 @@ class S3FileStoragePort implements FileStoragePort
         return $this->disk()->putFileAs($fileStoragePath, $file, $name);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function putFile(File|UploadedFile $file, bool $isRelativeToWorkDir = true): bool|string
     {
         $fileStoragePath = $isRelativeToWorkDir ? $this->workDir : '';
@@ -80,9 +69,6 @@ class S3FileStoragePort implements FileStoragePort
         return $this->disk()->putFile($fileStoragePath, $file);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function delete(string $path, bool $isWorkDirPath = false): bool
     {
         if ($isWorkDirPath) {
@@ -97,7 +83,7 @@ class S3FileStoragePort implements FileStoragePort
      */
     public function makeTempUrlForPath(
         string $path,
-        ?int $duration = null,
+        int|DateTimeInterface|null $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string {
@@ -107,14 +93,13 @@ class S3FileStoragePort implements FileStoragePort
 
         return $this->disk()->temporaryUrl(
             $path,
-            $duration ?: now()->addMinutes($this->defaultTempUrlDuration),
+            is_int($duration)
+                ? now()->addMinutes($duration)
+                : ($duration ?? now()->addMinutes($this->defaultTempUrlDuration)),
             $options
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function makeUrlForPath(string $path, bool $isWorkDirPath = false): string
     {
         if ($isWorkDirPath) {
@@ -124,14 +109,11 @@ class S3FileStoragePort implements FileStoragePort
         return $this->disk()->url($path);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function get(string $path, bool $isWorkDirPath = true): string
     {
         $path = $isWorkDirPath ? "{$this->getWorkDir()}/$path" : $path;
 
-        return $this->disk()->get($path);
+        return $this->disk()->get($path) ?? '';
     }
 
     /**
@@ -207,7 +189,7 @@ class S3FileStoragePort implements FileStoragePort
         string $path,
         string $filename,
         ?string $contentType = null,
-        ?int $duration = null,
+        int|DateTimeInterface|null $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string {
@@ -221,10 +203,14 @@ class S3FileStoragePort implements FileStoragePort
         );
     }
 
+    /**
+     * @return string[]
+     */
     protected function downloadResponseOptions(string $filename, ?string $contentType = null): array
     {
         $responseOptions = [
-            'ResponseContentDisposition' => "filename=$filename",
+            // Encoding the filename with rawurlencode ensures the filename is always valid with ISO-8859-1.
+            'ResponseContentDisposition' => 'filename='.rawurlencode($filename),
         ];
 
         if ($contentType) {
@@ -232,5 +218,52 @@ class S3FileStoragePort implements FileStoragePort
         }
 
         return $responseOptions;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function saveFileToLocal(string $path, string $localName, ?string $localDirectory = null, bool $isWorkDirPath = false): string
+    {
+        $localDirectory = $localDirectory ?? sys_get_temp_dir();
+        $localPath = $localDirectory.'/'.$localName;
+
+        $fileContent = $this->get($path, $isWorkDirPath);
+        file_put_contents($localPath, $fileContent);
+
+        return $localPath;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function streamFileToLocal(string $path, string $localName, ?string $localDirectory = null, bool $isWorkDirPath = false): string
+    {
+        $localDirectory = $localDirectory ?? sys_get_temp_dir();
+        $localPath = $localDirectory.'/'.$localName;
+
+        $resolvedPath = $isWorkDirPath ? "{$this->getWorkDir()}/$path" : $path;
+
+        $remoteStream = $this->disk()->readStream($resolvedPath);
+
+        if ($remoteStream === null) {
+            throw new \RuntimeException("Unable to open remote stream for file: {$resolvedPath}");
+        }
+
+        $localStream = fopen($localPath, 'w');
+
+        if ($localStream === false) {
+            fclose($remoteStream);
+            throw new \RuntimeException("Unable to open local file for writing: {$localPath}");
+        }
+
+        try {
+            stream_copy_to_stream($remoteStream, $localStream);
+        } finally {
+            fclose($remoteStream);
+            fclose($localStream);
+        }
+
+        return $localPath;
     }
 }

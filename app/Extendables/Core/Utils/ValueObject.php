@@ -3,6 +3,7 @@
 namespace App\Extendables\Core\Utils;
 
 use BackedEnum;
+use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
@@ -105,6 +106,10 @@ abstract class ValueObject implements Arrayable, JsonSerializable, Responsable
 
         if ($propValue instanceof ValueObject) {
             return $propValue->toResponseDataRecursive();
+        }
+
+        if ($propValue instanceof Carbon) {
+            return $propValue->jsonSerialize();
         }
 
         if ($propValue instanceof Arrayable) {

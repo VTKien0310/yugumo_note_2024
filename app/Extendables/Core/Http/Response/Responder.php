@@ -18,6 +18,11 @@ class Responder
         return $this->responseBuilder->responseNoContent();
     }
 
+    public function responseAccepted(mixed $data = null): JsonResponse
+    {
+        return $this->responseBuilder->responseAccepted($data);
+    }
+
     public function responseRawContent(mixed $data): JsonResponse
     {
         return $this->responseBuilder->responseSuccess($data);
