@@ -2,6 +2,7 @@
 
 namespace App\Extendables\Core\Ports\File;
 
+use DateTimeInterface;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -65,7 +66,7 @@ class DummyFileStoragePort implements FileStoragePort
 
     public function makeTempUrlForPath(
         string $path,
-        ?int $duration = null,
+        int|DateTimeInterface|null $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string {
@@ -136,10 +137,35 @@ class DummyFileStoragePort implements FileStoragePort
         string $path,
         string $filename,
         ?string $contentType = null,
-        ?int $duration = null,
+        int|DateTimeInterface|null $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string {
         return $path;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function saveFileToLocal(
+        string $path,
+        string $localName,
+        ?string $localDirectory = null,
+        bool $isWorkDirPath = false
+    ): string {
+        $localDirectory = $localDirectory ?? sys_get_temp_dir();
+
+        return $localDirectory.'/'.$localName;
+    }
+
+    public function streamFileToLocal(
+        string $path,
+        string $localName,
+        ?string $localDirectory = null,
+        bool $isWorkDirPath = false
+    ): string {
+        $localDirectory = $localDirectory ?? sys_get_temp_dir();
+
+        return $localDirectory.'/'.$localName;
     }
 }

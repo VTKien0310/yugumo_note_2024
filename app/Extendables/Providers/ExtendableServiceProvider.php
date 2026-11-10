@@ -4,7 +4,7 @@ namespace App\Extendables\Providers;
 
 use App\Extendables\Core\Cache\CacheHelper;
 use App\Extendables\Core\Cache\RedisCacheHelper;
-use App\Extendables\Core\Http\Enums\HttpRequestParamEnum;
+use App\Extendables\Core\Http\Constants\HttpRequestParamConstants;
 use App\Extendables\Core\Http\Request\States\QueryString\FilterQueryStringState;
 use App\Extendables\Core\Http\Request\States\QueryString\JsonApi\JsonApiFilterQueryStringState;
 use App\Extendables\Core\Http\Request\States\QueryString\JsonApi\JsonApiOnlyQueryStringState;
@@ -32,9 +32,11 @@ use App\Extendables\Core\Ports\RemoteLog\RemoteLogPort;
 use App\Extendables\Core\Ports\RemoteLog\SlackLogPort;
 use App\Extendables\Core\Utils\ExtendedLengthAwarePaginator;
 use Aws\CloudFront\UrlSigner;
+use BackedEnum;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -98,26 +100,25 @@ class ExtendableServiceProvider extends ServiceProvider
         });
 
         // state binding
-        $request = request();
-        $this->app->singleton(
+        $this->app->scoped(
             RelationQueryStringState::class,
-            fn () => new JsonApiRelationQueryStringState($request->query(HttpRequestParamEnum::INCLUDE->value))
+            fn () => new JsonApiRelationQueryStringState(request()->query(HttpRequestParamConstants::INCLUDE))
         );
-        $this->app->singleton(
+        $this->app->scoped(
             SortQueryStringState::class,
-            fn () => new JsonApiSortQueryStringState($request->query(HttpRequestParamEnum::SORT->value))
+            fn () => new JsonApiSortQueryStringState(request()->query(HttpRequestParamConstants::SORT))
         );
-        $this->app->singleton(
+        $this->app->scoped(
             FilterQueryStringState::class,
-            fn () => new JsonApiFilterQueryStringState($request->query(HttpRequestParamEnum::FILTER->value))
+            fn () => new JsonApiFilterQueryStringState(request()->query(HttpRequestParamConstants::FILTER))
         );
-        $this->app->singleton(
+        $this->app->scoped(
             PaginateQueryStringState::class,
-            fn () => new JsonApiPaginateQueryStringState($request->query(HttpRequestParamEnum::PAGINATE->value))
+            fn () => new JsonApiPaginateQueryStringState(request()->query(HttpRequestParamConstants::PAGINATE))
         );
-        $this->app->singleton(
+        $this->app->scoped(
             OnlyQueryStringState::class,
-            fn () => new JsonApiOnlyQueryStringState($request->query(HttpRequestParamEnum::ONLY->value))
+            fn () => new JsonApiOnlyQueryStringState(request()->query(HttpRequestParamConstants::ONLY))
         );
 
         // others binding
@@ -142,6 +143,13 @@ class ExtendableServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->builderMacros();
+        $this->strMacros();
+        $this->collectionMacros();
+    }
+
+    private function builderMacros(): void
+    {
         Builder::macro('whereEmpty', function (string $field) {
             return $this->where(
                 fn (Builder $query) => $query->whereNull($field)->orWhere($field, '=', '')
@@ -159,12 +167,27 @@ class ExtendableServiceProvider extends ServiceProvider
         EloquentBuilder::macro('whereNotEmpty', function (string $field) {
             return $this->whereNotNull($field)->where($field, '<>', '');
         });
+    }
 
+    private function strMacros(): void
+    {
         Str::macro('replaceSlash', function (string $str, string $replace = '-'): string {
             return str_replace(['/', '\\'], $replace, $str);
         });
         Str::macro('hashSha256', function (string $str): string {
             return hash('sha256', $str);
+        });
+        Str::macro('hashEachByteSha256', function (string $str): string {
+            return collect(mb_str_split($str))
+                ->map(fn (string $character) => hash('sha256', $character))
+                ->join('');
+        });
+    }
+
+    private function collectionMacros(): void
+    {
+        Collection::macro('toEnumValues', function (): Collection {
+            return $this->map(fn (BackedEnum $value) => $value->value);
         });
     }
 }

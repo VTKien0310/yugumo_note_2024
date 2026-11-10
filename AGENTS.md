@@ -170,7 +170,7 @@ php artisan about                    # Show application info
 
 - Region: `sin` (Singapore)
 - Install [flyctl](https://fly.io/docs/flyctl/) before deploying
-- All setup is in the source code (`Dockerfile`, `fly.toml`)
+- All setup is in the source code (`docker/Dockerfile`, `fly.toml`)
 - Release command runs `php artisan migrate --force` automatically
 - Deploy:
 

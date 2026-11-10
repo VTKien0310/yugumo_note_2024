@@ -2,8 +2,13 @@
 
 namespace App\Extendables\Core\Utils\FileHandling;
 
+use Random\RandomException;
+
 class ArrayToTextFileConverter
 {
+    /**
+     * @throws RandomException
+     */
     public function handle(
         array $content,
         array $lineBeforeWriteHooksPipe = [],
@@ -13,7 +18,7 @@ class ArrayToTextFileConverter
         ArrayToFileWriteModeEnum $writeMode = ArrayToFileWriteModeEnum::APPEND
     ): string {
         $fileExtension = $fileExtension ?: 'txt';
-        $fileName = $fileName ?: uniqid('laravel');
+        $fileName = $fileName ?: 'laravel'.bin2hex(random_bytes(16));
         $filePath = sys_get_temp_dir().'/'.$fileName.'.'.$fileExtension;
 
         $fOpenMode = $writeMode->value;

@@ -2,7 +2,7 @@
 
 namespace App\Extendables\Core\Ports\Notification;
 
-use App\Models\User\User;
+use App\Features\User\Models\User;
 use Illuminate\Support\Collection;
 
 class DummyNotificationPort implements NotificationPort
@@ -16,4 +16,9 @@ class DummyNotificationPort implements NotificationPort
      * {@inheritDoc}
      */
     public function sendToSlackWebhook(string $webhookUrl, string $notification, ...$notificationArgs): void {}
+
+    /**
+     * {@inheritDoc}
+     */
+    public function sendToEmail(array|string $email, string $notification, ...$notificationArgs): void {}
 }

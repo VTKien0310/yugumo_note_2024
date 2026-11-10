@@ -2,7 +2,7 @@
 
 namespace App\Features\Note\Actions;
 
-use App\Extendables\Core\Models\Queries\PaginateQuery;
+use App\Extendables\Core\Models\Queries\OffsetPaginateQuery;
 use App\Features\Note\Models\Note;
 use App\Features\Note\Queries\IndexNoteQuery;
 use App\Features\User\Models\User;
@@ -12,7 +12,7 @@ readonly class ListNoteOfUserAction
 {
     public function __construct(
         private IndexNoteQuery $indexNoteQuery,
-        private PaginateQuery $paginateQuery
+        private OffsetPaginateQuery $paginateQuery
     ) {}
 
     public function handle(?User $user = null): LengthAwarePaginator

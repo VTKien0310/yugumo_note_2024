@@ -2,6 +2,7 @@
 
 namespace App\Extendables\Core\Ports\File;
 
+use DateTimeInterface;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -29,9 +30,12 @@ interface FileStoragePort
 
     public function delete(string $path, bool $isWorkDirPath = false): bool;
 
+    /**
+     * @param  array<string, mixed>  $options
+     */
     public function makeTempUrlForPath(
         string $path,
-        ?int $duration = null,
+        int|DateTimeInterface|null $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string;
@@ -54,6 +58,9 @@ interface FileStoragePort
         bool $isWorkDirPath = true
     ): string|bool;
 
+    /**
+     * @param  array<string, mixed>  $headers
+     */
     public function download(
         string $path,
         ?string $name = null,
@@ -76,13 +83,38 @@ interface FileStoragePort
 
     /**
      * Make a temporary download url for an asset
+     *
+     * @param  array<string, mixed>  $options
      */
     public function makeDownloadUrlForPath(
         string $path,
         string $filename,
         ?string $contentType = null,
-        ?int $duration = null,
+        int|DateTimeInterface|null $duration = null,
         array $options = [],
         bool $isWorkDirPath = false
     ): string;
+
+    /**
+     * Save a file to the local filesystem.
+     *
+     * @param  string  $path  The source file path.
+     * @param  string  $localName  The name for the saved file locally.
+     * @param  string|null  $localDirectory  The local directory where the file will be saved. Defaults to the system temp directory if not provided.
+     * @param  bool  $isWorkDirPath  Indicates whether the source path is relative to the working directory.
+     * @return string The full path of the saved local file.
+     */
+    public function saveFileToLocal(string $path, string $localName, ?string $localDirectory = null, bool $isWorkDirPath = false): string;
+
+    /**
+     * Stream a file to the local filesystem without loading it fully into memory.
+     * Use this for large files to avoid OOM issues that saveFileToLocal() can cause.
+     *
+     * @param  string  $path  The source file path.
+     * @param  string  $localName  The name for the saved file locally.
+     * @param  string|null  $localDirectory  The local directory where the file will be saved. Defaults to the system temp directory if not provided.
+     * @param  bool  $isWorkDirPath  Indicates whether the source path is relative to the working directory.
+     * @return string The full path of the saved local file.
+     */
+    public function streamFileToLocal(string $path, string $localName, ?string $localDirectory = null, bool $isWorkDirPath = false): string;
 }
