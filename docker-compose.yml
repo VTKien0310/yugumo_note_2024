@@ -2,6 +2,7 @@ services:
     yugumo-note-2024-localhost:
         build:
             context: '.'
+            dockerfile: 'docker/Dockerfile'
             target: dev
             args:
                 USER_ID: '${WWWUSER:-1000}'
